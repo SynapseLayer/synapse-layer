@@ -405,6 +405,48 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
 
 ---
 
+## 🏢 Built With Synapse Layer
+
+### GoArqIA — Intelligent Architecture AI Assistant
+
+> "Synapse Layer eliminated token waste in our architecture recommendations. 70% reduction in input tokens while improving output quality."
+> 
+> — **Lucas Ferreira**, Founder, GoArqIA
+
+**Stack:** Python 3.11 + Claude 3.5 + Synapse Layer + PostgreSQL + pgvector
+
+**Problem:**
+GoArqIA processes architectural diagrams, code reviews, and design documents. Each request required the model to re-read 150KB of context from previous sessions, leading to:
+- 70% of tokens wasted on context repetition
+- 3–5s latency increase per request
+- $2K/month in wasted API costs
+
+**Solution:**
+Integrated Synapse Layer to maintain persistent architectural context across sessions:
+- Store user's architecture patterns, preferences, and past decisions
+- Recall relevant context (semantic search) in <50ms
+- Transfer memory between Claude sessions with Neural Handover™
+- LGPD-compliant (Brazilian data residency with AES-256-GCM)
+
+**Results:**
+- ✅ **70% token reduction** (from 150KB → 45KB average input)
+- ✅ **2.5x faster** (3.5s → 1.4s per request)
+- ✅ **$1,200/month savings** on API costs
+- ✅ **100% LGPD compliant** (encrypted, auditable, deletable)
+- ✅ **User satisfaction +85%** (architectural continuity)
+
+**Technical Highlights:**
+- 12K architectural memories stored (schemas, patterns, decisions)
+- Trust Quotient™ = 0.92 (high consistency across sessions)
+- Zero PII exposure (SynapseSanitizer removes sensitive data)
+- Audit trail of all architectural decisions (immutable log)
+
+---
+
+*Want to be featured? Build something cool with Synapse Layer and [let us know](mailto:hello@synapselayer.org)!*
+
+---
+
 ## 🏗️ Open Core Model
 
 Synapse Layer operates under an **Open Core** model: powerful community edition + optional enterprise features.
