@@ -403,6 +403,48 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
 
 ## FAQ
 
+---
+
+## 🏗️ Open Core Model
+
+Synapse Layer operates under an **Open Core** model: powerful community edition + optional enterprise features.
+
+### Community (Apache 2.0 Open Source)
+
+| Feature | Included |
+|---------|----------|
+| **Python SDK** | ✅ Full `synapse_memory` library |
+| **AES-256-GCM Encryption** | ✅ Client-side, PBKDF2 (210k) |
+| **SynapseSanitizer** | ✅ PII detection & removal |
+| **SynapseValidator** | ✅ Intent classification (9 categories) |
+| **Trust Quotient™ Algorithm** | ✅ Open formula (Recency 40%, Consistency 30%, etc.) |
+| **Neural Handover™** | ✅ Basic multi-model transfer |
+| **PostgreSQL + pgvector** | ✅ Self-hosted or managed |
+| **MCP Integration** | ✅ Claude Desktop compatible |
+| **Audit Trail** | ✅ Immutable operation logs |
+| **Documentation & Examples** | ✅ Full API docs + guides |
+
+### Enterprise (Proprietary / Commercial)
+
+| Feature | Commercial License |
+|---------|-------------------|
+| **Synapse Forge Dashboard** | 🔒 Proprietary console |
+| **Advanced Consensus Engine** | 🔒 Proprietary TQ+ algorithm |
+| **World Knowledge Cloud** | 🔒 Shared opt-in memory layer |
+| **Decentralized Nodes** | 🔒 Managed node infrastructure |
+| **SYN Token Economics** | 🔒 Tokenomics design & launch |
+| **Priority Support** | 🔒 SLA-backed support |
+| **Custom Integrations** | 🔒 Bespoke API adapters |
+
+### Philosophy
+
+> The core memory layer, encryption, sanitization, and validation are **yours to own forever**. Enterprise features accelerate time-to-value but are never required.
+
+- **Community = Self-sovereign memory**
+- **Enterprise = Accelerated deployment**
+
+Both are critical to the vision. Pick what fits your needs.
+
 **Q: How is this different from Mem0 / Zep?**  
 A: We encrypt on your machine (you own keys). They encrypt server-side (they own keys). That's the fundamental difference.
 
