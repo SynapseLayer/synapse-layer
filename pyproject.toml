@@ -5,40 +5,52 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "synapse-layer"
 version = "1.0.3"
-description = "Zero-Knowledge Memory Layer for AI Agents"
+description = "Zero-Knowledge Memory Layer for AI Agents — Giving Agents a Past. Giving Models a Soul."
 readme = "README.md"
-requires-python = ">=3.9"
 license = {text = "Apache 2.0"}
-authors = [
-    {name = "Ismael Marchi", email = "founder.synapselayer@proton.me"}
-]
-keywords = ["ai", "agents", "memory", "zero-knowledge", "mcp", "encryption", "agentic-ai"]
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Topic :: Software Development :: Libraries :: Application Frameworks",
+authors = [{name = "Ismael Marchi", email = "founder.synapselayer@proton.me"}]
+
+keywords = [
+  "ai-agents",
+  "memory",
+  "zero-knowledge",
+  "encryption",
+  "mcp",
+  "agentic-ai",
+  "lgpd"
 ]
 
-[project.urls]
-Homepage = "https://www.synapselayer.org"
-Documentation = "https://www.synapselayer.org/docs"
-Repository = "https://github.com/SynapseLayer/synapse-layer"
-Issues = "https://github.com/SynapseLayer/synapse-layer/issues"
+requires-python = ">=3.9"
+dependencies = [
+  "cryptography>=41.0.0",
+  "pydantic>=2.0",
+  "httpx>=0.24.0",
+  "python-dotenv>=1.0.0",
+]
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=7.0",
-    "pytest-asyncio>=0.21.0",
-    "pytest-cov>=4.0",
-    "black>=23.0",
-    "ruff>=0.1.0",
+  "pytest>=7.4.0",
+  "pytest-cov>=4.1.0",
+  "pytest-asyncio>=0.21.0",
+  "black>=23.7.0",
+  "isort>=5.12.0",
+  "mypy>=1.4.0",
+  "flake8>=6.0.0",
 ]
 
+[project.urls]
+Homepage = "https://synapselayer.org"
+Repository = "https://github.com/SynapseLayer/synapse-layer"
+Documentation = "https://synapselayer.org/docs"
+Issues = "https://github.com/SynapseLayer/synapse-layer/issues"
+
 [tool.setuptools]
-packages = ["synapse_layer"]
+packages = ["synapse_memory"]
+
+[tool.setuptools.package-dir]
+"" = "."
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --cov=synapse_memory --cov-report=term-missing"
