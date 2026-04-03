@@ -7,6 +7,7 @@
   [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
   [![Python](https://img.shields.io/badge/Python-3.9%2B-blue)](https://www.python.org/)
   [![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-green)](https://modelcontextprotocol.io)
+  [![CI](https://img.shields.io/badge/CI%2FCD-in%20progress%20🔄-yellow)](https://github.com/SynapseLayer/synapse-layer/actions)
 
   [Website](https://www.synapselayer.org) • [Docs](https://www.synapselayer.org/docs) • [GitHub](https://github.com/SynapseLayer/synapse-layer)
 </div>
