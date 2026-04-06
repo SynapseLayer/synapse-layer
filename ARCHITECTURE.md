@@ -172,18 +172,21 @@ CREATE POLICY agent_isolation
 ### 6. Trust Quotient™ Calculation
 
 ```
-TQ = (Recency × 0.4) + (Consistency × 0.3) + (Confidence × 0.2) + (Relevance × 0.1)
+TQ = f(Recency, Consistency, Confidence, Relevance)
 
-Recency: How fresh the memory (0-1)
+Recency:     How fresh the memory (0-1)
 Consistency: Agreement with other memories (0-1)
-Confidence: Validation confidence (0-1)
-Relevance: Semantic similarity to query (0-1)
+Confidence:  Validation confidence from SynapseValidator (0-1)
+Relevance:   Semantic similarity to query (0-1)
+
+Weights are proprietary and dynamically calibrated.
+Full algorithm available under Enterprise license.
 ```
 
 **Conflict Resolution:**
 - When memories conflict, highest TQ wins
 - Tie-breaker: Most recent timestamp
-- Audit log records all conflicts
+- Audit log records all conflicts and resolutions
 
 ---
 
@@ -207,22 +210,109 @@ The following sequence is **mandatory and non-negotiable**:
 
 ```
 synapse-layer/
-├── sdk/
-│   └── python/
-│       └── synapse_memory/
-│           ├── __init__.py
-│           ├── sanitizer.py           ← SynapseSanitizer
-│           ├── engine/
-│           │   ├── __init__.py
-│           │   └── validator.py       ← SynapseValidator
-│           └── crypto/
-│               └── __init__.py
-├── docs/
-│   └── ARCHITECTURE.md                ← This file
+├── synapse_memory/
+│   ├── __init__.py
+│   ├── core.py                    ← SynapseMemory (orchestrator)
+│   ├── sanitizer.py               ← SynapseSanitizer (PII removal)
+│   ├── privacy.py                 ← DifferentialPrivacy (DP noise)
+│   ├── engine/
+│   │   ├── __init__.py
+│   │   ├── validator.py           ← SynapseValidator (intent validation)
+│   │   └── handover.py            ← NeuralHandover (cross-agent transfer)
+│   └── crypto/
+│       └── __init__.py
+├── ARCHITECTURE.md                ← This file
 ├── SECURITY.md
 ├── README.md
+├── CHANGELOG.md
 └── pyproject.toml
 ```
+
+---
+
+## Neural Handover™ — Persistence-First Architecture
+
+Cross-agent context transfer with Status Ledger, JWT signing, and automatic fallback.
+
+### Handover State Machine
+
+```mermaid
+stateDiagram-v2
+    [*] --> PENDING: create_handover()
+
+    PENDING --> ACCEPTED: accept_handover() [valid JWT + within TTL]
+    ACCEPTED --> COMPLETED: Context imported to target agent
+
+    PENDING --> EXPIRED: TTL exceeded
+    EXPIRED --> GracePeriod: Within 15min grace window
+    GracePeriod --> SummaryReturned: Summary generated, raw data cleared
+
+    PENDING --> FAILED: Target agent error
+    FAILED --> EmergencyCheckpoint: Full context preserved for recovery
+
+    COMPLETED --> [*]
+    SummaryReturned --> [*]
+    EmergencyCheckpoint --> [*]
+```
+
+### Handover Data Flow
+
+```mermaid
+sequenceDiagram
+    participant A as Agent A (Origin)
+    participant S as Synapse Layer
+    participant V as Vault (Status Ledger)
+    participant B as Agent B (Target)
+
+    A->>S: create_handover(memories, target_agent)
+    S->>S: Sanitize content (PII removal)
+    S->>S: Validate intent (Cognitive Security™)
+    S->>S: Sign JWT (HMAC-SHA256)
+    S->>V: Persist as PENDING
+    S-->>A: HandoverResult {token, handover_id}
+
+    A->>B: Transmit signed JWT token
+
+    B->>S: accept_handover(handover_id)
+    S->>S: Verify JWT signature
+    S->>S: Check TTL expiration
+
+    alt Valid & Within TTL
+        S->>V: Update → ACCEPTED → COMPLETED
+        S-->>B: Full context data
+        B->>B: Import memories into local store
+    else TTL Expired (Grace Period)
+        S->>S: Generate summary from context
+        S->>V: Update → EXPIRED
+        S-->>B: Summary only (raw data cleared)
+    else TTL Expired (Beyond Grace)
+        S-->>B: TimeoutError
+    end
+
+    alt Target Agent Fails
+        S->>V: Update → FAILED
+        S->>V: Create Emergency Checkpoint
+        Note over V: Full context preserved<br/>for recovery via<br/>get_latest_handover()
+    end
+```
+
+### Handover JWT Token Structure
+
+```
+Header:   {"alg": "HS256", "typ": "SHT"}
+Payload:  {"tid": "ho_...", "org": "gpt-4", "tgt": "claude-3.5",
+           "uid": "user-123", "scp": "full", "iat": ..., "exp": ...}
+Signature: HMAC-SHA256(header.payload, signing_key)
+```
+
+### Recovery Mechanisms
+
+| Scenario | Action | Data Available |
+|----------|--------|:-:|
+| Normal | `accept_handover()` | Full context |
+| Grace Period | Auto-summary | Summary only |
+| Agent Failure | Emergency Checkpoint | Full context (frozen) |
+| Full Expiry | `get_latest_handover()` | Summary only |
 
 ---
 
@@ -232,7 +322,8 @@ synapse-layer/
 - **Client-Side Sanitization:** PII removed before leaving client
 - **Immutable Audit:** Every operation logged; cannot be deleted
 - **Differential Privacy:** Aggregate queries don't leak individual data
-- **Handover Verification:** HMAC-SHA256 signatures on cross-model transfers
+- **Handover Verification:** HMAC-SHA256 signed JWT tokens on cross-model transfers
+- **Persistence-First:** All handovers vault-persisted before transmission
 
 ---
 

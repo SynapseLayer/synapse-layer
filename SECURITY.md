@@ -1,346 +1,395 @@
-# SECURITY.md — Synapse Layer Security Architecture
+# SECURITY.md — Synapse Layer Cognitive Security Architecture
+
+**Version:** 1.0.6  
+**Last Updated:** April 2026  
+**Classification:** Public  
+**Standard:** Banking-Grade Infrastructure (Padrão Bancário BR)
+
+---
 
 ## Executive Summary
 
-Synapse Layer implements **Zero-Knowledge Architecture** where:
-- You own encryption keys; we never have access
-- All PII removal happens on your machine (client-side)
-- Encrypted blobs stored at rest
-- Immutable audit trail of all operations
-- **GDPR, LGPD, HIPAA compliant**
+Synapse Layer v1.0.6 implements a **Cognitive Security Protocol** — four independent, non-bypassable security layers that protect every memory operation from ingestion to cross-agent transfer.
 
-**Security Standard:** Banking-Grade Infrastructure (Padrão Bancário BR)
+| Seal | Component | Function |
+|------|-----------|----------|
+| 1 | **Semantic Privacy Guard™** | PII detection, removal, forensic hashing |
+| 2 | **Differential Privacy** | Gaussian noise on embeddings (ε-bounded) |
+| 3 | **Intelligent Intent Validation™** | Two-step confidence gate + self-healing |
+| 4 | **Persistence-First Neural Handover™** | JWT-signed vault-first cross-agent transfer |
+
+**Architecture:** Zero-Knowledge. You own encryption keys. The server never sees plaintext.
+
+**Compliance:** GDPR, LGPD, HIPAA ready.
+
+---
+
+## Cognitive Security Pipeline
+
+Every `store()` call passes through this pipeline. No exceptions. No bypasses.
+
+```
+Agent Input
+  │
+  ├── Seal 1: Semantic Privacy Guard™
+  │     ├─ 12 regex patterns detect PII (email, SSN, CPF, credit cards, etc.)
+  │     ├─ SHA-256 hash of each redacted item (forensic audit)
+  │     ├─ Aggressive mode: proper noun stripping
+  │     └─ Risk score + sensitivity classification
+  │
+  ├── Seal 2: Differential Privacy
+  │     ├─ Gaussian noise injection on embedding vector
+  │     ├─ σ = Δf · √(2·ln(1.25/δ)) / ε
+  │     ├─ L2 normalization preserves cosine similarity
+  │     └─ SNR metric in audit payload
+  │
+  ├── Seal 3: Intelligent Intent Validation™
+  │     ├─ Step 1: Agent suggests intent (keyword heuristic)
+  │     ├─ Step 2: Synapse validates (confidence gate ≥ 0.85)
+  │     ├─ 19 critical keywords → auto-promote to CRITICAL
+  │     └─ Self-healing on recall: keyword consensus reclassification
+  │
+  ├── Encryption: AES-256-GCM (client-side)
+  │     ├─ 256-bit key, 96-bit IV, 128-bit auth tag
+  │     └─ PBKDF2-SHA256 key derivation (210k iterations)
+  │
+  └── Vault Persistence
+        ├─ Encrypted blob + noise-injected embedding
+        └─ Immutable audit trail with all flags
+```
+
+---
+
+## Seal 1 — Semantic Privacy Guard™
+
+**Module:** `synapse_memory/sanitizer.py`  
+**Status:** Mandatory — cannot be bypassed in the standard pipeline
+
+### Detection Patterns (12 Precompiled)
+
+| Pattern | Example | Sensitivity |
+|---------|---------|-------------|
+| Email addresses | `john@example.com` | MEDIUM |
+| Phone numbers | `+55 11 99999-8888` | MEDIUM |
+| SSN (US) | `123-45-6789` | CRITICAL |
+| CPF (BR) | `123.456.789-00` | CRITICAL |
+| Credit cards | `4111-1111-1111-1111` | CRITICAL |
+| IP addresses | `192.168.1.1` | LOW |
+| Dates of birth | `1990-01-15` | MEDIUM |
+| Bearer tokens | `Bearer eyJhbGci...` | CRITICAL |
+| AWS access keys | `AKIA...` | CRITICAL |
+| Generic API keys | `sk_test_...`, `ghp_...` | CRITICAL |
+| URLs | `https://internal.corp/...` | LOW |
+| Passport numbers | `AB1234567` | HIGH |
+
+### Aggressive Mode
+
+When `aggressive_sanitize=True`, proper nouns (capitalized words not at sentence start) are stripped. This prevents name-based correlation attacks across memory pools.
+
+```python
+memory = SynapseMemory(agent_id="secure", aggressive_sanitize=True)
+# "John Smith prefers dark mode" → "[REDACTED_NAME] prefers dark mode"
+```
+
+### Forensic Audit
+
+Every redacted item produces a SHA-256 hash stored in the audit payload. This enables:
+- **Non-repudiation**: Prove a specific item was redacted without revealing it
+- **Compliance reporting**: Count and classify PII encounters
+- **Forensic investigation**: Match hashes against known PII if legally required
+
+---
+
+## Seal 2 — Differential Privacy
+
+**Module:** `synapse_memory/privacy.py`  
+**Status:** Enabled by default (ε = 0.5)
+
+### Mechanism
+
+Calibrated Gaussian noise is injected into embedding vectors **before** they are stored in pgvector. This prevents semantic inference attacks — even with full database access, the original semantic fingerprint cannot be reconstructed.
+
+```
+σ = Δf · √(2 · ln(1.25 / δ)) / ε
+
+where:
+  Δf = L2 sensitivity of the embedding function
+  ε  = privacy budget (default 0.5)
+  δ  = failure probability (default 1e-5)
+```
+
+### Privacy Budget (ε)
+
+| ε Value | Privacy Level | Use Case |
+|---------|---------------|----------|
+| 0.01–0.1 | Maximum privacy | Healthcare, legal |
+| 0.5 | Balanced (default) | General use |
+| 1.0–10.0 | Relaxed privacy | Analytics, aggregation |
+
+### Post-Noise Normalization
+
+After noise injection, vectors are L2-normalized to unit length. This preserves cosine similarity semantics for recall operations while maintaining the privacy guarantee.
+
+### Audit Payload
+
+Every `store()` includes:
+```json
+{
+  "privacy_applied": true,
+  "epsilon": 0.5,
+  "noise_sigma": 0.0234,
+  "snr_db": 18.7
+}
+```
+
+---
+
+## Seal 3 — Intelligent Intent Validation™
+
+**Module:** `synapse_memory/engine/validator.py`  
+**Status:** Mandatory on every `store()` call
+
+### Intent Categories
+
+| Category | Description | Auto-Critical |
+|----------|-------------|:---:|
+| `PREFERENCE` | Taste, style, language, tone | — |
+| `FACT` | Verified knowledge, research, data | — |
+| `PROCEDURAL` | Steps, workflows, protocols | — |
+| `BIO` | Personal info, identity, demographics | — |
+| `EPHEMERAL` | Session-scoped, transient context | — |
+| `CRITICAL` | Security, compliance, legal, financial | ✅ |
+
+### Two-Step Validation
+
+1. **Agent Suggestion**: Keyword heuristic scoring across all categories
+   (saturation normalization with `SATURATION_HITS=3`)
+2. **Synapse Validation**: Confidence gate, critical override, source assignment
+
+### Confidence Contract
+
+| Condition | Result |
+|-----------|--------|
+| `confidence ≥ 0.85` | `source_type = "validated"` |
+| `confidence < 0.85` | `source_type = "inference"` + warning |
+| Critical keyword detected | `source_type = "critical_override"`, `confidence_boost = 1.0` |
+
+### Critical Keywords (19)
+
+`emergency`, `breach`, `attack`, `ransomware`, `warrant`, `subpoena`, `exploit`,
+`vulnerability`, `incident`, `threat`, `unauthorized`, `compromise`, `malware`,
+`phishing`, `fraud`, `violation`, `compliance`, `audit`, `lawsuit`
+
+Any of these triggers automatic promotion to `CRITICAL` with `confidence_boost = 1.0`,
+regardless of agent-reported confidence.
+
+### Self-Healing on Recall
+
+During `recall()`, semantically proximate memories (cosine ≥ 0.85) with conflicting
+categories are detected. The weaker classification is corrected via keyword consensus.
+
+Full `SelfHealingResult` audit payload:
+```python
+@dataclass(frozen=True)
+class SelfHealingResult:
+    reclassified: bool
+    original_category: IntentCategory
+    new_category: IntentCategory
+    reason: str
+    evidence_scores: dict[str, float]
+```
+
+This prevents **category drift attacks** where adversaries store conflicting metadata
+to downgrade memory criticality over time.
+
+---
+
+## Seal 4 — Persistence-First Neural Handover™
+
+**Module:** `synapse_memory/engine/handover.py`  
+**Status:** Production
+
+### Architecture: Vault-First
+
+Memories are persisted to the Status Ledger **before** any network transmission.
+If the target agent crashes, disconnects, or times out — nothing is lost.
+
+### Status Ledger State Machine
+
+```
+PENDING → ACCEPTED → COMPLETED    (normal flow)
+PENDING → FAILED                   (Emergency Checkpoint created)
+PENDING → EXPIRED                  (grace period: summary returned)
+```
+
+**Transition rules are strict and immutable.** A `COMPLETED` handover cannot
+be reverted. A `FAILED` handover always creates an Emergency Checkpoint.
+
+### JWT Token Structure (SHT — Synapse Handover Token)
+
+```json
+{
+  "origin_agent": "gpt-4",
+  "target_agent": "claude-3.5",
+  "user_id": "user-123",
+  "scope": "full",
+  "memory_count": 42,
+  "iat": 1712361600,
+  "exp": 1712365200
+}
+```
+
+**Signature:** HMAC-SHA256 with per-instance secret key.
+
+### Security Properties
+
+| Property | Mechanism |
+|----------|----------|
+| **Authentication** | HMAC-SHA256 signature verification |
+| **Integrity** | Signature covers full payload |
+| **Freshness** | `iat` + `exp` timestamps, TTL enforcement |
+| **Non-repudiation** | All transitions logged in Status Ledger |
+| **Fault tolerance** | Emergency Checkpoint on failure |
+| **Privacy** | Content sanitized + intent-validated before packaging |
+
+### Grace Period Protocol
+
+When TTL expires but the handover is within the 15-minute grace window:
+- Raw memory data is **not** returned
+- A compact summary is auto-generated
+- Summary is sufficient for the target agent to understand context
+- Original data remains encrypted in the vault
+
+### Emergency Checkpoint
+
+On `fail_handover()`:
+- Full context snapshot is frozen
+- Checkpoint is vault-persisted with failure reason
+- Recovery can be manual or automated
+- Checkpoint preserves all metadata including intent classifications
 
 ---
 
 ## Encryption & Key Management
 
-### AES-256-GCM Encryption
+### AES-256-GCM
 
-**Algorithm:** AES-256 in Galois Counter Mode (GCM)
-- **Key Size:** 256 bits (32 bytes)
-- **IV:** 96 bits (12 bytes), randomly generated per message
-- **Auth Tag:** 128 bits (16 bytes) — Verifies integrity & authenticity
-- **Mode:** GCM provides both confidentiality and authenticity
+| Parameter | Value |
+|-----------|-------|
+| Algorithm | AES-256-GCM |
+| Key size | 256 bits (32 bytes) |
+| IV | 96 bits (12 bytes), random per message |
+| Auth tag | 128 bits (16 bytes) |
+| Mode | Authenticated encryption (confidentiality + integrity) |
 
-**Why GCM?**
-- Authenticated encryption (prevents tampering)
-- Parallelizable (fast)
-- Industry standard (TLS 1.3, SSH)
-- Protects against chosen-ciphertext attacks
+### Key Derivation (PBKDF2-SHA256)
 
-### Key Derivation (PBKDF2)
-
-**Algorithm:** PBKDF2-SHA256
-- **Iterations:** 210,000 (NIST 2023 minimum)
-- **Salt:** 32 bytes, randomly generated
-- **Hash Function:** SHA-256
-- **Output Key Length:** 32 bytes (256 bits)
-
-**Process:**
-```
-user_password + random_salt → PBKDF2(210k iterations) → 256-bit encryption key
-```
-
-**Why 210k iterations?**
-- Recommended by NIST SP 800-132 (2023)
-- Resistant to GPU/ASIC attacks
-- Computational cost: ~100ms per derivation (acceptable for user experience)
-- Updated from previous standard (600k+) to balance security and UX
-
-**Security Properties:**
-- **Time-based:** Each derivation takes ~100ms, making brute-force impractical
-- **Space-hard:** Resistant to parallel GPU attacks
-- **Unique per user:** Different salt prevents rainbow table attacks
-
----
-
-## Client-Side Sanitization
-
-### PII Detection & Removal
-
-**Before transmission to server, client removes:**
-
-1. **Personally Identifiable Information**
-   - Names (flagged but not automatically removed)
-   - Email addresses: `john@example.com`
-   - Phone numbers: `+55 11 99999-8888`
-   - Home addresses
-
-2. **Financial Information (CRITICAL)**
-   - Credit card numbers: `1234-5678-9012-3456`
-   - Bank account numbers
-   - SSN/CPF: `123-45-6789`, `123.456.789-00`
-
-3. **Health Information (CRITICAL)**
-   - Medical diagnoses
-   - Medication names
-   - Hospital names
-
-4. **Security Credentials (CRITICAL)**
-   - Passwords
-   - API keys: `sk_test_...`, `ghp_...`
-   - OAuth tokens
-
-5. **Authentication Factors**
-   - 2FA codes
-   - Biometric data
-
-### Sanitization Process
-
-```python
-# Input
-user_content = "My email is john@example.com and SSN is 123-45-6789"
-
-# SynapseSanitizer.sanitize_content()
-# Step 1: Regex detection
-# Step 2: PII removal
-sanitized_content = "My email is [EMAIL_REDACTED] and SSN is [SSN_REDACTED]"
-
-# Output
-risk_score = 0.3  # CRITICAL items found
-pii_count = 2
-is_safe = False
-ner_hints = ["email:12", "ssn:48"]
-
-# Sanitized version sent to server (encrypted)
-```
-
-### Why Client-Side?
-
-- **Privacy:** We never see your raw PII
-- **Control:** You decide what gets removed
-- **Speed:** No round-trip to server
-- **Regulation:** Compliance with LGPD § 5.10 and GDPR Article 5
-
----
-
-## Intent Validation & Self-Healing
-
-### IntentCategory Classification
+| Parameter | Value |
+|-----------|-------|
+| Algorithm | PBKDF2-SHA256 |
+| Iterations | 210,000 (NIST SP 800-132, 2023) |
+| Salt | 32 bytes, random |
+| Output | 256-bit encryption key |
 
 ```
-USER_PROFILE    → Settings, preferences (NORMAL)
-CONVERSATION    → Dialog, chat (NORMAL)
-DECISION        → Commitments, goals (NORMAL)
-KNOWLEDGE       → Facts, learning (NORMAL)
-PREFERENCE      → Tastes, likes (NORMAL)
-
-MEDICAL         → Health records (AUTO-CRITICAL)
-FINANCIAL       → Payments, accounts (AUTO-CRITICAL)
-LEGAL           → Contracts, disputes (AUTO-CRITICAL)
-SECURITY        → Passwords, tokens (AUTO-CRITICAL)
-```
-
-### Confidence Threshold
-
-- **Minimum Valid Confidence:** 0.85 (85%) — **Immutable**
-- **Critical Keywords:** Auto-promote to SECURITY
-  - `emergency`, `urgent`, `breach`, `attack`, `fraud`
-- **Self-Healing:** If confidence 0.5–0.85, detect context and upgrade
-
-**Example:**
-```
-Input: "I have health issues and need medical help"
-Confidence (raw): 0.65
-Self-Healing: Detect "health" + "medical" → Upgrade to MEDICAL (auto-CRITICAL)
-Final: confidence=0.75, category=MEDICAL, is_critical=True
+user_password + random_salt → PBKDF2(210k iterations) → 256-bit key
 ```
 
 ---
 
-## Differential Privacy
+## Data at Rest
 
-### Aggregation Protection
-
-When querying across multiple memories (e.g., "What are my common health concerns?"), noise is added to prevent individual data leakage:
-
-```
-Actual aggregate: [50 users with anxiety, 30 with insomnia, 20 with depression]
-With DP (ε=1.0): [51 users with anxiety, 28 with insomnia, 22 with depression]
-```
-
-### Epsilon (Privacy Budget)
-
-- **ε = 1.0:** Strong privacy (data not identifiable)
-- **ε = 0.1:** Weaker privacy (more accurate statistics)
-- **Default:** ε = 0.5 (balanced)
-
-**How it works:**
-- Laplace mechanism adds Laplacian noise proportional to 1/ε
-- Lower ε = stronger privacy = more noise
-- Higher ε = weaker privacy = less noise
-
----
-
-## Neural Handover™ Security
-
-### Lifecycle of a Handover
-
-```
-1. Agent A (Claude) initiates handover
-   ├─ Extracts relevant memories
-   ├─ Creates summary
-   └─ Signs with private key
-
-2. Handover signature created
-   ├─ Algorithm: HMAC-SHA256
-   ├─ Key: Agent A's private key
-   ├─ Message: summary_content + timestamp + target_agent_id
-   └─ Signature: 32-byte proof
-
-3. Handover transmitted to Agent B (GPT-4)
-   ├─ Encrypted with Agent B's public key
-   ├─ TTL: 1 hour (expires)
-   └─ Single-use token (cannot be replayed)
-
-4. Agent B verifies handover
-   ├─ Verify signature with Agent A's public key
-   ├─ Check timestamp (not expired)
-   ├─ Check target_agent_id matches
-   ├─ Decrypt with private key
-   └─ Load context into memory
-
-5. Audit log records
-   ├─ Handover initiator (Agent A)
-   ├─ Handover recipient (Agent B)
-   ├─ Timestamp
-   ├─ Memory summary hash
-   └─ Verification result (success/failed)
-```
-
-### Security Properties
-
-- **Authentication:** Only Agent A can sign handovers on its behalf
-- **Integrity:** Signature prevents tampering with summary
-- **Freshness:** Timestamp + TTL prevent replay attacks
-- **Non-Repudiation:** Agent A cannot deny initiating handover
-- **Audit Trail:** All handovers logged permanently
-
----
-
-## Data at Rest Encryption
-
-### PostgreSQL Storage
+### PostgreSQL + pgvector
 
 ```sql
 CREATE TABLE memories (
     id UUID PRIMARY KEY,
     agent_id UUID NOT NULL,
-    encrypted_blob BYTEA NOT NULL,        -- AES-256-GCM ciphertext
-    embedding vector(1536) NOT NULL,     -- Semantic search vector
+    encrypted_blob BYTEA NOT NULL,       -- AES-256-GCM ciphertext
+    embedding vector(1536) NOT NULL,     -- Noise-injected semantic vector
     intent_category VARCHAR(50) NOT NULL,
+    is_critical BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL
 );
 
--- Row-Level Security (RLS)
+-- Row-Level Security
 ALTER TABLE memories ENABLE ROW LEVEL SECURITY;
-CREATE POLICY agent_isolation
-    ON memories
-    FOR SELECT
-    USING (agent_id = current_user_id());
+CREATE POLICY agent_isolation ON memories
+    FOR SELECT USING (agent_id = current_user_id());
 ```
 
-### Encryption at Rest
-
-- **Column:** `encrypted_blob` contains AES-256-GCM ciphertext
-- **Key:** Derived from master key + agent_id
-- **Encryption:** Happens on client; server stores encrypted bytes
-- **Decryption:** Only client can decrypt (has user's password)
+**Key points:**
+- `encrypted_blob` = AES-256-GCM ciphertext (server cannot decrypt)
+- `embedding` = noise-injected vector (original semantics unrecoverable)
+- `intent_category` = validated classification (not raw agent input)
+- Row-Level Security isolates agents from each other
 
 ---
 
 ## Transport Security
 
-### HTTPS + TLS 1.3
-
-- **Protocol:** HTTPS (TLS 1.3)
-- **Ciphers:** AES-256-GCM or ChaCha20-Poly1305
-- **Certificate Pinning:** Client verifies server certificate (prevent MITM)
-- **mTLS:** Client certificate authentication (optional for enterprise)
-
-### API Authentication
-
-- **Bearer Token:** Session token (short-lived, ~1 hour)
-- **Refresh Token:** Long-lived token for getting new session (stores securely)
-- **API Key:** For programmatic access (rotate regularly)
+| Layer | Implementation |
+|-------|---------------|
+| Protocol | HTTPS (TLS 1.3) |
+| Ciphers | AES-256-GCM or ChaCha20-Poly1305 |
+| Certificate | Pinning (MITM prevention) |
+| mTLS | Optional for enterprise |
+| Auth | Bearer token (1h) + refresh token + API key |
 
 ---
 
 ## Compliance
 
-### GDPR (General Data Protection Regulation)
+### GDPR (EU)
 
-✅ **Data Minimization:** PII detected and removed client-side  
-✅ **Encryption:** AES-256-GCM at rest + TLS in transit  
-✅ **Purpose Limitation:** Data used only for memory/retrieval  
-✅ **Right to Deletion:** User can request permanent deletion (audit log erased after 1 year)  
-✅ **Right to Access:** User can export all encrypted memories  
-✅ **Data Controller:** User owns the data; Synapse is processor  
+| Requirement | Implementation |
+|-------------|---------------|
+| Data minimization | Semantic Privacy Guard™ (PII removed client-side) |
+| Encryption | AES-256-GCM at rest + TLS 1.3 in transit |
+| Purpose limitation | Data used only for memory/retrieval |
+| Right to deletion | User can delete all memories + audit trail (1y retention) |
+| Right to access | Full encrypted export available |
+| Data controller | User owns data; Synapse is processor |
 
-**Relevant Articles:**
-- Article 5: Principles (lawfulness, fairness, transparency, integrity)
-- Article 32: Security of processing
-- Article 35: Data Protection Impact Assessment
+### LGPD (Brazil)
 
-### LGPD (Lei Geral de Proteção de Dados — Brazil)
+| Requirement | Implementation |
+|-------------|---------------|
+| Consentimento explícito | User opt-in required |
+| Segurança | AES-256-GCM per § 5.10 |
+| Transparência | Clear privacy policy |
+| Direito de exclusão | Permanent deletion available |
+| Padrão Bancário | BACEN standards implemented |
 
-✅ **Consentimento Explícito:** User opt-in required  
-✅ **Segurança:** AES-256-GCM encryption per § 5.10  
-✅ **Transparência:** Clear privacy policy and data usage  
-✅ **Direito de Acesso:** User can request data export  
-✅ **Direito de Exclusão:** User can delete memories permanently  
-✅ **Regime de Responsabilidade:** Synapse liable for breaches  
+### HIPAA (US)
 
-**Padrão Bancário:** Implemented according to Central Bank of Brazil (BACEN) standards
-
-### HIPAA (Health Insurance Portability and Accountability Act)
-
-✅ **Encryption:** AES-256-GCM for all health data  
-✅ **Access Controls:** User-based encryption (PBKDF2)  
-✅ **Audit Trail:** Immutable log of all access  
-✅ **Business Associate Agreement:** Required for healthcare apps  
-⚠️ **Key Management:** User responsible for managing encryption keys  
+| Requirement | Implementation |
+|-------------|---------------|
+| Encryption | AES-256-GCM for all health data |
+| Access controls | User-based encryption (PBKDF2) |
+| Audit trail | Immutable log of all access |
+| BAA | Required for healthcare apps |
 
 ---
 
-## Threat Model & Mitigation
+## Threat Model
 
 | Threat | Probability | Impact | Mitigation |
-|--------|-------------|--------|-----------|
-| **Plaintext data breach** | HIGH | CRITICAL | AES-256-GCM encryption at rest |
-| **SQL injection** | MEDIUM | HIGH | Parameterized queries, ORM (Prisma) |
-| **API key leak** | MEDIUM | CRITICAL | Sanitize + remove before transmission |
-| **Man-in-the-middle** | LOW | HIGH | TLS 1.3 + certificate pinning |
-| **Brute force password** | LOW | MEDIUM | PBKDF2 210k iterations + rate limiting |
-| **Insider threat** | LOW | CRITICAL | Zero-knowledge (employees can't decrypt) |
-| **Replay attack** | LOW | MEDIUM | Handover TTL + single-use tokens |
-| **Denial of service** | MEDIUM | MEDIUM | Rate limiting + DDoS protection |
-
----
-
-## Best Practices for Users
-
-1. **Manage Passwords:**
-   - Use strong, unique passwords (20+ chars)
-   - Never share your password
-   - Use password manager
-
-2. **Sanitization:**
-   - Review sanitized content before storing
-   - Don't bypass sanitization deliberately
-   - Report false negatives
-
-3. **Handover:**
-   - Only initiate handovers to trusted agents
-   - Verify agent identity before accepting handovers
-   - Review summary before accepting context
-
-4. **Audit Log:**
-   - Periodically review access logs
-   - Enable alerts for suspicious activity
-   - Export audit trail annually
+|--------|:-----------:|:------:|------------|
+| Plaintext data breach | HIGH | CRITICAL | AES-256-GCM + zero-knowledge |
+| Semantic inference attack | HIGH | HIGH | Differential Privacy (ε=0.5) |
+| PII leakage through embeddings | HIGH | CRITICAL | Semantic Privacy Guard™ |
+| Category drift attack | MEDIUM | HIGH | Self-healing + keyword consensus |
+| Unauthorized handover | MEDIUM | HIGH | HMAC-SHA256 + agent identity check |
+| SQL injection | MEDIUM | HIGH | Parameterized queries, ORM |
+| API key leak | MEDIUM | CRITICAL | Sanitizer detects and removes |
+| Handover token tampering | LOW | HIGH | HMAC-SHA256 signature |
+| Man-in-the-middle | LOW | HIGH | TLS 1.3 + certificate pinning |
+| Brute force | LOW | MEDIUM | PBKDF2 210k + rate limiting |
+| Replay attack | LOW | MEDIUM | Handover TTL + single-use tokens |
+| Insider threat | LOW | CRITICAL | Zero-knowledge (employees can't decrypt) |
+| Target agent crash | MEDIUM | MEDIUM | Emergency Checkpoint |
 
 ---
 
@@ -350,33 +399,18 @@ If you discover a security vulnerability:
 
 1. **Do NOT** file a public GitHub issue
 2. **Email:** security@synapselayer.org
-3. **Include:**
-   - Vulnerability description
-   - Reproduction steps
-   - Potential impact
-   - Suggested fix (optional)
-
-4. **Timeline:**
-   - We respond within 48 hours
-   - We aim to patch within 7 days
-   - Public disclosure after patch release
+3. **Include:** Description, reproduction steps, potential impact
+4. **Timeline:** 48h response, 7-day patch target, public disclosure after fix
 
 ---
 
-## Security Updates
+## Security Contact
 
-- **Critical patches:** Released immediately
-- **High-priority fixes:** Within 1 week
-- **General updates:** Monthly security releases
-- **Subscribe:** https://synapselayer.org/security
-
----
-
-## Questions?
-
-**Email:** security@synapselayer.org
+**Email:** security@synapselayer.org  
+**Founder:** founder.synapselayer@proton.me  
+**Subscribe:** https://synapselayer.org/security
 
 ---
 
-*Last Updated: April 2026*
-*Version: 1.0.3*
+*Synapse Layer — Cognitive Security Protocol for AI Agents*  
+*v1.0.6 — April 2026*

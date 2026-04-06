@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "synapse-layer"
-version = "1.0.4"
-description = "Zero-Knowledge Memory Layer for AI Agents — Giving Agents a Past. Giving Models a Soul."
+version = "1.0.6"
+description = "Zero-Knowledge Memory Layer for AI Agents — Cognitive Security Protocol with 4 proprietary seals. Giving Agents a Past. Giving Models a Soul."
 readme = "README.md"
 license = {text = "Apache 2.0"}
 authors = [{name = "Ismael Marchi", email = "founder.synapselayer@proton.me"}]
@@ -17,7 +17,23 @@ keywords = [
   "encryption",
   "mcp",
   "agentic-ai",
-  "lgpd"
+  "lgpd",
+  "cognitive-security",
+  "differential-privacy",
+  "neural-handover",
+]
+
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Security :: Cryptography",
 ]
 
 requires-python = ">=3.9"
@@ -44,9 +60,11 @@ Homepage = "https://synapselayer.org"
 Repository = "https://github.com/SynapseLayer/synapse-layer"
 Documentation = "https://synapselayer.org/docs"
 Issues = "https://github.com/SynapseLayer/synapse-layer/issues"
+Changelog = "https://github.com/SynapseLayer/synapse-layer/blob/main/CHANGELOG.md"
+Security = "https://github.com/SynapseLayer/synapse-layer/blob/main/SECURITY.md"
 
 [tool.setuptools]
-packages = ["synapse_memory"]
+packages = ["synapse_memory", "synapse_memory.engine", "synapse_memory.crypto"]
 
 [tool.setuptools.package-dir]
 "" = "."
@@ -54,3 +72,17 @@ packages = ["synapse_memory"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-v --cov=synapse_memory --cov-report=term-missing"
+
+[tool.coverage.report]
+exclude_lines = [
+    "if __name__ == .__main__.",
+    "pragma: no cover",
+]
+
+[tool.black]
+line-length = 100
+target-version = ["py39"]
+
+[tool.isort]
+profile = "black"
+line_length = 100

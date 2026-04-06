@@ -10,9 +10,21 @@ License: Apache 2.0
 from .sanitizer import SynapseSanitizer, SanitizationResult, SensitivityLevel
 from .privacy import DifferentialPrivacy, PrivacyResult
 from .core import SynapseMemory, StoreResult, RecallResult
-from .engine.validator import SynapseValidator, ValidationResult, IntentCategory
+from .engine.validator import (
+    SynapseValidator,
+    ValidationResult,
+    SelfHealingResult,
+    IntentCategory,
+)
+from .engine.handover import (
+    NeuralHandover,
+    HandoverResult,
+    HandoverPackage,
+    HandoverStatus,
+    HandoverToken,
+)
 
-__version__ = "1.0.4"
+__version__ = "1.0.6"
 
 __all__ = [
     # Core
@@ -29,5 +41,12 @@ __all__ = [
     # Validator
     "SynapseValidator",
     "ValidationResult",
+    "SelfHealingResult",
     "IntentCategory",
+    # Neural Handover
+    "NeuralHandover",
+    "HandoverResult",
+    "HandoverPackage",
+    "HandoverStatus",
+    "HandoverToken",
 ]
