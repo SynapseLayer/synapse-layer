@@ -1,6 +1,7 @@
 <div align="center">
   <h1>Synapse Layer</h1>
-  <p><strong>Zero-Knowledge Memory Layer for AI Agents</strong></p>
+  <h3>Zero-Knowledge Universal Memory for MCP</h3>
+  <p><strong>The privacy-first, persistent memory infrastructure for AI agents.<br>MCP-native, secure-by-design.</strong></p>
   <p><em>Giving Agents a Past. Giving Models a Soul. ⚗️</em></p>
 
   [![PyPI](https://img.shields.io/pypi/v/synapse-layer)](https://pypi.org/project/synapse-layer/)
@@ -13,12 +14,47 @@
   [![MCP Reference](https://img.shields.io/badge/MCP_Registry-PR_%231129-00d4aa)](https://github.com/modelcontextprotocol/registry/pull/1129)
   [![Technical Deep-Dive](https://img.shields.io/badge/dev.to-Technical_Deep--Dive-0A0A0A?logo=devdotto)](https://dev.to/synapselayer/beyond-context-windows-a-zero-knowledge-memory-reference-implementation-for-the-mcp-ecosystem-4bcg)
 
-  [Website](https://synapselayer.org) · [Forge](https://synapselayer.org/forge) · [Docs](https://synapselayer.org/docs) · [GitHub](https://github.com/SynapseLayer/synapse-layer) · [PyPI](https://pypi.org/project/synapse-layer/)
+  [Website](https://synapselayer.org) · [Forge](https://synapselayer.org/forge) · [Docs](https://synapseforge.abacusai.app/docs) · [GitHub](https://github.com/SynapseLayer/synapse-layer) · [PyPI](https://pypi.org/project/synapse-layer/)
 </div>
 
 ---
 
-## TL;DR
+## Overview
+
+Synapse Layer is the **reference implementation** of a universal memory layer for AI agents in the **Model Context Protocol (MCP)** ecosystem.
+
+It solves the fundamental problem of **agent amnesia** by providing reliable, long-term and short-term context persistence with strong cryptographic guarantees.
+
+Every memory operation passes through a **non-bypassable 4-layer Cognitive Security Pipeline**:
+
+| Seal | Name | Function |
+|:---:|---|---|
+| 1 | **Semantic Privacy Guard™** | Automatic PII sanitization (12+ patterns) |
+| 2 | **Intelligent Intent Validation™** | Auto-categorization + self-healing |
+| 3 | **Differential Privacy** | Calibrated Gaussian noise (ε-DP) |
+| 4 | **Neural Handover™** | HMAC-signed cross-model transfer |
+
+---
+
+## Key Differentiators
+
+- 🔐 **True zero-knowledge architecture** — raw content never exposed to the server
+- 🏛️ **Official MCP reference server** — [PR #1129](https://github.com/modelcontextprotocol/registry/pull/1129) submitted to the MCP Registry
+- 🤖 **Native compatibility** with Claude Desktop, LangChain, CrewAI and custom agents
+- 📦 **Full SDK** available via PyPI (`pip install synapse-layer`)
+- 🔍 **Cryptographic audit trails** and Trust Quotient™ scoring on every operation
+
+---
+
+## Ideal For
+
+- Agents requiring **reliable long-term memory**
+- **Secure multi-agent orchestration** workflows
+- **Regulated environments** requiring GDPR, LGPD and SOC2 compliance
+
+---
+
+## Quick Start
 
 ```bash
 pip install synapse-layer
@@ -259,6 +295,25 @@ Early access to Synapse Forge — the visual memory debugger and agent orchestra
 
 ---
 
+## Official Links
+
+| Resource | URL |
+|---|---|
+| **GitHub** | [github.com/SynapseLayer/synapse-layer](https://github.com/SynapseLayer/synapse-layer) |
+| **Documentation** | [synapseforge.abacusai.app/docs](https://synapseforge.abacusai.app/docs) |
+| **Forge Dashboard** | [synapselayer.org/forge](https://synapselayer.org/forge) |
+| **PyPI** | [pypi.org/project/synapse-layer](https://pypi.org/project/synapse-layer/) |
+| **Technical Deep-Dive** | [dev.to — Beyond Context Windows](https://dev.to/synapselayer/beyond-context-windows-a-zero-knowledge-memory-reference-implementation-for-the-mcp-ecosystem-4bcg) |
+| **MCP Registry PR** | [PR #1129](https://github.com/modelcontextprotocol/registry/pull/1129) |
+
+---
+
+## Tags
+
+`mcp` · `memory` · `zero-knowledge` · `ai-agents` · `persistent-memory` · `privacy` · `langchain` · `claude` · `crewai` · `security`
+
+---
+
 ## Security
 
 See [SECURITY.md](SECURITY.md) for full architecture, key management, and compliance documentation (GDPR / LGPD / HIPAA ready).
@@ -276,7 +331,7 @@ Apache License 2.0 — see [LICENSE](LICENSE).
 <div align="center">
   <strong>Giving Agents a Past. Giving Models a Soul. ⚗️</strong>
   <br><br>
-  <a href="https://synapselayer.org">Website</a> · <a href="https://synapselayer.org/forge">Forge</a> · <a href="https://synapselayer.org/docs">Docs</a> · <a href="https://github.com/SynapseLayer/synapse-layer">GitHub</a> · <a href="https://pypi.org/project/synapse-layer/">PyPI</a>
+  <a href="https://synapselayer.org">Website</a> · <a href="https://synapselayer.org/forge">Forge</a> · <a href="https://synapseforge.abacusai.app/docs">Docs</a> · <a href="https://github.com/SynapseLayer/synapse-layer">GitHub</a> · <a href="https://pypi.org/project/synapse-layer/">PyPI</a>
   <br><br>
   Built by <a href="mailto:founder.synapselayer@proton.me">Ismael Marchi</a>
 </div>
