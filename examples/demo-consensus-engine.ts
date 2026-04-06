@@ -1,65 +1,50 @@
 /**
- * Synapse Layer — Trust Quotient™ Consensus Engine (Public Stub)
+ * Synapse Layer — Consensus Engine (Public Example)
  *
- * This file demonstrates the PUBLIC API surface of the Consensus Engine.
- * The full scoring algorithm, weight calibration, and conflict resolution
- * internals are proprietary and available under Enterprise license.
+ * Demonstrates how to use the Synapse Layer MCP API
+ * to store and recall AI agent memories.
  *
- * For full implementation access, contact:
- *   founder.synapselayer@proton.me
+ * The Trust Quotient™ scoring algorithm is proprietary.
+ * Full implementation available under Enterprise license.
  *
- * Author: Security & Architecture Team
+ * Contact: founder.synapselayer@proton.me
  * License: Apache 2.0
  * Version: 1.0.6
  */
 
-// ════════════════════════════════════════════════════════════════
-//  Public Types
-// ════════════════════════════════════════════════════════════════
+// ── Public Types ─────────────────────────────────────────────
 
 export interface Memory {
   id: string;
   agent_id: string;
   content: string;
-  intent_category: string;
-  confidence: number;
-  is_critical: boolean;
   created_at: Date;
-  updated_at: Date;
 }
 
-export interface SearchResult {
+export interface RecallResult {
   memory: Memory;
-  recency_score: number;
-  consistency_score: number;
-  confidence_score: number;
-  relevance_score: number;
-  trust_quotient: number;
+  trust_quotient: number; // 0–1, computed by proprietary engine
 }
 
-export interface ConflictResolution {
-  winner: SearchResult;
-  loser: SearchResult;
-  reason: string;
-  winner_tq: number;
-  loser_tq: number;
-}
-
-// ════════════════════════════════════════════════════════════════
-//  Usage Example (Public API Only)
-// ════════════════════════════════════════════════════════════════
+// ── Usage Example ────────────────────────────────────────────
 
 /**
- * The Consensus Engine scores memories using four dimensions:
+ * Store a memory:
  *
- *   TQ = f(Recency, Consistency, Confidence, Relevance)
+ *   POST /mcp-server
+ *   {
+ *     "method": "tools/call",
+ *     "params": {
+ *       "name": "store_memory",
+ *       "arguments": {
+ *         "user_id": "user-123",
+ *         "agent_id": "claude-3.5",
+ *         "content": "User prefers dark mode."
+ *       }
+ *     }
+ *   }
  *
- * Each dimension produces a 0–1 score. The final Trust Quotient
- * determines which memory wins in conflict resolution.
- *
- * Weights are proprietary and dynamically calibrated.
- *
- * Example usage via MCP:
+ * Recall memories:
  *
  *   POST /mcp-server
  *   {
@@ -68,19 +53,16 @@ export interface ConflictResolution {
  *       "name": "recall_memory",
  *       "arguments": {
  *         "user_id": "user-123",
- *         "query": "investment preferences",
+ *         "query": "user preferences",
  *         "top_k": 5
  *       }
  *     }
  *   }
  *
- * Response includes `trust_quotient` for each result,
- * and conflicts are auto-resolved by highest TQ.
- *
- * For the full algorithm implementation, see the Enterprise SDK
- * or contact founder.synapselayer@proton.me
+ * Response includes `trust_quotient` per result.
+ * Conflicts are auto-resolved by the proprietary engine.
  */
 
-console.log("Synapse Layer — Trust Quotient™ Consensus Engine");
-console.log("Full implementation available under Enterprise license.");
+console.log("Synapse Layer — Consensus Engine");
+console.log("Full algorithm available under Enterprise license.");
 console.log("Contact: founder.synapselayer@proton.me");
