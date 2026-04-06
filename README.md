@@ -12,7 +12,7 @@
   [![Adopt an Agent](https://img.shields.io/badge/🧠_Adopt_an_Agent-Synapse_Layer-purple)](https://synapseforge.abacusai.app/forge)
   [![MCP Reference](https://img.shields.io/badge/MCP_Registry-PR_%231129-00d4aa)](https://github.com/modelcontextprotocol/registry/pull/1129)
 
-  [Website](https://synapselayer.org) · [Forge](https://synapseforge.abacusai.app/forge) · [Docs](https://synapseforge.abacusai.app/docs) · [GitHub](https://github.com/SynapseLayer/synapse-layer) · [PyPI](https://pypi.org/project/synapse-layer/)
+  [Website](https://synapselayer.org) · [Forge](https://synapseforge.abacusai.app/forge) · [Docs](https://synapselayer.org/docs) · [GitHub](https://github.com/SynapseLayer/synapse-layer) · [PyPI](https://pypi.org/project/synapse-layer/)
 </div>
 
 ---
@@ -275,7 +275,7 @@ Apache License 2.0 — see [LICENSE](LICENSE).
 <div align="center">
   <strong>Giving Agents a Past. Giving Models a Soul. ⚗️</strong>
   <br><br>
-  <a href="https://synapselayer.org">Website</a> · <a href="https://synapseforge.abacusai.app/forge">Forge</a> · <a href="https://synapseforge.abacusai.app/docs">Docs</a> · <a href="https://github.com/SynapseLayer/synapse-layer">GitHub</a> · <a href="https://pypi.org/project/synapse-layer/">PyPI</a>
+  <a href="https://synapselayer.org">Website</a> · <a href="https://synapseforge.abacusai.app/forge">Forge</a> · <a href="https://synapselayer.org/docs">Docs</a> · <a href="https://github.com/SynapseLayer/synapse-layer">GitHub</a> · <a href="https://pypi.org/project/synapse-layer/">PyPI</a>
   <br><br>
   Built by <a href="mailto:founder.synapselayer@proton.me">Ismael Marchi</a>
 </div>
