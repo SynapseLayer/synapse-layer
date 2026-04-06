@@ -228,8 +228,9 @@ Early access to Synapse Forge — the visual memory debugger and agent orchestra
 | Persistence-First Neural Handover™ | ✅ Production |
 | Trust Quotient™ | ✅ Production |
 | MCP Server | ✅ Compatible |
-| Synapse Forge | 🔜 Private Beta |
+| Synapse Forge | ✅ [Live Dashboard](https://synapseforge.abacusai.app/forge) |
 | CI/CD Pipeline | 🔄 In Progress |
+| **Latest Release** | [**v1.0.6 — Cognitive Security Protocol**](https://github.com/SynapseLayer/synapse-layer/releases/tag/v1.0.6) |
 
 ---
 
