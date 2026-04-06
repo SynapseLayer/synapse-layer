@@ -212,3 +212,6 @@ dist/
 sdk/
 *.pdf
 PRIVATE_REPO_INDEX.md
+
+# Abacus.AI system file
+.abacus.donotdelete
