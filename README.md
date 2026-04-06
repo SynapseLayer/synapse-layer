@@ -9,9 +9,10 @@
   [![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-green)](https://modelcontextprotocol.io)
   [![Security](https://img.shields.io/badge/Security-4_Seals-blueviolet)](#cognitive-security-pipeline)
   [![v1.0.6](https://img.shields.io/badge/version-1.0.6-informational)](CHANGELOG.md)
-  [![Adopt an Agent](https://img.shields.io/badge/🧠_Adopt_an_Agent-Synapse_Layer-purple)](https://synapselayer.org/forge)
+  [![Adopt an Agent](https://img.shields.io/badge/🧠_Adopt_an_Agent-Synapse_Layer-purple)](https://synapseforge.abacusai.app/forge)
+  [![MCP Reference](https://img.shields.io/badge/MCP_Registry-PR_%231129-00d4aa)](https://github.com/modelcontextprotocol/registry/pull/1129)
 
-  [Website](https://www.synapselayer.org) · [Forge](https://synapselayer.org/forge) · [Docs](https://www.synapselayer.org/docs) · [GitHub](https://github.com/SynapseLayer/synapse-layer) · [PyPI](https://pypi.org/project/synapse-layer/)
+  [Website](https://synapselayer.org) · [Forge](https://synapseforge.abacusai.app/forge) · [Docs](https://synapseforge.abacusai.app/docs) · [GitHub](https://github.com/SynapseLayer/synapse-layer) · [PyPI](https://pypi.org/project/synapse-layer/)
 </div>
 
 ---
@@ -196,7 +197,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for Mermaid diagrams and deep-dive.
 | **Pro** | $29/mo | 100K/month | All Free + priority support, analytics, API access, advanced integrations |
 | **Enterprise** | Custom | Unlimited | All Pro + dedicated support, custom SLA, on-premise, security audit |
 
-→ [Start Free](https://synapselayer.org/signup?plan=free) · [Join Waitlist](https://synapselayer.org/forge)
+→ [Start Free](https://synapseforge.abacusai.app/forge) · [Join Waitlist](https://synapseforge.abacusai.app/forge)
 
 ---
 
@@ -211,9 +212,9 @@ Early access to Synapse Forge — the visual memory debugger and agent orchestra
 - 🧠 "Adopt an Agent" program access
 - 💬 Direct channel with the core team
 
-→ **[Join Waitlist](https://synapselayer.org/forge)**
+→ **[Join Waitlist](https://synapseforge.abacusai.app/forge)**
 
-[![Adopt an Agent](https://img.shields.io/badge/🧠_Adopt_an_Agent-Synapse_Layer-purple)](https://synapselayer.org/forge)
+[![Adopt an Agent](https://img.shields.io/badge/🧠_Adopt_an_Agent-Synapse_Layer-purple)](https://synapseforge.abacusai.app/forge)
 
 ---
 
@@ -274,7 +275,7 @@ Apache License 2.0 — see [LICENSE](LICENSE).
 <div align="center">
   <strong>Giving Agents a Past. Giving Models a Soul. ⚗️</strong>
   <br><br>
-  <a href="https://synapselayer.org">Website</a> · <a href="https://synapselayer.org/forge">Forge</a> · <a href="https://github.com/SynapseLayer/synapse-layer">GitHub</a> · <a href="https://pypi.org/project/synapse-layer/">PyPI</a>
+  <a href="https://synapselayer.org">Website</a> · <a href="https://synapseforge.abacusai.app/forge">Forge</a> · <a href="https://synapseforge.abacusai.app/docs">Docs</a> · <a href="https://github.com/SynapseLayer/synapse-layer">GitHub</a> · <a href="https://pypi.org/project/synapse-layer/">PyPI</a>
   <br><br>
   Built by <a href="mailto:founder.synapselayer@proton.me">Ismael Marchi</a>
 </div>
