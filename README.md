@@ -262,11 +262,11 @@ Early access to Synapse Forge — the visual memory debugger and agent orchestra
 | Component | Status |
 |---|---|
 | SDK (PyPI) | `v1.0.6` — stable |
-| Semantic Privacy Guard™ | ✅ Production |
-| Differential Privacy | ✅ Production |
-| Intelligent Intent Validation™ | ✅ Production |
-| Persistence-First Neural Handover™ | ✅ Production |
-| Trust Quotient™ | ✅ Production |
+| Semantic Privacy Guard™ | ✅ Implemented |
+| Differential Privacy | ✅ Implemented |
+| Intelligent Intent Validation™ | ✅ Implemented |
+| Persistence-First Neural Handover™ | ✅ Implemented |
+| Trust Quotient™ | ✅ Implemented |
 | MCP Server | ✅ Compatible |
 | Synapse Forge | ✅ [Live Dashboard](https://synapselayer.org/forge) |
 | CI/CD Pipeline | 🔄 In Progress |
@@ -322,11 +322,21 @@ See [SECURITY.md](SECURITY.md) for full architecture, key management, and compli
 
 ---
 
-## License
+## License & Open-Core Model
 
 Apache License 2.0 — see [LICENSE](LICENSE).
 
-**Open-core model:** SDK is fully open source. The Synapse Forge platform and advanced engine internals are proprietary.
+This project follows an **open-core model**:
+
+| Component | License | Repository |
+|---|---|---|
+| **Python SDK** (`synapse-layer`) | Apache 2.0 — fully open source | [Public](https://github.com/SynapseLayer/synapse-layer) |
+| **MCP Server example** | Apache 2.0 — fully open source | [Public](https://github.com/SynapseLayer/synapse-layer/tree/main/examples/mcp-secure-memory) |
+| **Synapse Forge Dashboard** | Proprietary | Private |
+| **Consensus Engine internals** | Proprietary | Private |
+| **Trust Quotient™ weights** | Proprietary | Private |
+
+The SDK gives you full access to store, recall, handover, sanitize, and encrypt memories. The Forge dashboard and internal scoring algorithms are closed-source and available under commercial license.
 
 ---
 
