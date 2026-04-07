@@ -15,6 +15,8 @@
   [![Technical Deep-Dive](https://img.shields.io/badge/dev.to-Technical_Deep--Dive-0A0A0A?logo=devdotto)](https://dev.to/synapselayer/beyond-context-windows-a-zero-knowledge-memory-reference-implementation-for-the-mcp-ecosystem-4bcg)
 
   [Website](https://synapselayer.org) · [Forge](https://synapselayer.org/forge) · [Docs](https://synapseforge.abacusai.app/docs) · [GitHub](https://github.com/SynapseLayer/synapse-layer) · [PyPI](https://pypi.org/project/synapse-layer/)
+
+  <!-- mcp-name: io.github.synapselayer/synapse-secure-memory -->
 </div>
 
 ---
