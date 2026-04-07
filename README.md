@@ -12,11 +12,11 @@
   [![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-green)](https://modelcontextprotocol.io)
   [![Security](https://img.shields.io/badge/Security-4_Seals-blueviolet)](#cognitive-security-pipeline)
   [![v1.0.6](https://img.shields.io/badge/version-1.0.6-informational)](CHANGELOG.md)
-  [![Adopt an Agent](https://img.shields.io/badge/🧠_Adopt_an_Agent-Synapse_Layer-purple)](https://synapselayer.org/forge)
+  [![Adopt an Agent](https://img.shields.io/badge/🧠_Adopt_an_Agent-Synapse_Layer-purple)](https://forge.synapselayer.org)
   [![MCP Reference](https://img.shields.io/badge/MCP_Registry-PR_%231129-00d4aa)](https://github.com/modelcontextprotocol/registry/pull/1129)
   [![Technical Deep-Dive](https://img.shields.io/badge/dev.to-Technical_Deep--Dive-0A0A0A?logo=devdotto)](https://dev.to/synapselayer/beyond-context-windows-a-zero-knowledge-memory-reference-implementation-for-the-mcp-ecosystem-4bcg)
 
-  [Website](https://synapselayer.org) · [Forge](https://synapselayer.org/forge) · [Docs](https://synapseforge.abacusai.app/docs) · [GitHub](https://github.com/SynapseLayer/synapse-layer) · [PyPI](https://pypi.org/project/synapse-layer/)
+  [Website](https://synapselayer.org) · [Forge](https://forge.synapselayer.org) · [Docs](https://forge.synapselayer.org/docs) · [GitHub](https://github.com/SynapseLayer/synapse-layer) · [PyPI](https://pypi.org/project/synapse-layer/)
 
   <!-- mcp-name: io.github.synapselayer/synapse-secure-memory -->
 </div>
@@ -238,7 +238,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for Mermaid diagrams and deep-dive.
 | **Pro** | $29/mo | 100K/month | All Free + priority support, analytics, API access, advanced integrations |
 | **Enterprise** | Custom | Unlimited | All Pro + dedicated support, custom SLA, on-premise, security audit |
 
-→ [Start Free](https://synapselayer.org/forge) · [Join Waitlist](https://synapselayer.org/forge)
+→ [Start Free](https://forge.synapselayer.org) · [Join Waitlist](https://forge.synapselayer.org)
 
 ---
 
@@ -253,9 +253,9 @@ Early access to Synapse Forge — the visual memory debugger and agent orchestra
 - 🧠 "Adopt an Agent" program access
 - 💬 Direct channel with the core team
 
-→ **[Join Waitlist](https://synapselayer.org/forge)**
+→ **[Join Waitlist](https://forge.synapselayer.org)**
 
-[![Adopt an Agent](https://img.shields.io/badge/🧠_Adopt_an_Agent-Synapse_Layer-purple)](https://synapselayer.org/forge)
+[![Adopt an Agent](https://img.shields.io/badge/🧠_Adopt_an_Agent-Synapse_Layer-purple)](https://forge.synapselayer.org)
 
 ---
 
@@ -270,7 +270,7 @@ Early access to Synapse Forge — the visual memory debugger and agent orchestra
 | Persistence-First Neural Handover™ | ✅ Implemented |
 | Trust Quotient™ | ✅ Implemented |
 | MCP Server | ✅ Compatible |
-| Synapse Forge | ✅ [Live Dashboard](https://synapselayer.org/forge) |
+| Synapse Forge | ✅ [Live Dashboard](https://forge.synapselayer.org) |
 | CI/CD Pipeline | 🔄 In Progress |
 | **Latest Release** | [**v1.0.6 — Cognitive Security Protocol**](https://github.com/SynapseLayer/synapse-layer/releases/tag/v1.0.6) |
 
@@ -304,8 +304,8 @@ Early access to Synapse Forge — the visual memory debugger and agent orchestra
 | Resource | URL |
 |---|---|
 | **GitHub** | [github.com/SynapseLayer/synapse-layer](https://github.com/SynapseLayer/synapse-layer) |
-| **Documentation** | [synapseforge.abacusai.app/docs](https://synapseforge.abacusai.app/docs) |
-| **Forge Dashboard** | [synapselayer.org/forge](https://synapselayer.org/forge) |
+| **Documentation** | [forge.synapselayer.org/docs](https://forge.synapselayer.org/docs) |
+| **Forge Dashboard** | [forge.synapselayer.org](https://forge.synapselayer.org) |
 | **PyPI** | [pypi.org/project/synapse-layer](https://pypi.org/project/synapse-layer/) |
 | **Technical Deep-Dive** | [dev.to — Beyond Context Windows](https://dev.to/synapselayer/beyond-context-windows-a-zero-knowledge-memory-reference-implementation-for-the-mcp-ecosystem-4bcg) |
 | **MCP Registry PR** | [PR #1129](https://github.com/modelcontextprotocol/registry/pull/1129) |
@@ -345,7 +345,9 @@ The SDK gives you full access to store, recall, handover, sanitize, and encrypt 
 <div align="center">
   <strong>Giving Agents a Past. Giving Models a Soul. ⚗️</strong>
   <br><br>
-  <a href="https://synapselayer.org">Website</a> · <a href="https://synapselayer.org/forge">Forge</a> · <a href="https://synapseforge.abacusai.app/docs">Docs</a> · <a href="https://github.com/SynapseLayer/synapse-layer">GitHub</a> · <a href="https://pypi.org/project/synapse-layer/">PyPI</a>
+  <a href="https://synapselayer.org">Website</a> · <a href="https://forge.synapselayer.org">Forge</a> · <a href="https://forge.synapselayer.org/docs">Docs</a> · <a href="https://github.com/SynapseLayer/synapse-layer">GitHub</a> · <a href="https://pypi.org/project/synapse-layer/">PyPI</a>
   <br><br>
   Built by <a href="mailto:founder.synapselayer@proton.me">Ismael Marchi</a>
+  <br>
+  <sub>Official Console: <a href="https://forge.synapselayer.org">forge.synapselayer.org</a></sub>
 </div>
