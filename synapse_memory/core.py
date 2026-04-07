@@ -135,7 +135,8 @@ class SynapseMemory:
             validate=True,
         )
 
-        # In-memory store (production uses pgvector + AES-256-GCM)
+        # In-memory store — SDK demo only.
+        # Production deployments persist to pgvector + AES-256-GCM.
         self._memories: List[Dict[str, Any]] = []
 
         logger.info(
@@ -213,11 +214,13 @@ class SynapseMemory:
         ).hexdigest()
         memory_id = content_hash[:32]
 
-        # Trust Quotient = merged_confidence * validation_score
+        # Trust Quotient (TQ) = merged_confidence × validation_score.
+        # TQ is the primary ranking signal for recall operations.
         trust_quotient = round(
             validation.confidence * validation.validation_score, 4
         )
-        # Apply confidence_boost for CRITICAL memories
+        # Apply additive confidence boost for CRITICAL memories so they
+        # consistently surface at the top of recall results.
         if validation.confidence_boost > 0:
             trust_quotient = min(
                 trust_quotient + validation.confidence_boost * 0.1, 1.0
@@ -307,7 +310,8 @@ class SynapseMemory:
         """
         query_lower = query.lower()
 
-        # Simple relevance scoring for SDK demo
+        # Simple relevance scoring (SDK demo — substring matching).
+        # Production: pgvector cosine similarity with ANN index.
         scored: List[tuple] = []
         for mem in self._memories:
             content_lower = mem['content'].lower()

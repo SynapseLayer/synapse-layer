@@ -186,11 +186,27 @@ class DifferentialPrivacy:
     def batch_apply(
         self, embeddings: List[List[float]]
     ) -> List[PrivacyResult]:
-        """Apply differential privacy to a batch of embeddings."""
+        """Apply differential privacy to a batch of embeddings.
+
+        Each embedding receives independent noise calibrated to the
+        same (ε, δ) budget. Noise instances are non-correlated.
+
+        Args:
+            embeddings: List of dense float vectors (all same dimension).
+
+        Returns:
+            List of ``PrivacyResult`` in the same order as input.
+        """
         return [self.apply(emb) for emb in embeddings]
 
     def get_config(self) -> Dict[str, Any]:
-        """Return current privacy configuration for audit logging."""
+        """Return current privacy configuration for audit logging.
+
+        Useful for compliance reports and automated privacy audits.
+
+        Returns:
+            Dict with ``epsilon``, ``delta``, ``normalize``, and ``mechanism``.
+        """
         return {
             'epsilon': self.epsilon,
             'delta': self.delta,

@@ -1,5 +1,5 @@
 """
-SynapseSanitizer — Production-Grade Content Sanitization Engine
+SynapseSanitizer — Semantic Privacy Guard™ Content Sanitization Engine
 
 High-performance PII detection, removal, and content hardening pipeline.
 Supports standard and aggressive modes for maximum semantic privacy.
@@ -42,7 +42,7 @@ class SanitizationResult:
 
 class SynapseSanitizer:
     """
-    Production-grade content sanitizer with:
+    Semantic Privacy Guard™ content sanitizer with:
     - 12 precompiled regex patterns for PII/sensitive data detection
     - Aggressive mode: removes proper nouns (capitalized words) for
       maximum semantic privacy against embedding-based inference attacks
@@ -289,6 +289,17 @@ class SynapseSanitizer:
     ) -> Dict[str, Any]:
         """
         Compute effectiveness metrics comparing original vs. sanitized content.
+
+        Measures character-level reduction to quantify how much PII was
+        removed. Useful for compliance dashboards and audit reporting.
+
+        Args:
+            original: The raw, unsanitized text.
+            sanitized: The output of ``sanitize_content()``.
+
+        Returns:
+            Dict with ``original_length``, ``sanitized_length``,
+            ``reduction_pct``, and ``effectiveness`` ("high" or "low").
         """
         orig_len = len(original)
         san_len = len(sanitized)
@@ -305,7 +316,17 @@ class SynapseSanitizer:
     def batch_sanitize(
         self, contents: List[str]
     ) -> List[SanitizationResult]:
-        """Sanitize a list of texts in batch."""
+        """Sanitize a list of texts in batch.
+
+        Convenience wrapper that applies ``sanitize_content()`` to each
+        element in *contents* and returns results in the same order.
+
+        Args:
+            contents: List of raw text strings to sanitize.
+
+        Returns:
+            List of ``SanitizationResult`` in input order.
+        """
         return [self.sanitize_content(c) for c in contents]
 
 

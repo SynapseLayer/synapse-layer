@@ -404,6 +404,22 @@ If you discover a security vulnerability:
 
 ---
 
+## Source References
+
+The security architecture described in this document is implemented across the following modules in the public SDK:
+
+| Module | Component | Path |
+|--------|-----------|------|
+| **Memory Core** | Zero-Knowledge Memory Layer (orchestration) | [`synapse_memory/core.py`](synapse_memory/core.py) |
+| **Semantic Privacy Guard™** | PII detection, removal & forensic hashing | [`synapse_memory/sanitizer.py`](synapse_memory/sanitizer.py) |
+| **Differential Privacy** | Gaussian noise injection on embeddings | [`synapse_memory/privacy.py`](synapse_memory/privacy.py) |
+| **Intelligent Intent Validation™** | Two-step classification + self-healing | [`synapse_memory/engine/validator.py`](synapse_memory/engine/validator.py) |
+| **Neural Handover™** | JWT-signed vault-first cross-agent transfer | [`synapse_memory/engine/handover.py`](synapse_memory/engine/handover.py) |
+
+Each module includes inline tests that can be executed individually (e.g., `python -m synapse_memory.core`).
+
+---
+
 ## Security Contact
 
 **Email:** security@synapselayer.org  

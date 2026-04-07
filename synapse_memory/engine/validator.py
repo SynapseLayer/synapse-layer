@@ -1,8 +1,8 @@
 """
 SynapseValidator — Intelligent Intent Validation™ with Self-Healing
 
-Production-grade cognitive security layer that classifies, validates,
-and auto-corrects memory intent in a two-step pipeline:
+Cognitive security layer that classifies, validates, and auto-corrects
+memory intent in a two-step pipeline:
 
     Step 1 (Agent Suggestion):  Keyword heuristics + scoring → proposed intent
     Step 2 (Synapse Validation): Confidence gate, critical promotion, self-healing
@@ -488,8 +488,18 @@ class SynapseValidator:
     def _score_content(self, content: str) -> Dict[str, float]:
         """Score content against all keyword dictionaries.
 
+        Used by ``heal_conflicts()`` to re-evaluate evidence strength
+        for both memories involved in a category conflict.
+
+        Normalization: ``min(hits / 3.0, 1.0)`` — three keyword
+        matches saturate confidence for a given category.
+
+        Args:
+            content: Text to score (will be lowercased internally).
+
         Returns:
-            Dict mapping category value strings to normalized scores.
+            Dict mapping category value strings to normalized scores
+            in the range [0.0, 1.0].
         """
         content_lower = content.lower()
         scores: Dict[str, float] = {}

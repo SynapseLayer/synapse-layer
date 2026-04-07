@@ -621,7 +621,24 @@ class NeuralHandover:
         issued_at: float,
         expires_at: float,
     ) -> HandoverToken:
-        """Create and sign a JWT-style handover token."""
+        """Create and sign a JWT-style handover token (SHT format).
+
+        Constructs a three-part ``header.payload.signature`` string
+        using HMAC-SHA256 with the instance signing key. The token
+        is base64url-encoded (no padding) for safe URL transport.
+
+        Args:
+            token_id:      Unique identifier for this handover.
+            origin_agent:  Source agent ID.
+            target_agent:  Destination agent ID.
+            user_id:       Owning user ID.
+            scope:         Access scope (e.g., "full", "read_only").
+            issued_at:     Unix timestamp of issuance.
+            expires_at:    Unix timestamp of expiration.
+
+        Returns:
+            Fully populated ``HandoverToken`` with encoded JWT.
+        """
         header = {
             'alg': 'HS256',
             'typ': 'SHT',  # Synapse Handover Token
@@ -665,7 +682,14 @@ class NeuralHandover:
         )
 
     def _verify_token(self, token: HandoverToken) -> bool:
-        """Verify HMAC-SHA256 signature of a handover token."""
+        """Verify HMAC-SHA256 signature of a handover token.
+
+        Uses constant-time comparison (``hmac.compare_digest``) to
+        prevent timing-based side-channel attacks.
+
+        Returns:
+            True if signature is valid, False otherwise.
+        """
         try:
             parts = token.encoded_token.split('.')
             if len(parts) != 3:
@@ -685,7 +709,7 @@ class NeuralHandover:
             return False
 
     def _get_package(self, handover_id: str) -> HandoverPackage:
-        """Retrieve a package or raise KeyError."""
+        """Retrieve a package from the Status Ledger or raise KeyError."""
         package = self._ledger.get(handover_id)
         if package is None:
             raise KeyError(f"Handover '{handover_id}' not found in ledger.")
@@ -696,7 +720,11 @@ class NeuralHandover:
         package: HandoverPackage,
         reason: str,
     ) -> HandoverPackage:
-        """Transition to FAILED and create emergency checkpoint."""
+        """Transition to FAILED and create an Emergency Checkpoint.
+
+        The checkpoint preserves a full snapshot of ``context_data`` so
+        that recovery (manual or automated) is always possible.
+        """
         now = time.time()
         package.status = HandoverStatus.FAILED
         package.failed_at = now
@@ -725,10 +753,12 @@ class NeuralHandover:
 
     @staticmethod
     def _generate_summary(package: HandoverPackage) -> str:
-        """Generate a compact summary from expired handover context.
+        """Generate a compact summary from an expired handover context.
 
-        Used during grace period to return useful information
-        without exposing raw memory data.
+        Called during the grace period to provide the target agent with
+        useful high-level information without exposing raw memory data.
+        Includes handover metadata, intent distribution, and truncated
+        content snippets (first 80 chars of up to 5 memories).
         """
         parts: List[str] = [
             f"Handover Summary (expired): {package.handover_id}",
