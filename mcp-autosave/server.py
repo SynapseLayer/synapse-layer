@@ -269,11 +269,14 @@ def process_text(
     text: str,
     project: Optional[str] = None,
     source: Optional[str] = None,
+    conversation_id: Optional[str] = None,
+    message_id: Optional[str] = None,
+    url: Optional[str] = None,
 ) -> list:
     """Auto-detect milestones, decisions, and alerts in text, then save.
 
     Scans the provided text for strategic triggers and persists each
-    detected event as an autonomous memory.
+    detected event as an autonomous memory with optional tracing metadata.
 
     Parameters
     ----------
@@ -283,15 +286,31 @@ def process_text(
         Force a specific project (auto-detected if not provided).
     source : str | None
         Override source identifier.
+    conversation_id : str | None
+        Conversation/session ID for traceability.
+    message_id : str | None
+        Message ID within the conversation.
+    url : str | None
+        Source URL for reference.
     """
     if not _check_rate_limit():
         return [{"id": None, "status": "rate_limited",
                  "error": f"Exceeded {RATE_LIMIT_PER_MINUTE} calls/min."}]
 
+    # Build source_ref from optional tracing params
+    source_ref: Dict[str, str] = {}
+    if conversation_id:
+        source_ref["conversation_id"] = conversation_id
+    if message_id:
+        source_ref["message_id"] = message_id
+    if url:
+        source_ref["url"] = url
+
     results = engine.process_text(
         text,
         project=project.strip().upper() if project else None,
         source=source,
+        source_ref=source_ref if source_ref else None,
     )
     return [_result_to_dict(r) for r in results]
 

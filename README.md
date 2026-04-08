@@ -234,12 +234,12 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for Mermaid diagrams and deep-dive.
 
 **Your AI agents remember what matters, forget what's sensitive.**
 
-The Auto-Save Engine gives Synapse Layer autonomous memory — it detects milestones, decisions, and strategic events without the user needing to ask.
+The Auto-Save Engine gives Synapse Layer autonomous memory — the engine automatically identifies what matters and persists it without the user needing to ask.
 
 ```python
-from synapse_memory.autosave import AutoSaveEngine, AutoSaveEvent
+from synapse_memory.autosave import AutoSaveEngine, AutoSaveEvent, SaveResult
 
-# Direct save
+# Direct save — content is redacted before storage
 event = AutoSaveEvent(
     content="Launched OFFLY v2.0 to production",
     project="OFFLY",
@@ -247,23 +247,21 @@ event = AutoSaveEvent(
     importance=4,
     tags=["launch", "production"],
 )
-result = engine.save(event)  # → SaveResult(status="saved", id="...")
+result: SaveResult = engine.save(event)
+# → SaveResult(status="saved", id="a1b2c3...")
 
-# Auto-detect triggers in free text
-results = engine.process_text(
-    "We decided to pivot GOARQIA to enterprise B2B"
-)
-# → Detects [DECISION], saves automatically
+# Auto-detect and save — the engine decides what's worth remembering
+results = engine.process_text("We decided to pivot to enterprise B2B")
 ```
 
-**Features:**
-- 🔒 PII/secrets redacted before storage (never reaches embedding provider)
-- ⚡ Near-zero latency (embedding=NULL on insert, async backfill)
-- 🧠 Autonomous trigger detection (milestones, decisions, alerts)
-- 🔁 SHA-256 deduplication + LRU cache
-- 🏗️ OSS baseline + Pro extensibility via `SYNAPSE_MODE`
+**How it works:**
+- 🔒 PII/secrets are **always** redacted before storage or embedding
+- ⚡ Near-zero perceived latency (async embedding pipeline)
+- 🧠 The engine autonomously identifies significant events
+- 🔁 Built-in deduplication prevents duplicate memories
+- 🏗️ Extensible via `SYNAPSE_MODE=pro`
 
-See [mcp-autosave/](mcp-autosave/) for the production MCP Bridge.
+See [mcp-autosave/](mcp-autosave/) for the production MCP Bridge with Supabase persistence.
 
 ---
 

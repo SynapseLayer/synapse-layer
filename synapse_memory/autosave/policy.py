@@ -31,6 +31,7 @@ logger = logging.getLogger("synapse.autosave.policy")
 # ── Security Blocklist Patterns ───────────────────────────────────────
 # Content matching ANY of these is ALWAYS blocked.
 _BLOCK_PATTERNS: List[re.Pattern] = [
+    # Secrets (8 patterns)
     re.compile(r'(?:api[_-]?key|apikey)[\s:="\']+[a-zA-Z0-9_\-]{20,}', re.I),
     re.compile(r'[Bb]earer\s+[a-zA-Z0-9_.\-]{20,}'),
     re.compile(r'(?:AKIA|ASIA)[A-Z0-9]{16}'),
@@ -39,6 +40,14 @@ _BLOCK_PATTERNS: List[re.Pattern] = [
     re.compile(r'(?:password|passwd|pwd|secret)[\s:="\']+\S{8,}', re.I),
     re.compile(r'(?:postgres|mysql|mongodb|redis)://[^\s]{10,}', re.I),
     re.compile(r'-----BEGIN\s(?:RSA\s)?PRIVATE\sKEY-----'),
+    # PII (7 patterns — synced with redactor.py)
+    re.compile(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'),
+    re.compile(r'(?:\+55\s?)?\(?\d{2}\)?[\s.-]?\d{4,5}[\s.-]?\d{4}'),
+    re.compile(r'\+\d{1,3}[\s.-]?\d{6,14}'),
+    re.compile(r'\d{3}\.\d{3}\.\d{3}-\d{2}'),
+    re.compile(r'\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}'),
+    re.compile(r'\d{3}-\d{2}-\d{4}'),
+    re.compile(r'https?://(?:localhost|127\.0\.0\.1|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+)[:\d/]*'),
 ]
 
 # Tags that trigger importance elevation

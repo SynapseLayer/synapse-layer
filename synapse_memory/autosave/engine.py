@@ -236,6 +236,7 @@ class AutoSaveEngine:
         text: str,
         project: Optional[str] = None,
         source: Optional[str] = None,
+        source_ref: Optional[Dict[str, Any]] = None,
     ) -> List[SaveResult]:
         """Detect triggers in text and save all resulting events.
 
@@ -247,6 +248,8 @@ class AutoSaveEngine:
             Force a specific project (skip auto-detection).
         source : str | None
             Override source identifier.
+        source_ref : dict | None
+            Tracing metadata (conversation_id, message_id, url).
 
         Returns
         -------
@@ -256,6 +259,9 @@ class AutoSaveEngine:
         events = self._triggers.detect(
             text, source=source, project_override=project,
         )
+        if source_ref:
+            for event in events:
+                event.source_ref = source_ref
         return [self.save(event) for event in events]
 
     def backfill(

@@ -190,6 +190,42 @@ class TestPolicyEngine:
         d = policy.evaluate(event)
         assert d.should_save is False
 
+    def test_block_email(self, policy):
+        event = _make_event(content="Contact john@acme.com for details")
+        d = policy.evaluate(event)
+        assert d.should_save is False
+        assert d.reason == "security_blocked"
+
+    def test_block_phone_br(self, policy):
+        event = _make_event(content="Ligar para +55 11 99999-8888")
+        d = policy.evaluate(event)
+        assert d.should_save is False
+
+    def test_block_phone_intl(self, policy):
+        event = _make_event(content="Call +1 5551234567890")
+        d = policy.evaluate(event)
+        assert d.should_save is False
+
+    def test_block_cpf(self, policy):
+        event = _make_event(content="CPF do cliente: 123.456.789-00")
+        d = policy.evaluate(event)
+        assert d.should_save is False
+
+    def test_block_cnpj(self, policy):
+        event = _make_event(content="CNPJ: 12.345.678/0001-00")
+        d = policy.evaluate(event)
+        assert d.should_save is False
+
+    def test_block_ssn(self, policy):
+        event = _make_event(content="SSN is 123-45-6789")
+        d = policy.evaluate(event)
+        assert d.should_save is False
+
+    def test_block_private_endpoint(self, policy):
+        event = _make_event(content="API at http://localhost:3000/api/secret")
+        d = policy.evaluate(event)
+        assert d.should_save is False
+
     def test_block_zero_importance(self, policy):
         event = _make_event(importance=0, type="[AUTO-OP]")
         d = policy.evaluate(event)
