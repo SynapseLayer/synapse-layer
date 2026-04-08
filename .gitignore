@@ -215,3 +215,5 @@ PRIVATE_REPO_INDEX.md
 
 # Abacus.AI system file
 .abacus.donotdelete
+.mcpregistry_*
+*.bak.*
