@@ -230,6 +230,43 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for Mermaid diagrams and deep-dive.
 
 ---
 
+## Auto-Save Memory
+
+**Your AI agents remember what matters, forget what's sensitive.**
+
+The Auto-Save Engine gives Synapse Layer autonomous memory — it detects milestones, decisions, and strategic events without the user needing to ask.
+
+```python
+from synapse_memory.autosave import AutoSaveEngine, AutoSaveEvent
+
+# Direct save
+event = AutoSaveEvent(
+    content="Launched OFFLY v2.0 to production",
+    project="OFFLY",
+    type="[MILESTONE]",
+    importance=4,
+    tags=["launch", "production"],
+)
+result = engine.save(event)  # → SaveResult(status="saved", id="...")
+
+# Auto-detect triggers in free text
+results = engine.process_text(
+    "We decided to pivot GOARQIA to enterprise B2B"
+)
+# → Detects [DECISION], saves automatically
+```
+
+**Features:**
+- 🔒 PII/secrets redacted before storage (never reaches embedding provider)
+- ⚡ Near-zero latency (embedding=NULL on insert, async backfill)
+- 🧠 Autonomous trigger detection (milestones, decisions, alerts)
+- 🔁 SHA-256 deduplication + LRU cache
+- 🏗️ OSS baseline + Pro extensibility via `SYNAPSE_MODE`
+
+See [mcp-autosave/](mcp-autosave/) for the production MCP Bridge.
+
+---
+
 ## Pricing
 
 | Plan | Price | Memories | Includes |

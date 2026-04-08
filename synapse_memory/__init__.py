@@ -23,6 +23,7 @@ from .engine.handover import (
     HandoverStatus,
     HandoverToken,
 )
+from .autosave import AutoSaveEngine, AutoSaveEvent, SaveResult
 
 __version__ = "1.0.7"
 
@@ -58,4 +59,8 @@ __all__ = [
     "HandoverPackage",
     "HandoverStatus",
     "HandoverToken",
+    # Auto-Save
+    "AutoSaveEngine",
+    "AutoSaveEvent",
+    "SaveResult",
 ]
