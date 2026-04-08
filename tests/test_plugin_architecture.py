@@ -282,8 +282,10 @@ class TestPluginLoader:
 
     def test_pro_mode_no_package_returns_none(self):
         """PRO mode without package installed returns None."""
-        result = load_pro_plugin(mode="pro")
-        assert result is None
+        import sys
+        with patch.dict(sys.modules, {"synapse_memory_pro": None}):
+            result = load_pro_plugin(mode="pro")
+            assert result is None
 
     def test_pro_mode_with_mock_package(self):
         """PRO mode with conforming package returns plugin."""
@@ -306,8 +308,10 @@ class TestPluginLoader:
 
     def test_pro_mode_import_error(self):
         """PRO mode handles ImportError gracefully."""
-        result = load_pro_plugin(mode="pro")
-        assert result is None  # synapse_memory_pro not installed
+        import sys
+        with patch.dict(sys.modules, {"synapse_memory_pro": None}):
+            result = load_pro_plugin(mode="pro")
+            assert result is None  # synapse_memory_pro not available
 
     def test_pro_mode_runtime_exception(self):
         """PRO mode handles runtime exceptions in plugin."""
@@ -446,15 +450,17 @@ class TestSynapseModeEnforcement:
 
     def test_pro_without_package_uses_defaults(self):
         """PRO mode without package falls back to defaults."""
-        engine = AutoSaveEngine(
-            database=FakeDatabase(),
-            redactor=fake_redact,
-            mode="pro",
-        )
-        assert isinstance(engine.importance_scorer, DefaultImportanceScorer)
-        assert isinstance(engine.conflict_resolver, DefaultConflictResolver)
-        assert isinstance(engine.dedup_strategy, DefaultDedupStrategy)
-        assert engine._plugin_loaded is False
+        import sys
+        with patch.dict(sys.modules, {"synapse_memory_pro": None}):
+            engine = AutoSaveEngine(
+                database=FakeDatabase(),
+                redactor=fake_redact,
+                mode="pro",
+            )
+            assert isinstance(engine.importance_scorer, DefaultImportanceScorer)
+            assert isinstance(engine.conflict_resolver, DefaultConflictResolver)
+            assert isinstance(engine.dedup_strategy, DefaultDedupStrategy)
+            assert engine._plugin_loaded is False
 
     def test_pro_with_package_uses_plugin(self):
         """PRO mode with package uses plugin strategies."""
