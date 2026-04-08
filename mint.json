@@ -1,0 +1,93 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "Synapse Layer",
+  "logo": {
+    "dark": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Synapse_Logo.svg/960px-Synapse_Logo.svg.png",
+    "light": "https://play-lh.googleusercontent.com/Whai5GKFK0tN1W9GjuR6NNfifqKj7lk0KTuaj6K5gzKO5hQ9hgqq58yxOo7zYzbaQg=w240-h480-rw"
+  },
+  "favicon": "https://play-lh.googleusercontent.com/Whai5GKFK0tN1W9GjuR6NNfifqKj7lk0KTuaj6K5gzKO5hQ9hgqq58yxOo7zYzbaQg=w600-h300-pc0xffffff-pd",
+  "colors": {
+    "primary": "#FFD700",
+    "light": "#FFE44D",
+    "dark": "#D4AF37",
+    "anchors": {
+      "from": "#FFD700",
+      "to": "#A855F7"
+    }
+  },
+  "modeToggle": {
+    "default": "dark"
+  },
+  "topbarLinks": [
+    {
+      "name": "GitHub",
+      "url": "https://github.com/SynapseLayer/synapse-layer"
+    },
+    {
+      "name": "PyPI",
+      "url": "https://pypi.org/project/synapse-layer/"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Launch Forge",
+    "url": "https://forge.synapselayer.org"
+  },
+  "tabs": [
+    {
+      "name": "API Reference",
+      "url": "docs/mcp-server"
+    }
+  ],
+  "anchors": [
+    {
+      "name": "Smithery",
+      "icon": "bolt",
+      "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEix669XvxFqD-XZRcrKXfIzcNVFV6dDfnPLBJW20RqWU4i-mHkc96kwwBlZWcsRsOMdHjlvDTosgQ68oJNgPprINM8rdbzpMFfdeJ-f44dx3nSTwLBehV_476KrDZH_deOxHf1aiW9sbcwN-1g13ZKPi62o5MFmCA_qKAbCwNlfkl6MhjUZb_5ozhanJb8/w640-h300/Screenshot%20from%202025-04-17%2018-20-10.png"
+    },
+    {
+      "name": "Community",
+      "icon": "twitter",
+      "url": "https://x.com/synapselayer"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": [
+        "docs/introduction",
+        "docs/quickstart"
+      ]
+    },
+    {
+      "group": "Core Concepts",
+      "pages": [
+        "docs/architecture",
+        "docs/open-core"
+      ]
+    },
+    {
+      "group": "Security",
+      "pages": [
+        "docs/security"
+      ]
+    },
+    {
+      "group": "Integrations",
+      "pages": [
+        "docs/mcp-server"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "x": "https://x.com/synapselayer",
+    "github": "https://github.com/SynapseLayer/synapse-layer"
+  },
+  "feedback": {
+    "thumbsRating": true
+  },
+  "analytics": {
+    "ga4": {
+      "measurementId": ""
+    }
+  }
+}

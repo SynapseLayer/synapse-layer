@@ -1,0 +1,84 @@
+---
+title: Security
+description: "Zero-Leak Policy: how Synapse Layer protects sensitive data."
+---
+
+# Security
+
+Synapse Layer is **security-first by design**. Every memory passes through a non-bypassable 4-layer Cognitive Security Pipeline before any persistence or network I/O.
+
+## The 4 Security Seals
+
+| Seal | Name | Function |
+|:---:|---|---|
+| 1 | **Semantic Privacy Guard™** | PII/secret detection and redaction |
+| 2 | **Intelligent Intent Validation™** | Auto-categorization with critical keyword promotion |
+| 3 | **Differential Privacy** | Calibrated Gaussian noise (ε-bounded) on embeddings |
+| 4 | **Neural Handover™** | HMAC-SHA256 signed JWT cross-model transfer |
+
+## Seal 1 — Semantic Privacy Guard™
+
+**15+ precompiled patterns** detect and redact sensitive data before encryption:
+
+| Category | What’s Detected |
+|---|---|
+| **Secrets** | API keys, Bearer tokens, AWS credentials (AKIA/ASIA), OpenAI keys (sk-), GitHub tokens (ghp/gho/ghs/ghu/ghr), passwords, database URLs, private keys |
+| **PII** | Email addresses, phone numbers (BR/international), CPF, CNPJ, SSN |
+| **Infrastructure** | Private/localhost endpoints |
+
+<Note>
+  The redaction engine runs **before** encryption and **before** any network call. Content that matches a blocklist pattern is **never** stored, transmitted, or embedded.
+</Note>
+
+```python
+memory = SynapseMemory(agent_id="secure-agent", aggressive_sanitize=True)
+await memory.store("John's SSN is 123-45-6789", confidence=0.9)
+# Stored: "[REDACTED_NAME]'s SSN is [REDACTED_SSN]"
+# SHA-256 hash of each redacted item preserved for forensic audit
+```
+
+## Seal 2 — Intelligent Intent Validation™
+
+Two-step cognitive security: the agent suggests an intent category, then Synapse validates independently.
+
+| Category | Description |
+|---|---|
+| `PREFERENCE` | Taste, style, language, tone |
+| `FACT` | Verified knowledge, research, data |
+| `PROCEDURAL` | Steps, workflows, protocols |
+| `BIO` | Personal info, identity, demographics |
+| `EPHEMERAL` | Session-scoped, transient context |
+| `CRITICAL` | Security, compliance, legal, financial |
+
+**Self-Healing:** During recall, semantically proximate memories with conflicting categories are automatically reclassified via keyword consensus.
+
+## Seal 3 — Differential Privacy
+
+Calibrated Gaussian noise is injected into embedding vectors **before** storage:
+
+```
+σ = Δf · √(2·ln(1.25/δ)) / ε
+```
+
+This prevents semantic inference attacks — even with database access, the original semantic fingerprint cannot be reconstructed. L2 normalization post-noise preserves cosine similarity semantics.
+
+## Seal 4 — Neural Handover™ Security
+
+- HMAC-SHA256 token signatures — tampering is detectable
+- Agent identity verification prevents unauthorized access
+- Content sanitized and intent-validated before packaging
+- Vault-persisted **before** transmission (crash-safe)
+- All state transitions logged for GDPR/LGPD compliance
+
+## Compliance
+
+| Framework | Status |
+|---|---|
+| **GDPR** | ✅ PII redaction + right to erasure support |
+| **LGPD** | ✅ CPF/CNPJ patterns + consent-aware storage |
+| **HIPAA** | ✅ Ready (encryption at rest + transit) |
+| **SOC 2** | 🚧 In progress |
+
+<Warning>
+  The specific regex patterns, thresholds, and scoring weights used in the security pipeline are proprietary. This documentation describes **what** is protected, not the implementation details of **how**.
+</Warning>

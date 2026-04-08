@@ -17,6 +17,7 @@
   [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
   [![Python](https://img.shields.io/badge/Python-3.9%2B-blue)](https://www.python.org/)
   [![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-green)](https://modelcontextprotocol.io)
+  [![Documentation](https://img.shields.io/badge/Docs-Mintlify-0D9373)](https://docs.synapselayer.org)
   [![v1.0.7 Stable](https://img.shields.io/badge/v1.0.7-stable-informational)](CHANGELOG.md)
 
   [Website](https://synapselayer.org) · [Forge](https://forge.synapselayer.org) · [Docs](https://forge.synapselayer.org/docs) · [PyPI](https://pypi.org/project/synapse-layer/) · [Smithery](https://smithery.ai/servers/synapselayer/synapse-protocol)

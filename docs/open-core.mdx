@@ -1,0 +1,76 @@
+---
+title: Open Core Model
+description: "Transparency, extensibility, and the OSS/PRO separation."
+---
+
+# Open Core Model
+
+Synapse Layer follows a transparent **open-core architecture**. The community edition is fully functional. The PRO tier unlocks proprietary intelligence.
+
+## What’s Open, What’s PRO
+
+<CardGroup cols={2}>
+  <Card title="Community (OSS)" icon="code">
+    **Apache 2.0 — Fully open source**
+
+    - Memory Storage & Recall
+    - MCP Server (4 tools)
+    - PII/Secret Redaction (15+ patterns)
+    - AES-256-GCM Encryption
+    - Differential Privacy (ε-DP)
+    - Basic Importance Scoring
+    - Hash-Based Deduplication
+    - Auto-Save Trigger Detection
+    - Plugin Architecture
+  </Card>
+  <Card title="Enterprise (PRO)" icon="crown">
+    **Commercial license**
+
+    - Everything in Community, plus:
+    - TQ™ Multi-Factor Scoring
+    - Neural Handover™ (JWT cross-model)
+    - N-Gram Semantic Deduplication
+    - Weighted Conflict Resolution
+    - Priority Intelligence Layer
+    - Priority Support & SLA
+    - Synapse Forge Dashboard
+  </Card>
+</CardGroup>
+
+> *"The OSS shows what is possible. The PRO defines how intelligence actually works."*
+
+## How It Works
+
+The separation is enforced at the code level via the **Plugin Architecture**:
+
+```python
+# OSS mode (default) — uses built-in defaults
+engine = AutoSaveEngine(database=db, redactor=redact)
+
+# PRO mode — auto-loads synapse-layer-pro if installed
+engine = AutoSaveEngine(database=db, redactor=redact, mode="pro")
+```
+
+Set `SYNAPSE_MODE=pro` to enable. If `synapse-layer-pro` is not installed, a warning is emitted and OSS defaults are used.
+
+## Repository Structure
+
+| Component | License | Repository |
+|---|---|---|
+| Python SDK (`synapse-layer`) | Apache 2.0 | [Public](https://github.com/SynapseLayer/synapse-layer) |
+| MCP Server & Auto-Save Bridge | Apache 2.0 | [Public](https://github.com/SynapseLayer/synapse-layer/tree/main/mcp-autosave) |
+| PRO Strategies (`synapse-layer-pro`) | Proprietary | Private |
+| Synapse Forge Dashboard | Proprietary | Private |
+| TQ™ Weights & Calibration | Proprietary | Private |
+
+## Pricing
+
+| Plan | Price | Memories | Includes |
+|---|---|---|---|
+| **Free** | $0 | 1,000/month | Full SDK, MCP server, community support |
+| **Pro** | $29/mo | 100K/month | All Free + TQ™, Neural Handover™, priority support |
+| **Enterprise** | Custom | Unlimited | All Pro + dedicated SLA, on-premise, security audit |
+
+<Card title="Get Started" icon="rocket" href="https://forge.synapselayer.org">
+  Start free at forge.synapselayer.org
+</Card>

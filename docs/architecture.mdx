@@ -1,0 +1,109 @@
+---
+title: Architecture
+description: "How Synapse Layer thinks, scores, and persists."
+---
+
+# Architecture
+
+Synapse Layer is not a simple key-value store. It’s an **autonomous memory engine** with built-in intelligence.
+
+## Memory Pipeline
+
+Every memory operation flows through a deterministic pipeline:
+
+```
+Agent → Sanitize (PII) → Validate Intent → Encrypt (AES-256) → DP Noise → Vault
+                                                                          ↓
+  Recall ← Trust Quotient™ Ranking ← Cosine Search ← Decrypt ← ← ← ← ←
+```
+
+**Key guarantee:** The server never sees plaintext. Embeddings are noise-injected before storage. Every recall is deterministic and explainable.
+
+## Trust Quotient™ (TQ) — The Intelligence Layer
+
+TQ is the scoring brain of Synapse Layer. Every memory is ranked by a multi-factor quality signal built on five pillars:
+
+| Pillar | What It Measures |
+|---|---|
+| **Recency** | How fresh is the memory? Recent context weighs more. |
+| **Frequency** | How often is this pattern confirmed across interactions? |
+| **Explicit Signals** | Did the agent or user explicitly mark this as important? |
+| **Source Authority** | Was this from a validated source or an inference? |
+| **Verification Consensus** | Do multiple independent signals agree on the classification? |
+
+<Warning>
+  TQ weights are proprietary and dynamically calibrated per deployment. The full algorithm is available under Enterprise license. The OSS tier provides baseline linear scoring.
+</Warning>
+
+The result:
+
+> **No black box. Every recall is deterministic, explainable, and hallucination-free.**
+
+## Auto-Save Engine
+
+The Auto-Save Engine adds **autonomous memory** — the system decides what’s worth remembering without being asked.
+
+```
+text → trigger_detect → policy_evaluate → redact → dedup → persist → embed (async)
+```
+
+**Detection categories:**
+
+- 🎯 **Milestones** — deployments, launches, releases, first customers
+- 🎯 **Decisions** — pivots, strategy changes, architectural choices
+- 🎯 **Alerts** — security incidents, breaches, critical bugs
+- 🎯 **Strategic context** — funding, partnerships, compliance events
+
+All triggers are evaluated against a **policy engine** that enforces:
+
+1. Security blocklist (absolute — secrets/PII always blocked)
+2. Project and type allowlists
+3. Importance thresholds (OSS vs PRO)
+4. Semantic deduplication
+5. LRU cache for near-instant dedup
+
+## Plugin Architecture
+
+Synapse Layer uses the **Strategy pattern** for clean OSS/PRO separation:
+
+```
+┌─────────────────────────────────────────────┐
+│              AutoSaveEngine                 │
+│  ┌──────────┐ ┌──────────┐ ┌────────────┐  │
+│  │ Importance│ │ Conflict │ │   Dedup    │  │
+│  │  Scorer   │ │ Resolver │ │  Strategy  │  │
+│  └─────┬────┘ └─────┬────┘ └─────┬──────┘  │
+│        │            │            │          │
+│   ┌────▼────────────▼────────────▼────┐     │
+│   │        Plugin Loader              │     │
+│   │   OSS defaults ← PRO override    │     │
+│   └───────────────────────────────────┘     │
+└─────────────────────────────────────────────┘
+```
+
+Extension points:
+
+- `ImportanceScorer` — Score event significance (0.0–1.0)
+- `ConflictResolver` — Resolve competing events
+- `DedupStrategy` — Detect duplicate memories
+- `RedactionStrategy` — Extensible content redaction
+
+The OSS ships with simple, predictable defaults. PRO implementations (TQ™ multi-factor scoring, n-gram semantic dedup, weighted conflict resolution) are injected dynamically via `synapse-layer-pro`.
+
+## Neural Handover™
+
+Secure, fault-tolerant context transfer between AI models:
+
+```
+Agent A → create_handover() → JWT Token → Agent B → accept_handover()
+                                  ↓
+                         Vault (persisted FIRST)
+```
+
+**State machine:** `PENDING → ACCEPTED → COMPLETED | FAILED | EXPIRED`
+
+- Content sanitized and intent-validated before packaging
+- HMAC-SHA256 signed tokens with TTL
+- Vault-persisted before transmission (crash-safe)
+- Emergency Checkpoint on failure
+- Grace period with auto-generated summaries

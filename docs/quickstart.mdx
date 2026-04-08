@@ -1,0 +1,106 @@
+---
+title: Quick Start
+description: "Get Synapse Layer running in under 60 seconds."
+---
+
+# Quick Start
+
+Three ways to connect. Pick the one that fits your stack.
+
+## Option 1: Smithery (Recommended for MCP)
+
+The fastest path for Claude Desktop, LangChain, and CrewAI agents:
+
+```bash
+npx @smithery/cli install @synapselayer/synapse-protocol
+```
+
+This registers Synapse Layer as an MCP server. Your agent immediately gets access to 4 tools:
+
+| Tool | What It Does |
+|---|---|
+| `process_text` | Scans text for decisions, milestones, alerts — saves autonomously |
+| `save_to_synapse` | Direct structured memory persistence with full security pipeline |
+| `backfill_embeddings` | Async vector embedding generation for stored memories |
+| `health_check` | System health, version, and capability report |
+
+## Option 2: Direct MCP Connection
+
+Add to your MCP client configuration:
+
+```json
+{
+  "mcpServers": {
+    "synapse-layer": {
+      "url": "https://forge.synapselayer.org/api/mcp"
+    }
+  }
+}
+```
+
+<Tip>
+  This connects to the discovery endpoint. For full persistence with your own database, deploy the [mcp-autosave bridge](https://github.com/SynapseLayer/synapse-layer/tree/main/mcp-autosave) with Supabase.
+</Tip>
+
+## Option 3: Python SDK
+
+```bash
+pip install synapse-layer
+```
+
+```python
+from synapse_layer import SynapseMemory
+import asyncio
+
+async def main():
+    mem = SynapseMemory(agent_id="my-agent")
+
+    # Store a memory (full security pipeline runs automatically)
+    result = await mem.store(
+        "User prefers dark mode and speaks Portuguese",
+        confidence=0.95
+    )
+    print(f"Stored: TQ={result.trust_quotient:.3f}")
+
+    # Recall with semantic search
+    results = await mem.recall("user preferences")
+    for r in results:
+        print(f"  {r.content} (TQ: {r.trust_quotient:.3f})")
+
+asyncio.run(main())
+```
+
+## Auto-Save Engine
+
+For autonomous memory capture (no manual tagging):
+
+```python
+from synapse_memory.autosave import AutoSaveEngine, AutoSaveEvent
+
+# The engine detects what's worth saving
+results = engine.process_text(
+    "We decided to pivot to enterprise B2B after the seed round"
+)
+# → Detects [DECISION] trigger, redacts PII, deduplicates, persists
+```
+
+## Verify Installation
+
+```bash
+curl -s -X POST https://forge.synapselayer.org/api/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | python3 -m json.tool
+```
+
+Expected: JSON response with 4 tools listed.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Architecture" icon="brain" href="/docs/architecture">
+    Understand TQ Intelligence and the memory pipeline.
+  </Card>
+  <Card title="Security" icon="shield-halved" href="/docs/security">
+    How the Zero-Leak Policy protects your data.
+  </Card>
+</CardGroup>
