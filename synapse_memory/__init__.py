@@ -24,6 +24,17 @@ from .engine.handover import (
     HandoverToken,
 )
 from .autosave import AutoSaveEngine, AutoSaveEvent, SaveResult
+from .plugins import (
+    ImportanceScorer,
+    ConflictResolver,
+    DedupStrategy,
+    RedactionStrategy,
+    SynapseProPlugin,
+    DefaultImportanceScorer,
+    DefaultConflictResolver,
+    DefaultDedupStrategy,
+    load_pro_plugin,
+)
 
 __version__ = "1.0.7"
 
@@ -63,4 +74,14 @@ __all__ = [
     "AutoSaveEngine",
     "AutoSaveEvent",
     "SaveResult",
+    # Plugin Architecture
+    "ImportanceScorer",
+    "ConflictResolver",
+    "DedupStrategy",
+    "RedactionStrategy",
+    "SynapseProPlugin",
+    "DefaultImportanceScorer",
+    "DefaultConflictResolver",
+    "DefaultDedupStrategy",
+    "load_pro_plugin",
 ]

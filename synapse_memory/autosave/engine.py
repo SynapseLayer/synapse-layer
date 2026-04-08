@@ -29,6 +29,18 @@ from .policy import PolicyEngine
 from .triggers import TriggerDetector
 from .formatter import EventFormatter
 
+from synapse_memory.plugins.interfaces import (
+    ImportanceScorer,
+    ConflictResolver,
+    DedupStrategy,
+)
+from synapse_memory.plugins.defaults import (
+    DefaultImportanceScorer,
+    DefaultConflictResolver,
+    DefaultDedupStrategy,
+)
+from synapse_memory.plugins.plugin_loader import load_pro_plugin
+
 logger = logging.getLogger("synapse.autosave.engine")
 
 
@@ -100,6 +112,11 @@ class AutoSaveEngine:
         formatter: Optional[EventFormatter] = None,
         cache_maxsize: int = 100,
         cache_ttl: float = 60.0,
+        *,
+        importance_scorer: Optional[ImportanceScorer] = None,
+        conflict_resolver: Optional[ConflictResolver] = None,
+        dedup_strategy: Optional[DedupStrategy] = None,
+        mode: Optional[str] = None,
     ) -> None:
         self._db = database
         self._redactor = redactor
@@ -107,6 +124,34 @@ class AutoSaveEngine:
         self._triggers = trigger_detector or TriggerDetector()
         self._formatter = formatter or EventFormatter()
         self._cache = _LRUCache(maxsize=cache_maxsize, ttl=cache_ttl)
+
+        # ── Plugin Architecture (OSS/PRO separation) ───────────────
+        plugin = load_pro_plugin(mode=mode)
+
+        self.importance_scorer: ImportanceScorer = (
+            importance_scorer
+            or (plugin.importance_scorer if plugin else None)
+            or DefaultImportanceScorer()
+        )
+        self.conflict_resolver: ConflictResolver = (
+            conflict_resolver
+            or (plugin.conflict_resolver if plugin else None)
+            or DefaultConflictResolver()
+        )
+        self.dedup_strategy: DedupStrategy = (
+            dedup_strategy
+            or (plugin.dedup_strategy if plugin else None)
+            or DefaultDedupStrategy()
+        )
+
+        self._plugin_loaded = plugin is not None
+        logger.info(
+            "AutoSaveEngine initialized: plugin=%s, scorer=%s, resolver=%s, dedup=%s",
+            "PRO" if self._plugin_loaded else "OSS",
+            type(self.importance_scorer).__name__,
+            type(self.conflict_resolver).__name__,
+            type(self.dedup_strategy).__name__,
+        )
 
     # ── Public API ─────────────────────────────────────────────────────
 

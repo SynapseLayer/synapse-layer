@@ -265,6 +265,58 @@ See [mcp-autosave/](mcp-autosave/) for the production MCP Bridge with Supabase p
 
 ---
 
+## Plugin Architecture
+
+Synapse Layer uses a **strategy-driven plugin architecture** for clean OSS/PRO separation:
+
+```
+┌─────────────────────────────────────────────┐
+│              AutoSaveEngine                 │
+│  ┌──────────┐ ┌──────────┐ ┌────────────┐  │
+│  │ Importance│ │ Conflict │ │   Dedup    │  │
+│  │  Scorer   │ │ Resolver │ │  Strategy  │  │
+│  └─────┬────┘ └─────┬────┘ └─────┬──────┘  │
+│        │            │            │          │
+│   ┌────▼────────────▼────────────▼────┐     │
+│   │        Plugin Loader              │     │
+│   │   OSS defaults ← PRO override    │     │
+│   └───────────────────────────────────┘     │
+└─────────────────────────────────────────────┘
+```
+
+**Core Interfaces** (`synapse_memory.plugins`):
+- `ImportanceScorer` — Score event significance (0.0–1.0)
+- `ConflictResolver` — Resolve competing events
+- `DedupStrategy` — Detect duplicate memories
+- `RedactionStrategy` — Extensible content redaction
+
+**OSS** ships with simple, predictable defaults. **PRO** implementations are injected dynamically via `synapse-layer-pro` — no proprietary logic lives in this repo.
+
+```python
+# OSS mode (default) — uses built-in defaults
+engine = AutoSaveEngine(database=db, redactor=redact)
+
+# PRO mode — automatically loads synapse-layer-pro if installed
+# pip install synapse-layer-pro
+engine = AutoSaveEngine(database=db, redactor=redact, mode="pro")
+
+# Custom strategies — bring your own
+from synapse_memory.plugins import ImportanceScorer
+
+class MyScorer:
+    def score(self, event) -> float:
+        return 1.0 if "critical" in event.content else 0.5
+
+engine = AutoSaveEngine(
+    database=db, redactor=redact,
+    importance_scorer=MyScorer(),
+)
+```
+
+Set `SYNAPSE_MODE=pro` to enable PRO features. If `synapse-layer-pro` is not installed, a warning is emitted and OSS defaults are used.
+
+---
+
 ## Pricing
 
 | Plan | Price | Memories | Includes |
