@@ -70,7 +70,7 @@ async def store_memory_complete_pipeline(raw_content: str, agent_id: str):
     print(f"  ✓ Confidence: {validation_result.confidence:.2f}")
     print(f"  ✓ Is critical: {validation_result.is_critical}")
     print(f"  ✓ Validation score: {validation_result.validation_score:.2f}")
-    print(f"  ✓ Is valid (>= 0.85): {validation_result.is_valid}")
+    print(f"  ✓ Is valid (above threshold): {validation_result.is_valid}")
     
     if validation_result.self_healing_applied:
         print(f"  ✓ Self-healing applied:")
@@ -79,7 +79,7 @@ async def store_memory_complete_pipeline(raw_content: str, agent_id: str):
     
     # Check if content passed validation
     if not validation_result.is_valid:
-        print("\n⚠️  VALIDATION FAILED (confidence < 0.85)")
+        print("\n⚠️  VALIDATION FAILED (confidence below threshold)")
         print("   Content would require user confirmation to proceed.")
         return {
             "status": "validation_failed",

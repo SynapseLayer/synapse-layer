@@ -26,6 +26,15 @@ from .engine.handover import (
 
 __version__ = "1.0.7"
 
+import os as _os
+SYNAPSE_MODE: str = _os.environ.get("SYNAPSE_MODE", "oss").lower()
+"""Runtime mode: 'oss' (default) or 'pro'.
+
+Set ``SYNAPSE_MODE=pro`` to unlock extended keyword registries,
+adaptive confidence curves, and multi-factor Trust Quotient™.
+See https://forge.synapselayer.org/docs/pro for details.
+"""
+
 __all__ = [
     # Core
     "SynapseMemory",

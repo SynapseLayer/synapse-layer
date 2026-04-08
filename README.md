@@ -11,7 +11,7 @@
   [![Python](https://img.shields.io/badge/Python-3.9%2B-blue)](https://www.python.org/)
   [![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-green)](https://modelcontextprotocol.io)
   [![Security](https://img.shields.io/badge/Security-4_Seals-blueviolet)](#cognitive-security-pipeline)
-  [![v1.0.6](https://img.shields.io/badge/version-1.0.6-informational)](CHANGELOG.md)
+  [![v1.0.7](https://img.shields.io/badge/version-1.0.7-informational)](CHANGELOG.md)
   [![Adopt an Agent](https://img.shields.io/badge/🧠_Adopt_an_Agent-Synapse_Layer-purple)](https://forge.synapselayer.org)
   [![MCP Reference](https://img.shields.io/badge/MCP_Registry-PR_%231129-00d4aa)](https://github.com/modelcontextprotocol/registry/pull/1129)
   [![Technical Deep-Dive](https://img.shields.io/badge/dev.to-Technical_Deep--Dive-0A0A0A?logo=devdotto)](https://dev.to/synapselayer/beyond-context-windows-a-zero-knowledge-memory-reference-implementation-for-the-mcp-ecosystem-4bcg)
@@ -33,7 +33,7 @@ Every memory operation passes through a **non-bypassable 4-layer Cognitive Secur
 
 | Seal | Name | Function |
 |:---:|---|---|
-| 1 | **Semantic Privacy Guard™** | Automatic PII sanitization (12+ patterns) |
+| 1 | **Semantic Privacy Guard™** | Automatic PII sanitization (multi-pattern) |
 | 2 | **Intelligent Intent Validation™** | Auto-categorization + self-healing |
 | 3 | **Differential Privacy** | Calibrated Gaussian noise (ε-DP) |
 | 4 | **Neural Handover™** | HMAC-signed cross-model transfer |
@@ -167,9 +167,9 @@ Two-step cognitive security: the agent suggests an intent category, then Synapse
 | `CRITICAL` | Security, compliance, legal, financial | ✅ |
 
 **Confidence Contract:**
-- `confidence ≥ 0.85` → `source_type = "validated"`
-- `confidence < 0.85` → `source_type = "inference"` + warning
-- Critical keyword detected → `confidence_boost = 1.0`, forced `CRITICAL`
+- High confidence → `source_type = "validated"`
+- Low confidence → `source_type = "inference"` + warning
+- Critical keyword detected → forced `CRITICAL` with full confidence boost
 
 **Self-Healing:** During `recall()`, semantically proximate memories with conflicting categories are automatically reclassified via keyword consensus.
 
@@ -263,7 +263,7 @@ Early access to Synapse Forge — the visual memory debugger and agent orchestra
 
 | Component | Status |
 |---|---|
-| SDK (PyPI) | `v1.0.6` — stable |
+| SDK (PyPI) | `v1.0.7` — stable |
 | Semantic Privacy Guard™ | ✅ Implemented |
 | Differential Privacy | ✅ Implemented |
 | Intelligent Intent Validation™ | ✅ Implemented |
@@ -272,11 +272,11 @@ Early access to Synapse Forge — the visual memory debugger and agent orchestra
 | MCP Server | ✅ Compatible |
 | Synapse Forge | ✅ [Live Dashboard](https://forge.synapselayer.org) |
 | CI/CD Pipeline | 🔄 In Progress |
-| **Latest Release** | [**v1.0.6 — Cognitive Security Protocol**](https://github.com/SynapseLayer/synapse-layer/releases/tag/v1.0.6) |
+| **Latest Release** | [**v1.0.7 — Cognitive Security Protocol**](https://github.com/SynapseLayer/synapse-layer/releases/tag/v1.0.7) |
 
 ---
 
-## Changelog (v1.0.6)
+## Changelog (v1.0.7)
 
 ### Added — Neural Handover™: Persistence-First Architecture
 - **NeuralHandover engine**: Complete cross-agent context transfer with vault-first persistence

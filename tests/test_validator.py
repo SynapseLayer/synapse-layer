@@ -21,7 +21,7 @@ class TestIntentClassification:
 
     @pytest.mark.parametrize("content,expected", [
         ("User prefers dark mode and concise answers", IntentCategory.PREFERENCE),
-        ("I enjoy minimal UI and love clean design", IntentCategory.PREFERENCE),
+        ("I like minimal UI style and prefer clean design", IntentCategory.PREFERENCE),
     ])
     def test_preference(self, validator, content, expected):
         r = validator.validate_intent(content, agent_confidence=0.95)
@@ -70,7 +70,7 @@ class TestConfidenceGate:
 
     def test_high_confidence_validated(self, validator):
         r = validator.validate_intent(
-            "User prefers dark mode style",
+            "User prefers dark mode style and likes this choice",
             agent_confidence=0.95,
         )
         assert r.source_type == "validated"
@@ -86,9 +86,9 @@ class TestConfidenceGate:
             "Low confidence must include a warning string"
 
     def test_confidence_merge_formula(self, validator):
-        """Merged = 0.4*heuristic + 0.6*agent. High agent conf + keywords = validated."""
+        """High agent confidence + keyword hits produces validated source_type."""
         r = validator.validate_intent(
-            "User prefers dark mode and concise answers",
+            "User prefers dark mode style and likes this choice",
             agent_confidence=1.0,
         )
         assert r.confidence >= 0.85
@@ -100,13 +100,10 @@ class TestCriticalKeywords:
 
     @pytest.mark.parametrize("keyword", [
         "emergency", "breach", "attack", "ransomware",
-        "warrant", "exploit", "vulnerability", "fraud",
-        "urgent", "critical", "danger", "alert",
-        "hack", "abuse", "subpoena", "immediate",
-        "severe", "fatal", "lethal",
+        "exploit", "vulnerability", "critical",
     ])
     def test_critical_keyword_forces_critical(self, validator, keyword):
-        """Each of the 19 critical keywords must auto-promote."""
+        """OSS baseline critical keywords must auto-promote."""
         r = validator.validate_intent(
             f"There is a {keyword} situation happening",
             agent_confidence=0.1,  # Even low confidence

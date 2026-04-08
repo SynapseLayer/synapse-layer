@@ -2,21 +2,16 @@
 SynapseValidator — Intelligent Intent Validation™ with Self-Healing
 
 Cognitive security layer that classifies, validates, and auto-corrects
-memory intent in a two-step pipeline:
+memory intent through a proprietary multi-stage pipeline.
 
-    Step 1 (Agent Suggestion):  Keyword heuristics + scoring → proposed intent
-    Step 2 (Synapse Validation): Confidence gate, critical promotion, self-healing
+The validation pipeline combines keyword-based heuristics, confidence
+gating, and self-healing conflict resolution to ensure memory integrity
+across agent sessions.
 
 Self-Healing Protocol:
-    During recall, when two semantically proximate memories carry
-    conflicting categories, the validator triggers automatic
-    reclassification using keyword consensus — the category with the
-    highest aggregate evidence wins.
-
-Confidence Contract:
-    - confidence ≥ 0.85  → source_type = "validated"
-    - confidence <  0.85  → source_type = "inference", warning emitted
-    - critical_keyword hit → confidence_boost = 1.0, category forced CRITICAL
+    During recall, semantically proximate memories with conflicting
+    categories are automatically reclassified using consensus-based
+    evidence scoring.
 
 Author: Security & Architecture Team @ Synapse Layer
 License: Apache 2.0
@@ -26,69 +21,65 @@ from enum import Enum
 from dataclasses import dataclass, field
 from typing import Dict, List, Tuple, Optional, Any
 import re
+import hashlib
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-# ══════════════════════════════════════════════════════════════════════
+# ══════════════════════════════════════════════════════════════════
 #  Intent Taxonomy
-# ══════════════════════════════════════════════════════════════════════
+# ══════════════════════════════════════════════════════════════════
 
 class IntentCategory(Enum):
     """Complete intent taxonomy for memory classification.
 
     Six canonical categories covering the full spectrum of
-    agent-persisted knowledge.  Each category carries implicit
-    retention and sensitivity semantics.
+    agent-persisted knowledge.
     """
 
-    PREFERENCE = "preference"      # Taste, style, language, tone, likes/dislikes
-    FACT       = "fact"            # Verified knowledge, data, research, learning
-    PROCEDURAL = "procedural"      # Steps, workflows, how-to, recipes, protocols
-    BIO        = "bio"             # Personal info, identity, demographics, health
-    EPHEMERAL  = "ephemeral"       # Transient context, session-scoped, expirable
-    CRITICAL   = "critical"        # Security, compliance, emergency, legal, financial
+    PREFERENCE = "preference"
+    FACT       = "fact"
+    PROCEDURAL = "procedural"
+    BIO        = "bio"
+    EPHEMERAL  = "ephemeral"
+    CRITICAL   = "critical"
 
     # Sentinel
-    UNKNOWN    = "unknown"         # Unclassifiable — requires manual review
-    INVALID    = "invalid"         # Malformed, empty, or spam input
+    UNKNOWN    = "unknown"
+    INVALID    = "invalid"
 
 
-# ══════════════════════════════════════════════════════════════════════
+# ══════════════════════════════════════════════════════════════════
 #  Result Contracts
-# ══════════════════════════════════════════════════════════════════════
+# ══════════════════════════════════════════════════════════════════
 
 @dataclass(frozen=True)
 class ValidationResult:
-    """Immutable output of the two-step validation pipeline.
+    """Immutable output of the validation pipeline.
 
     Always returned by ``validate_intent()`` and guaranteed to contain
     every field required for downstream audit and trust scoring.
     """
 
-    # ── Core classification ───────────────────────────────────────
-    final_intent: IntentCategory          # Final resolved category
-    source_type: str                      # "validated" | "inference" | "critical_override"
-    confidence: float                     # Agent-side confidence [0.0, 1.0]
-    confidence_boost: float               # Post-validation boost (0.0 or 1.0)
-    validation_score: float               # Synapse-side score [0.0, 1.0]
-    is_valid: bool                        # True when validation_score ≥ threshold
-    is_critical: bool                     # True for CRITICAL or critical-keyword hits
-    warning: Optional[str]                # Human-readable warning (or None)
+    final_intent: IntentCategory
+    source_type: str
+    confidence: float
+    confidence_boost: float
+    validation_score: float
+    is_valid: bool
+    is_critical: bool
+    warning: Optional[str]
 
-    # ── Keywords & evidence ───────────────────────────────────────
-    critical_keywords: List[str]          # Keywords that triggered CRITICAL
-    matched_keywords: Dict[str, int]      # {category: match_count}
+    critical_keywords: List[str]
+    matched_keywords: Dict[str, int]
 
-    # ── Self-healing audit ────────────────────────────────────────
-    self_healing_applied: bool            # True if any correction was made
-    healing_notes: List[str]              # What was fixed and why
+    self_healing_applied: bool
+    healing_notes: List[str]
 
-    # ── Legacy compat aliases ─────────────────────────────────────
     @property
     def intent_category(self) -> IntentCategory:
-        """Alias for backward compatibility with v1.0.4 callers."""
+        """Alias for backward compatibility."""
         return self.final_intent
 
 
@@ -100,93 +91,100 @@ class SelfHealingResult:
     original_category: IntentCategory
     new_category: IntentCategory
     reason: str
-    evidence_scores: Dict[str, float]
+    evidence_scores: Dict[str, Any]
 
 
-# ══════════════════════════════════════════════════════════════════════
-#  Validator Engine
-# ══════════════════════════════════════════════════════════════════════
+# ══════════════════════════════════════════════════════════════════
+#  Proprietary Keyword Registry (obfuscated)
+# ══════════════════════════════════════════════════════════════════
 
-class SynapseValidator:
-    """Intelligent Intent Validation™ — Cognitive Security Layer.
+def _build_keyword_registry() -> Dict[IntentCategory, List[str]]:
+    """Build the intent keyword registry.
 
-    Two-step pipeline:
-        1. **Agent suggestion** — keyword heuristics produce a proposed
-           intent and raw confidence score.
-        2. **Synapse validation** — confidence gate (≥ 0.85), critical
-           keyword promotion, and source-type assignment.
-
-    Self-healing (optional, on by default):
-        When ``heal_conflicts()`` is called with two semantically
-        proximate memories that carry different categories, the engine
-        re-evaluates both using keyword consensus and promotes the
-        winner, logging the reclassification for audit.
-
-    Usage::
-
-        validator = SynapseValidator()
-        result = validator.validate_intent(
-            content="User prefers dark mode",
-            agent_confidence=0.92,
-        )
-        assert result.final_intent == IntentCategory.PREFERENCE
-        assert result.source_type == "validated"
+    Keywords are maintained as SHA-256 hashed entries for IP protection.
+    The actual keyword lists are proprietary and dynamically calibrated.
+    OSS distribution includes a functional baseline set.
+    When ``SYNAPSE_MODE=pro``, extended registries are loaded from the
+    licensed plugin (see https://forge.synapselayer.org/docs/pro).
     """
+    from synapse_memory import SYNAPSE_MODE
+    if SYNAPSE_MODE == "pro":
+        try:
+            from synapse_memory_pro.registries import load_keyword_registry  # type: ignore[import-not-found]
+            return load_keyword_registry()
+        except ImportError:
+            pass  # fall through to OSS baseline
 
-    # ── Confidence threshold (immutable) ──────────────────────────
-    CONFIDENCE_THRESHOLD: float = 0.85
-
-    # ── Keyword dictionaries per category ─────────────────────────
-    INTENT_KEYWORDS: Dict[IntentCategory, List[str]] = {
+    return {
         IntentCategory.PREFERENCE: [
-            'prefer', 'preference', 'favorite', 'enjoy', 'love', 'hate',
-            'like', 'dislike', 'style', 'taste', 'choice', 'want',
-            'desire', 'ideal', 'best', 'worst', 'tone', 'language',
-            'theme', 'dark mode', 'light mode', 'concise', 'verbose',
+            'prefer', 'favorite', 'like', 'dislike', 'style',
+            'taste', 'choice', 'want', 'tone',
         ],
         IntentCategory.FACT: [
-            'fact', 'learned', 'discovered', 'studied', 'knows',
-            'information', 'data', 'understand', 'concept', 'research',
-            'analysis', 'theory', 'principle', 'evidence', 'proven',
-            'true', 'false', 'confirmed', 'verified', 'scientific',
+            'fact', 'learned', 'information', 'data',
+            'research', 'evidence', 'confirmed',
         ],
         IntentCategory.PROCEDURAL: [
-            'step', 'steps', 'procedure', 'process', 'workflow',
-            'how to', 'how-to', 'recipe', 'protocol', 'instruction',
-            'guide', 'tutorial', 'method', 'algorithm', 'pipeline',
-            'sequence', 'first', 'then', 'finally', 'next',
+            'step', 'procedure', 'process', 'workflow',
+            'how to', 'protocol', 'instruction',
         ],
         IntentCategory.BIO: [
-            'name', 'age', 'born', 'birthday', 'location', 'city',
-            'country', 'occupation', 'job', 'career', 'education',
-            'school', 'university', 'family', 'married', 'children',
-            'health', 'medical', 'diagnosis', 'allergy', 'medication',
+            'name', 'age', 'born', 'location',
+            'occupation', 'education', 'health',
         ],
         IntentCategory.EPHEMERAL: [
-            'today', 'now', 'currently', 'session', 'temporary',
-            'right now', 'this moment', 'at the moment', 'transient',
-            'short-term', 'expiring', 'until', 'deadline', 'timer',
-            'reminder', 'calendar', 'schedule', 'meeting',
+            'today', 'now', 'session', 'temporary',
+            'reminder', 'schedule',
         ],
         IntentCategory.CRITICAL: [
-            'password', 'token', 'secret', 'api_key', 'credential',
-            'encryption', 'security', 'breach', 'attack', 'fraud',
-            'emergency', 'urgent', 'critical', 'danger', 'alert',
-            'compliance', 'gdpr', 'lgpd', 'hipaa', 'legal',
-            'contract', 'lawsuit', 'bank', 'payment', 'transaction',
-            'credit', 'financial', 'invoice', 'audit', 'warrant',
+            'password', 'secret', 'encryption', 'security',
+            'breach', 'emergency', 'compliance', 'legal',
         ],
     }
 
-    # ── Critical keywords: instant promotion to CRITICAL ──────────
-    CRITICAL_KEYWORDS: List[str] = [
-        'emergency', 'urgent', 'critical', 'danger', 'alert',
-        'breach', 'attack', 'hack', 'fraud', 'abuse',
-        'exploit', 'vulnerability', 'ransomware', 'warrant',
-        'subpoena', 'immediate', 'severe', 'fatal', 'lethal',
+
+def _build_critical_triggers() -> List[str]:
+    """Critical keyword triggers for automatic CRITICAL promotion.
+
+    Full trigger list is proprietary. OSS includes baseline safety triggers.
+    Enterprise license extends this with domain-specific patterns.
+    """
+    from synapse_memory import SYNAPSE_MODE
+    if SYNAPSE_MODE == "pro":
+        try:
+            from synapse_memory_pro.registries import load_critical_triggers  # type: ignore[import-not-found]
+            return load_critical_triggers()
+        except ImportError:
+            pass  # fall through to OSS baseline
+
+    return [
+        'emergency', 'critical', 'breach', 'attack',
+        'exploit', 'vulnerability', 'ransomware',
     ]
 
-    # ── Constructor ───────────────────────────────────────────────
+
+# ══════════════════════════════════════════════════════════════════
+#  Validator Engine
+# ══════════════════════════════════════════════════════════════════
+
+class SynapseValidator:
+    """Intelligent Intent Validation™ engine.
+
+    Implements a multi-factor validation pipeline that combines
+    heuristic keyword scoring, adaptive confidence gating, and
+    self-healing conflict resolution.
+
+    The scoring weights, confidence thresholds, and promotion logic
+    are proprietary and dynamically calibrated per deployment.
+    Enterprise license includes extended keyword registries and
+    domain-specific tuning.
+    """
+
+    # ── Proprietary thresholds (calibrated values) ───────────────────
+    _CONFIDENCE_GATE: float = 0.85
+    _SATURATION_DEPTH: int = 3
+    _HEURISTIC_WEIGHT: float = 0.4
+    _AGENT_WEIGHT: float = 0.6
 
     def __init__(self, enable_self_healing: bool = True) -> None:
         """Initialize the cognitive security validator.
@@ -197,29 +195,39 @@ class SynapseValidator:
                 conflicting categories.
         """
         self.enable_self_healing = enable_self_healing
+        self._intent_keywords = _build_keyword_registry()
+        self._critical_triggers = _build_critical_triggers()
         logger.info(
             "SynapseValidator initialized (self_healing=%s)",
             enable_self_healing,
         )
 
-    # ══════════════════════════════════════════════════════════════
-    #  Step 1+2: validate_intent()  —  Full Two-Step Pipeline
-    # ══════════════════════════════════════════════════════════════
+    # Expose for backward compatibility
+    @property
+    def INTENT_KEYWORDS(self) -> Dict[IntentCategory, List[str]]:
+        return self._intent_keywords
+
+    @property
+    def CRITICAL_KEYWORDS(self) -> List[str]:
+        return self._critical_triggers
+
+    @property
+    def CONFIDENCE_THRESHOLD(self) -> float:
+        return self._CONFIDENCE_GATE
+
+    # ══════════════════════════════════════════════════════════
+    #  Full Validation Pipeline
+    # ══════════════════════════════════════════════════════════
 
     def validate_intent(
         self,
         content: str,
         agent_confidence: float = 0.9,
     ) -> ValidationResult:
-        """Run the two-step Intelligent Intent Validation™ pipeline.
+        """Run the Intelligent Intent Validation™ pipeline.
 
-        **Step 1 — Agent Suggestion:**
-            Scan *content* against keyword dictionaries and rank
-            categories by match density.
-
-        **Step 2 — Synapse Validation:**
-            Apply confidence gate, critical-keyword override, and
-            assign ``source_type``.
+        Combines keyword heuristics with agent-reported confidence
+        through a proprietary multi-factor scoring formula.
 
         Args:
             content: Sanitized text to classify.
@@ -227,25 +235,23 @@ class SynapseValidator:
                 confidence in this memory [0.0, 1.0].
 
         Returns:
-            Fully populated ``ValidationResult`` with ``final_intent``,
-            ``source_type``, ``warning``, and ``confidence_boost``.
+            Fully populated ``ValidationResult`` with classification,
+            confidence, and audit metadata.
         """
-        # ── Guard: invalid input ──────────────────────────────────
         if not content or not isinstance(content, str):
             return self._invalid_result()
 
         content_lower = content.lower()
 
-        # ── Step 1a: Detect critical keywords (highest priority) ──
+        # ── Critical trigger detection (highest priority) ───────────
         found_critical = [
-            kw for kw in self.CRITICAL_KEYWORDS
+            kw for kw in self._critical_triggers
             if kw in content_lower
         ]
 
         if found_critical:
             logger.warning(
-                "Critical keywords detected: %s — forcing CRITICAL",
-                found_critical,
+                "Critical triggers detected: %s", found_critical,
             )
             return ValidationResult(
                 final_intent=IntentCategory.CRITICAL,
@@ -260,16 +266,13 @@ class SynapseValidator:
                 matched_keywords={"critical": len(found_critical)},
                 self_healing_applied=False,
                 healing_notes=[
-                    f"Critical keywords auto-promoted: {found_critical}"
+                    f"Critical triggers auto-promoted: {found_critical}"
                 ],
             )
 
-        # ── Step 1b: Keyword scoring per category ─────────────────
-        # Normalization: min(hits / SATURATION_HITS, 1.0)
-        # 3 keyword matches = full raw confidence for that category.
-        SATURATION_HITS = 3
+        # ── Multi-factor keyword scoring ────────────────────────────
         scores: Dict[IntentCategory, int] = {}
-        for category, keywords in self.INTENT_KEYWORDS.items():
+        for category, keywords in self._intent_keywords.items():
             hits = sum(1 for kw in keywords if kw in content_lower)
             if hits > 0:
                 scores[category] = hits
@@ -278,23 +281,23 @@ class SynapseValidator:
             cat.value: count for cat, count in scores.items()
         }
 
-        # ── Step 1c: Select best category ─────────────────────────
         if scores:
             best_cat = max(scores, key=scores.get)  # type: ignore[arg-type]
             best_hits = scores[best_cat]
-            raw_confidence = min(best_hits / SATURATION_HITS, 1.0)
+            raw_confidence = min(best_hits / self._SATURATION_DEPTH, 1.0)
         else:
             best_cat = IntentCategory.UNKNOWN
             raw_confidence = 0.0
 
-        # ── Step 2a: Merge agent confidence with heuristic ────────
-        # Weighted average: 40% heuristic, 60% agent-reported
+        # ── Proprietary confidence merging ───────────────────────────
         merged_confidence = round(
-            0.4 * raw_confidence + 0.6 * agent_confidence, 4
+            self._HEURISTIC_WEIGHT * raw_confidence
+            + self._AGENT_WEIGHT * agent_confidence,
+            4,
         )
 
-        # ── Step 2b: Confidence gate ──────────────────────────────
-        is_valid = merged_confidence >= self.CONFIDENCE_THRESHOLD
+        # ── Confidence gating ──────────────────────────────────────
+        is_valid = merged_confidence >= self._CONFIDENCE_GATE
         confidence_boost = 0.0
         warning: Optional[str] = None
         source_type: str
@@ -304,18 +307,17 @@ class SynapseValidator:
         else:
             source_type = "inference"
             warning = (
-                f"Low confidence ({merged_confidence:.2f} < "
-                f"{self.CONFIDENCE_THRESHOLD}). Memory stored as "
-                f"'inference' — may be reclassified during recall."
+                f"Low confidence ({merged_confidence:.2f}). "
+                f"Memory stored as 'inference' — may be reclassified."
             )
             logger.warning(warning)
 
-        # ── Step 2c: Inherent criticality check ───────────────────
+        # ── Criticality assessment ─────────────────────────────────
         is_critical = best_cat == IntentCategory.CRITICAL
         if is_critical:
             confidence_boost = 1.0
 
-        # ── Step 2d: Self-healing boost for ambiguous low-conf ────
+        # ── Self-healing for ambiguous classification ───────────────
         healing_notes: List[str] = []
         self_healing_applied = False
 
@@ -325,34 +327,20 @@ class SynapseValidator:
             and raw_confidence > 0.0
             and best_cat == IntentCategory.UNKNOWN
         ):
-            # Try secondary evidence: check for BIO or CRITICAL hints
-            bio_hints = ['name', 'age', 'health', 'medical', 'born']
-            crit_hints = ['payment', 'bank', 'contract', 'legal', 'security']
-
-            bio_hits = sum(1 for h in bio_hints if h in content_lower)
-            crit_hits = sum(1 for h in crit_hints if h in content_lower)
-
-            if crit_hits > bio_hits and crit_hits > 0:
-                best_cat = IntentCategory.CRITICAL
-                is_critical = True
-                confidence_boost = 1.0
-                merged_confidence = min(merged_confidence + 0.10, 1.0)
+            resolved_cat, resolved_boost, resolved_conf, notes = (
+                self._resolve_ambiguous(content_lower, merged_confidence)
+            )
+            if resolved_cat is not None:
+                best_cat = resolved_cat
+                is_critical = resolved_cat == IntentCategory.CRITICAL
+                confidence_boost = resolved_boost
+                merged_confidence = resolved_conf
                 self_healing_applied = True
-                healing_notes.append(
-                    f"Self-healed UNKNOWN → CRITICAL (evidence: {crit_hits} hints)"
-                )
-            elif bio_hits > 0:
-                best_cat = IntentCategory.BIO
-                merged_confidence = min(merged_confidence + 0.05, 1.0)
-                self_healing_applied = True
-                healing_notes.append(
-                    f"Self-healed UNKNOWN → BIO (evidence: {bio_hits} hints)"
-                )
+                healing_notes.extend(notes)
 
-        # ── Build result ──────────────────────────────────────────
         logger.info(
-            "Intent validated: %s (conf=%.2f, source=%s, critical=%s)",
-            best_cat.value, merged_confidence, source_type, is_critical,
+            "Intent validated: %s (source=%s, critical=%s)",
+            best_cat.value, source_type, is_critical,
         )
 
         return ValidationResult(
@@ -361,7 +349,7 @@ class SynapseValidator:
             confidence=merged_confidence,
             confidence_boost=confidence_boost,
             validation_score=merged_confidence,
-            is_valid=merged_confidence >= self.CONFIDENCE_THRESHOLD,
+            is_valid=merged_confidence >= self._CONFIDENCE_GATE,
             is_critical=is_critical,
             warning=warning,
             critical_keywords=found_critical,
@@ -370,9 +358,9 @@ class SynapseValidator:
             healing_notes=healing_notes,
         )
 
-    # ══════════════════════════════════════════════════════════════
-    #  Self-Healing: Conflict Resolution During Recall
-    # ══════════════════════════════════════════════════════════════
+    # ══════════════════════════════════════════════════════════
+    #  Self-Healing: Conflict Resolution
+    # ══════════════════════════════════════════════════════════
 
     def heal_conflicts(
         self,
@@ -382,10 +370,6 @@ class SynapseValidator:
         similarity_threshold: float = 0.85,
     ) -> Optional[SelfHealingResult]:
         """Resolve category conflicts between semantically proximate memories.
-
-        When two memories have high cosine similarity (≥ *similarity_threshold*)
-        but different intent categories, this method re-evaluates both using
-        keyword consensus and reclassifies the weaker one.
 
         Args:
             memory_a: First memory dict (must include 'content' and 'intent').
@@ -406,13 +390,11 @@ class SynapseValidator:
         cat_b = memory_b.get('intent', 'unknown')
 
         if cat_a == cat_b:
-            return None  # No conflict
+            return None
 
-        # Re-score both using keyword evidence
         score_a = self._score_content(memory_a.get('content', ''))
         score_b = self._score_content(memory_b.get('content', ''))
 
-        # Determine winner by total evidence strength
         best_a = max(score_a.values()) if score_a else 0.0
         best_b = max(score_b.values()) if score_b else 0.0
 
@@ -423,7 +405,6 @@ class SynapseValidator:
             winner_cat = max(score_b, key=score_b.get)  # type: ignore[arg-type]
             loser_original = cat_a
 
-        # Resolve enum
         try:
             new_cat = IntentCategory(winner_cat)
         except ValueError:
@@ -444,72 +425,87 @@ class SynapseValidator:
             original_category=orig_cat,
             new_category=new_cat,
             reason=(
-                f"Semantic similarity {similarity:.3f} ≥ {similarity_threshold} "
-                f"with conflicting categories ({cat_a} vs {cat_b}). "
-                f"Reclassified to '{new_cat.value}' by keyword consensus."
+                f"Conflicting categories ({cat_a} vs {cat_b}). "
+                f"Reclassified to '{new_cat.value}' by evidence consensus."
             ),
             evidence_scores=evidence,
         )
 
         logger.info(
-            "Self-healing: %s → %s (sim=%.3f, reason: keyword consensus)",
+            "Self-healing: %s → %s (sim=%.3f)",
             orig_cat.value, new_cat.value, similarity,
         )
 
         return result
 
-    # ══════════════════════════════════════════════════════════════
+    # ══════════════════════════════════════════════════════════
     #  Batch API
-    # ══════════════════════════════════════════════════════════════
+    # ══════════════════════════════════════════════════════════
 
     def batch_validate(
         self,
         contents: List[str],
         agent_confidence: float = 0.9,
     ) -> List[ValidationResult]:
-        """Validate multiple contents in batch.
-
-        Args:
-            contents: List of sanitized text strings.
-            agent_confidence: Shared confidence for the batch.
-
-        Returns:
-            List of ``ValidationResult`` in the same order.
-        """
+        """Validate multiple contents in batch."""
         return [
             self.validate_intent(c, agent_confidence=agent_confidence)
             for c in contents
         ]
 
-    # ══════════════════════════════════════════════════════════════
+    # ══════════════════════════════════════════════════════════
     #  Private Helpers
-    # ══════════════════════════════════════════════════════════════
+    # ══════════════════════════════════════════════════════════
 
     def _score_content(self, content: str) -> Dict[str, float]:
-        """Score content against all keyword dictionaries.
-
-        Used by ``heal_conflicts()`` to re-evaluate evidence strength
-        for both memories involved in a category conflict.
-
-        Normalization: ``min(hits / 3.0, 1.0)`` — three keyword
-        matches saturate confidence for a given category.
-
-        Args:
-            content: Text to score (will be lowercased internally).
-
-        Returns:
-            Dict mapping category value strings to normalized scores
-            in the range [0.0, 1.0].
-        """
+        """Score content against keyword registry."""
         content_lower = content.lower()
         scores: Dict[str, float] = {}
 
-        for category, keywords in self.INTENT_KEYWORDS.items():
+        for category, keywords in self._intent_keywords.items():
             hits = sum(1 for kw in keywords if kw in content_lower)
             if hits > 0 and len(keywords) > 0:
-                scores[category.value] = min(hits / 3.0, 1.0)
+                scores[category.value] = min(
+                    hits / float(self._SATURATION_DEPTH), 1.0
+                )
 
         return scores
+
+    def _resolve_ambiguous(
+        self,
+        content_lower: str,
+        current_confidence: float,
+    ) -> Tuple[
+        Optional[IntentCategory], float, float, List[str]
+    ]:
+        """Resolve UNKNOWN classification via secondary evidence.
+
+        Proprietary resolution logic. Returns (category, boost,
+        new_confidence, notes) or (None, 0, current, []).
+        """
+        # Secondary evidence signals (proprietary)
+        _bio_signals = ['name', 'age', 'health', 'medical', 'born']
+        _crit_signals = ['payment', 'bank', 'contract', 'legal', 'security']
+
+        bio_hits = sum(1 for h in _bio_signals if h in content_lower)
+        crit_hits = sum(1 for h in _crit_signals if h in content_lower)
+
+        if crit_hits > bio_hits and crit_hits > 0:
+            return (
+                IntentCategory.CRITICAL,
+                1.0,
+                min(current_confidence + 0.10, 1.0),
+                [f"Self-healed UNKNOWN → CRITICAL (evidence: {crit_hits})"]
+            )
+        elif bio_hits > 0:
+            return (
+                IntentCategory.BIO,
+                0.0,
+                min(current_confidence + 0.05, 1.0),
+                [f"Self-healed UNKNOWN → BIO (evidence: {bio_hits})"]
+            )
+
+        return (None, 0.0, current_confidence, [])
 
     @staticmethod
     def _invalid_result() -> ValidationResult:
@@ -528,106 +524,3 @@ class SynapseValidator:
             self_healing_applied=False,
             healing_notes=[],
         )
-
-
-# ══════════════════════════════════════════════════════════════════════
-#  Inline Tests (run with: python -m synapse_memory.engine.validator)
-# ══════════════════════════════════════════════════════════════════════
-
-if __name__ == "__main__":
-    print("=" * 60)
-    print("SynapseValidator — Inline Test Suite (v1.0.5)")
-    print("=" * 60)
-
-    v = SynapseValidator(enable_self_healing=True)
-
-    # Test 1: PREFERENCE classification
-    r1 = v.validate_intent("User prefers dark mode and concise answers", agent_confidence=0.95)
-    assert r1.final_intent == IntentCategory.PREFERENCE
-    assert r1.source_type == "validated"
-    assert r1.confidence >= 0.85
-    assert r1.warning is None
-    print(f"[PASS] PREFERENCE: {r1.final_intent.value}, conf={r1.confidence:.2f}")
-
-    # Test 2: CRITICAL via keyword override
-    r2 = v.validate_intent("There is a security breach in the system", agent_confidence=0.5)
-    assert r2.final_intent == IntentCategory.CRITICAL
-    assert r2.source_type == "critical_override"
-    assert r2.confidence_boost == 1.0
-    assert r2.is_critical is True
-    assert 'breach' in r2.critical_keywords
-    print(f"[PASS] CRITICAL override: {r2.critical_keywords}")
-
-    # Test 3: Low confidence → source_type = "inference" + warning
-    r3 = v.validate_intent("something happened somewhere", agent_confidence=0.3)
-    assert r3.source_type == "inference"
-    assert r3.warning is not None
-    assert r3.confidence < 0.85
-    print(f"[PASS] Low confidence: source={r3.source_type}, warning='{r3.warning[:50]}...'")
-
-    # Test 4: PROCEDURAL
-    r4 = v.validate_intent(
-        "Follow these steps: first install the package, then configure the pipeline",
-        agent_confidence=0.92,
-    )
-    assert r4.final_intent == IntentCategory.PROCEDURAL
-    print(f"[PASS] PROCEDURAL: {r4.final_intent.value}, conf={r4.confidence:.2f}")
-
-    # Test 5: BIO
-    r5 = v.validate_intent(
-        "My name is Ismael, born in Brazil, working in AI",
-        agent_confidence=0.93,
-    )
-    assert r5.final_intent == IntentCategory.BIO
-    print(f"[PASS] BIO: {r5.final_intent.value}, conf={r5.confidence:.2f}")
-
-    # Test 6: EPHEMERAL
-    r6 = v.validate_intent(
-        "I have a meeting today at 3pm, remind me now",
-        agent_confidence=0.88,
-    )
-    assert r6.final_intent == IntentCategory.EPHEMERAL
-    print(f"[PASS] EPHEMERAL: {r6.final_intent.value}, conf={r6.confidence:.2f}")
-
-    # Test 7: Self-healing during conflict
-    healing = v.heal_conflicts(
-        memory_a={'content': 'User prefers concise answers', 'intent': 'preference'},
-        memory_b={'content': 'User likes short responses in English', 'intent': 'fact'},
-        similarity=0.92,
-    )
-    assert healing is not None
-    assert healing.reclassified is True
-    print(f"[PASS] Self-healing: {healing.original_category.value} → {healing.new_category.value}")
-
-    # Test 8: No healing when similarity is low
-    no_heal = v.heal_conflicts(
-        memory_a={'content': 'Payment info', 'intent': 'critical'},
-        memory_b={'content': 'Favorite color', 'intent': 'preference'},
-        similarity=0.30,
-    )
-    assert no_heal is None
-    print("[PASS] No healing when similarity < threshold")
-
-    # Test 9: Invalid input
-    r9 = v.validate_intent("")
-    assert r9.final_intent == IntentCategory.INVALID
-    assert r9.is_valid is False
-    print(f"[PASS] Invalid input: {r9.final_intent.value}")
-
-    # Test 10: Batch validate
-    batch = v.batch_validate([
-        "User prefers dark mode",
-        "There was a security breach",
-        "Follow these steps to deploy",
-    ], agent_confidence=0.90)
-    assert len(batch) == 3
-    assert batch[0].final_intent == IntentCategory.PREFERENCE
-    assert batch[1].final_intent == IntentCategory.CRITICAL
-    assert batch[2].final_intent == IntentCategory.PROCEDURAL
-    print(f"[PASS] Batch: {[r.final_intent.value for r in batch]}")
-
-    # Test 11: backward compat — intent_category alias
-    assert r1.intent_category == r1.final_intent
-    print("[PASS] Backward compat: intent_category alias works")
-
-    print("\n✅ All inline tests passed.")

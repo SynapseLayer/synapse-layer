@@ -1,15 +1,11 @@
 """
 SynapseMemory — Zero-Knowledge Memory Core with Cognitive Security™
 
-Orchestrates the full memory pipeline:
-    raw_text → sanitize → validate_intent → encrypt → embed → DP noise → upsert
+Orchestrates the secure memory pipeline with built-in sanitization,
+intent validation, differential privacy, and self-healing recall.
 
-Every call to store() returns an audit-ready payload with flags:
-    {"sanitized": True, "privacy_applied": True, "intent": {...}}
-
-Recall integrates self-healing: semantically proximate memories with
-conflicting categories are automatically reclassified via keyword
-consensus before being returned to the caller.
+Every call to store() returns an audit-ready payload.
+Enterprise tier extends with pluggable pipeline stages.
 
 Author: Security & Architecture Team @ Synapse Layer
 License: Apache 2.0
@@ -214,17 +210,9 @@ class SynapseMemory:
         ).hexdigest()
         memory_id = content_hash[:32]
 
-        # Trust Quotient (TQ) = merged_confidence × validation_score.
-        # TQ is the primary ranking signal for recall operations.
-        trust_quotient = round(
-            validation.confidence * validation.validation_score, 4
-        )
-        # Apply additive confidence boost for CRITICAL memories so they
-        # consistently surface at the top of recall results.
-        if validation.confidence_boost > 0:
-            trust_quotient = min(
-                trust_quotient + validation.confidence_boost * 0.1, 1.0
-            )
+        # Trust Quotient — proprietary ranking signal (Enterprise extends
+        # with multi-factor TQ including recency decay and agent reputation).
+        trust_quotient = self._compute_tq(validation)
 
         record: Dict[str, Any] = {
             'memory_id': memory_id,
@@ -545,6 +533,17 @@ class SynapseMemory:
 
         return values
 
+    def _compute_tq(self, validation: ValidationResult) -> float:
+        """Compute Trust Quotient for a validated memory.
+
+        OSS uses a baseline formula. Enterprise tier adds recency decay,
+        agent-reputation weighting, and cross-session normalization.
+        """
+        tq = round(validation.confidence * validation.validation_score, 4)
+        if validation.confidence_boost > 0:
+            tq = min(tq + validation.confidence_boost * 0.1, 1.0)
+        return tq
+
     @staticmethod
     def _cosine_similarity(a: List[float], b: List[float]) -> float:
         """Compute cosine similarity between two vectors.
@@ -563,136 +562,3 @@ class SynapseMemory:
 
         return dot / (norm_a * norm_b)
 
-
-# ══ Inline Tests (run with: python -m synapse_memory.core) ═════════════
-if __name__ == "__main__":
-    import asyncio
-
-    print("=" * 60)
-    print("SynapseMemory — Inline Test Suite (v1.0.5)")
-    print("=" * 60)
-
-    async def run_tests():
-        # Test 1: Basic store with full pipeline
-        mem = SynapseMemory(agent_id="test-agent")
-        r = await mem.store(
-            content="User prefers concise answers in Brazilian Portuguese",
-            confidence=0.95,
-        )
-        assert r.sanitized is True
-        assert r.privacy_applied is True
-        assert r.trust_quotient > 0
-        assert r.memory_id
-        assert r.validation_details['final_intent'] in [
-            'preference', 'fact', 'procedural', 'bio',
-            'ephemeral', 'critical', 'unknown',
-        ]
-        assert r.validation_details['source_type'] in [
-            'validated', 'inference', 'critical_override',
-        ]
-        print(f"[PASS] Basic store: TQ={r.trust_quotient:.4f}, "
-              f"intent={r.validation_details['final_intent']}, "
-              f"source={r.validation_details['source_type']}")
-
-        # Test 2: CRITICAL auto-promotion via keyword
-        r2 = await mem.store(
-            content="Security breach detected in the authentication system",
-            confidence=0.60,
-        )
-        assert r2.validation_details['final_intent'] == 'critical'
-        assert r2.validation_details['source_type'] == 'critical_override'
-        assert r2.validation_details['confidence_boost'] == 1.0
-        print(f"[PASS] Critical override: "
-              f"intent={r2.validation_details['final_intent']}, "
-              f"boost={r2.validation_details['confidence_boost']}")
-
-        # Test 3: Low confidence → inference + warning
-        r3 = await mem.store(
-            content="Something happened yesterday with something",
-            confidence=0.30,
-        )
-        assert r3.validation_details['source_type'] == 'inference'
-        assert r3.validation_details['warning'] is not None
-        print(f"[PASS] Low confidence: source={r3.validation_details['source_type']}, "
-              f"warning present")
-
-        # Test 4: Store with PII — must be sanitized
-        r4 = await mem.store(
-            content="Call john@acme.com at +55 11 99999-8888",
-            confidence=0.85,
-        )
-        assert r4.sanitized is True
-        assert r4.sanitization_details['pii_count'] >= 2
-        print(f"[PASS] PII sanitized: {r4.sanitization_details['pii_count']} items")
-
-        # Test 5: Recall with results
-        r5 = await mem.recall("concise answers Portuguese")
-        assert len(r5) > 0
-        assert r5[0].trust_quotient > 0
-        assert r5[0].intent  # Has intent field
-        print(f"[PASS] Recall: {len(r5)} results, "
-              f"TQ={r5[0].trust_quotient:.4f}, "
-              f"intent={r5[0].intent}")
-
-        # Test 6: Recall self-healing integration
-        # Store two memories with different contents but similar query match
-        await mem.store(
-            content="User prefers dark mode in all applications",
-            confidence=0.92,
-        )
-        await mem.store(
-            content="User likes dark theme and prefers minimal UI",
-            confidence=0.90,
-        )
-        r6 = await mem.recall("dark mode preference")
-        assert len(r6) > 0
-        print(f"[PASS] Recall self-healing: {len(r6)} results returned")
-
-        # Test 7: Disabled sanitization
-        mem_raw = SynapseMemory(
-            agent_id="raw-agent",
-            sanitize_enabled=False,
-        )
-        r7 = await mem_raw.store(
-            content="john@test.com is the contact",
-            confidence=0.80,
-        )
-        assert r7.sanitized is False
-        assert r7.privacy_applied is True
-        print(f"[PASS] Sanitize disabled: sanitized={r7.sanitized}")
-
-        # Test 8: Disabled privacy
-        mem_nodp = SynapseMemory(
-            agent_id="no-dp-agent",
-            privacy_enabled=False,
-        )
-        r8 = await mem_nodp.store(
-            content="Important architecture decision for the project",
-            confidence=0.90,
-        )
-        assert r8.sanitized is True
-        assert r8.privacy_applied is False
-        print(f"[PASS] Privacy disabled: dp={r8.privacy_applied}")
-
-        # Test 9: Invalid agent_id
-        try:
-            SynapseMemory(agent_id="")
-            assert False, "Should have raised ValueError"
-        except ValueError:
-            print("[PASS] Invalid agent_id rejected")
-
-        # Test 10: Custom epsilon
-        mem_eps = SynapseMemory(
-            agent_id="eps-agent",
-            privacy_epsilon=0.1,
-        )
-        r10 = await mem_eps.store(
-            content="Highly sensitive configuration data",
-            confidence=0.99,
-        )
-        assert r10.privacy_details['epsilon'] == 0.1
-        print(f"[PASS] Custom ε=0.1: σ={r10.privacy_details['sigma']:.4f}")
-
-        print("\n✅ All inline tests passed.")
-
-    asyncio.run(run_tests())
