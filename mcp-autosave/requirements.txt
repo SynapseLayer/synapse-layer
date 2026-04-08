@@ -1,0 +1,8 @@
+# Synapse Layer — Auto-Save MCP Bridge
+# Python 3.10+
+mcp>=1.0.0
+supabase>=2.0.0
+openai>=1.0.0
+python-dotenv>=1.0.0
+# Optional: local embeddings fallback
+# sentence-transformers>=2.2.0
