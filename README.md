@@ -18,7 +18,7 @@
 
   [Website](https://synapselayer.org) · [Forge](https://forge.synapselayer.org) · [Docs](https://forge.synapselayer.org/docs) · [GitHub](https://github.com/SynapseLayer/synapse-layer) · [PyPI](https://pypi.org/project/synapse-layer/)
 
-  <!-- mcp-name: io.github.synapselayer/synapse-secure-memory -->
+  <!-- mcp-name: io.github.SynapseLayer/synapse-secure-memory -->
 </div>
 
 ---

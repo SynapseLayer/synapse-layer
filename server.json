@@ -1,8 +1,8 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.synapselayer/synapse-secure-memory",
-  "title": "Synapse Layer \u2014 Zero-Knowledge Memory",
-  "description": "Zero-Knowledge persistent memory for MCP agents. Non-bypassable 4-layer Cognitive Security Pipeline: PII sanitization (12+ patterns), intent validation, AES-256-GCM encryption with differential privacy, and HMAC-signed cross-model Neural Handover\u2122.",
+  "name": "io.github.SynapseLayer/synapse-secure-memory",
+  "title": "Synapse Layer — Zero-Knowledge Memory",
+  "description": "Zero-Knowledge Context™ & Neural Handover™ for AI Agents. The Trust Layer for AI Memory.",
   "version": "1.0.6",
   "websiteUrl": "https://synapselayer.org",
   "repository": {
@@ -28,7 +28,7 @@
         },
         {
           "name": "SYNAPSE_PRIVACY_EPSILON",
-          "description": "Differential privacy epsilon parameter. Lower values = stronger privacy. Range: 0.1\u20132.0.",
+          "description": "Differential privacy epsilon parameter. Lower values = stronger privacy. Range: 0.1–2.0.",
           "isRequired": false,
           "isSecret": false,
           "default": "0.5"
@@ -38,6 +38,13 @@
           "description": "AES-256-GCM encryption key for at-rest memory encryption. Auto-generated if not provided.",
           "isRequired": false,
           "isSecret": true
+        },
+        {
+          "name": "LOG_LEVEL",
+          "description": "Logging verbosity: DEBUG, INFO, WARNING, ERROR. Default: INFO.",
+          "isRequired": false,
+          "isSecret": false,
+          "default": "INFO"
         }
       ]
     }
