@@ -4,6 +4,7 @@
   <p><strong>The privacy-first, persistent memory infrastructure for AI agents.<br>MCP-native, secure-by-design.</strong></p>
   <p><em>Giving Agents a Past. Giving Models a Soul. ⚗️</em></p>
 
+  [![Synapse Layer on Smithery](https://smithery.ai/badge/synapselayer/synapse-protocol)](https://smithery.ai/servers/synapselayer/synapse-protocol)
   [![CI](https://github.com/SynapseLayer/synapse-layer/actions/workflows/ci.yml/badge.svg)](https://github.com/SynapseLayer/synapse-layer/actions/workflows/ci.yml)
   [![Coverage](https://img.shields.io/badge/coverage-95%25-brightgreen)](https://github.com/SynapseLayer/synapse-layer/actions/workflows/ci.yml)
   [![PyPI](https://img.shields.io/pypi/v/synapse-layer)](https://pypi.org/project/synapse-layer/)
