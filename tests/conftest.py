@@ -10,6 +10,14 @@ License: Apache 2.0
 
 import math
 import random
+import warnings
+
+# Suppress DeprecationWarnings from third-party integration dependencies
+# (e.g., semantic-kernel memory module deprecation notices)
+warnings.filterwarnings("ignore", category=DeprecationWarning, module=r"semantic_kernel")
+warnings.filterwarnings("ignore", category=DeprecationWarning, module=r"typing_extensions")
+warnings.filterwarnings("ignore", category=DeprecationWarning, module=r"pydantic")
+
 import pytest
 from typing import List, Dict, Any
 

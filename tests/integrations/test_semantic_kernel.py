@@ -12,6 +12,11 @@ License: Apache 2.0
 """
 
 import asyncio
+import warnings
+
+# Suppress SK deprecation warnings BEFORE any semantic_kernel imports
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
 import pytest
 import numpy as np
 from unittest.mock import AsyncMock, patch

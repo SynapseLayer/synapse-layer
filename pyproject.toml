@@ -88,6 +88,10 @@ packages = ["synapse_memory", "synapse_memory.engine", "synapse_memory.crypto", 
 testpaths = ["tests"]
 addopts = "-v --cov=synapse_memory --cov-report=term-missing"
 asyncio_mode = "auto"
+filterwarnings = [
+  "ignore::DeprecationWarning:semantic_kernel.memory",
+  "ignore::DeprecationWarning:typing_extensions",
+]
 
 [tool.coverage.report]
 exclude_lines = [

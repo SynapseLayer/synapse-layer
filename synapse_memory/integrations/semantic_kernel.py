@@ -46,6 +46,10 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 try:
+    import warnings as _warnings
+    _warnings.filterwarnings(
+        "ignore", category=DeprecationWarning, module=r"semantic_kernel\.memory"
+    )
     import numpy as np
     from semantic_kernel.contents.chat_history import ChatHistory
     from semantic_kernel.contents.chat_message_content import ChatMessageContent
