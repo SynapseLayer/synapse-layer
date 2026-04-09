@@ -6,15 +6,9 @@
 
   <br>
 
-  [![Synapse Layer on Smithery](https://smithery.ai/badge/synapselayer/synapse-protocol)](https://smithery.ai/servers/synapselayer/synapse-protocol)
   [![CI](https://github.com/SynapseLayer/synapse-layer/actions/workflows/ci.yml/badge.svg)](https://github.com/SynapseLayer/synapse-layer/actions)
-  [![Coverage](https://img.shields.io/badge/coverage-95%25-brightgreen)](https://github.com/SynapseLayer/synapse-layer/actions/workflows/ci.yml)
-  [![PyPI](https://img.shields.io/pypi/v/synapse-layer)](https://pypi.org/project/synapse-layer/)
-  [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-  [![Python](https://img.shields.io/badge/Python-3.9%2B-blue)](https://www.python.org/)
-  [![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-green)](https://modelcontextprotocol.io)
+  [![Synapse Layer on Smithery](https://smithery.ai/badge/synapselayer/synapse-protocol)](https://smithery.ai/servers/synapselayer/synapse-protocol)
   [![Documentation](https://img.shields.io/badge/Docs-Mintlify-0D9373)](https://docs.synapselayer.org)
-  [![v1.0.7 Stable](https://img.shields.io/badge/v1.0.7-stable-informational)](CHANGELOG.md)
 
   [Website](https://synapselayer.org) · [Forge](https://forge.synapselayer.org) · [Docs](https://docs.synapselayer.org) · [PyPI](https://pypi.org/project/synapse-layer/) · [Smithery](https://smithery.ai/servers/synapselayer/synapse-protocol)
 
