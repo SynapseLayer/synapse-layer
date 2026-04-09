@@ -1,0 +1,59 @@
+# Synapse Layer
+
+> Persistent, encrypted memory infrastructure for AI agents.
+
+## Overview
+
+Synapse Layer is the missing memory primitive for AI systems. It provides persistent, encrypted, cross-model memory with deterministic recall — designed as infrastructure, not a feature.
+
+## Core Concepts
+
+- **agent_id**: Required identifier to maintain agent identity across sessions
+- **Memory persistence**: Cross-session, cross-model, encrypted at rest
+- **Trust Quotient (TQ)**: Deterministic reliability score for each recalled memory, based on recency, frequency, and source authority
+- **Neural Handover**: Signed context transfer between different AI models
+
+## API
+
+- **MCP endpoint**: `https://forge.synapselayer.org/api/mcp`
+- **Python SDK**: `pip install synapse-layer`
+- **Smithery**: `npx @smithery/cli install @synapselayer/synapse-protocol`
+
+## Tools
+
+| Tool | Description |
+|---|---|
+| process_text | Scans text for decisions, milestones, alerts — saves autonomously |
+| save_to_synapse | Direct structured memory persistence with full security pipeline |
+| backfill_embeddings | Async vector embedding generation for stored memories |
+| health_check | System health, version, capability report |
+
+## Usage Rules
+
+- Always recall before generating responses to leverage existing context
+- Prefer high TQ results when multiple memories are available
+- Use memory for personalization, continuity, and reasoning consistency
+- Let the security pipeline handle PII redaction automatically
+
+## Security
+
+- AES-256-GCM encryption
+- 15+ PII/secret redaction patterns
+- Differential privacy on embeddings
+- Zero-knowledge architecture
+
+## Value
+
+- Reduces token usage by up to 70%
+- Enables cross-session and cross-model continuity
+- Improves reasoning consistency with deterministic recall
+- Built-in LGPD/GDPR compliance
+
+## Links
+
+- Website: https://synapselayer.org
+- Documentation: https://synapselayer.org/docs
+- Forge Dashboard: https://synapselayer.org/forge
+- GitHub: https://github.com/SynapseLayer/synapse-layer
+- PyPI: https://pypi.org/project/synapse-layer/
+- Smithery: https://smithery.ai/servers/synapselayer/synapse-protocol

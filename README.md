@@ -1,14 +1,19 @@
 <div align="center">
 
-  <h1>Synapse Layer — Long-Term Memory for AI Agents</h1>
+  <h1>Synapse Layer</h1>
 
-  <p><strong>Plug once. Remember forever. Zero-Knowledge. Zero-Amnesia. 🧠</strong></p>
+  <p><strong>Persistent, Encrypted Memory Infrastructure for AI Agents</strong></p>
+
+  <p>Plug once. Remember forever. Zero-Knowledge. Zero-Amnesia. 🧠</p>
 
   <br>
 
   <a href="https://github.com/SynapseLayer/synapse-layer/actions"><img src="https://github.com/SynapseLayer/synapse-layer/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://smithery.ai/servers/synapselayer/synapse-protocol"><img src="https://smithery.ai/badge/synapselayer/synapse-protocol" alt="Synapse Layer on Smithery"></a>
   <a href="https://synapselayer.org/docs"><img src="https://img.shields.io/badge/Docs-Mintlify-0D9373" alt="Documentation"></a>
+  <a href="https://pypi.org/project/synapse-layer/"><img src="https://img.shields.io/pypi/v/synapse-layer" alt="PyPI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License"></a>
+  <a href="#-built-for-ai-agents"><img src="https://img.shields.io/badge/AI-Agent_Ready-blueviolet" alt="AI Agent Ready"></a>
 
   <br><br>
 
@@ -23,16 +28,16 @@
 ```python
 from synapse_layer import SynapseMemory
 
-memory = SynapseMemory(agent_id="my-agent")
+memory = SynapseMemory(agent_id="agent-1")
 
-# 1. Agents save context automatically
-memory.save("User prefers absolute security and neural handover.")
+await memory.store(
+    content="User prefers secure systems",
+    confidence=0.95
+)
 
-# 2. Recall is deterministic and explainable
-info = memory.recall("user focus")
-# Result: "User prefers absolute security and neural handover."
-#
-# Every result includes a Trust Quotient (TQ) — a deterministic score based on:
+results = await memory.recall("user preferences")
+
+# Each result includes a Trust Quotient (TQ) — a deterministic score based on:
 # - Recency (how current the info is)
 # - Frequency (how often it was reinforced)
 # - Source Authority (how reliable the input source is)
@@ -53,6 +58,27 @@ They forget everything between sessions, lose context when switching models, and
 Synapse Layer introduces persistent, encrypted, cross-model memory with deterministic recall.
 
 Not as a feature — but as **infrastructure**.
+
+---
+
+## 🎯 Who Is This For
+
+- **AI agent builders** — give your agents persistent context across sessions
+- **LLM infrastructure teams** — reduce token waste, increase reasoning consistency
+- **Production AI systems** — deterministic recall with zero hallucination risk
+- **Privacy-first organizations** — built-in LGPD/GDPR compliance with zero-knowledge architecture
+
+---
+
+## Before vs After
+
+| | Without Memory | With Synapse Layer |
+|---|---|---|
+| **Session state** | Stateless — resets every turn | Persistent — survives across sessions |
+| **Token usage** | Reprocesses context every call | Up to 70% reduction via recall |
+| **Model switching** | Context lost between models | Signed handover (GPT-4 ↔ Claude) |
+| **Privacy** | Plaintext embeddings | AES-256-GCM + PII redaction + DP noise |
+| **Recall quality** | Non-deterministic | Deterministic, explainable, ranked by TQ |
 
 ---
 
@@ -217,6 +243,20 @@ Synapse Layer makes memory:
 
 ---
 
+## 🤖 Built for AI Agents
+
+This repository is optimized for autonomous agents, LLM orchestrators, and multi-agent systems.
+
+| File | Purpose |
+|---|---|
+| [`SKILL.md`](SKILL.md) | Machine-readable agent interface specification |
+| [`llms.txt`](llms.txt) | AI crawler format for LLM discovery |
+| MCP native protocol | Direct integration via `forge.synapselayer.org/api/mcp` |
+
+Synapse Layer is not just a library you call — it's **infrastructure your agents connect to**.
+
+---
+
 ## 🎯 Roadmap & Community
 
 | Version | Status | Highlights |
@@ -269,7 +309,15 @@ We are solving it — at the foundation level.
 ---
 
 <div align="center">
-  <strong>Giving Agents a Past. Giving Models a Soul. ⚗️</strong>
+
+  ⭐ **[Star Synapse Layer](https://github.com/SynapseLayer/synapse-layer)** — Memory is not optional. Give your agents a past.
+
   <br><br>
+
+  <strong>Giving Agents a Past. Giving Models a Soul. ⚗️</strong>
+
+  <br><br>
+
   Built by <a href="https://synapselayer.org">Ismael Marchi</a> · <a href="https://x.com/synapselayer">@synapselayer</a>
+
 </div>
