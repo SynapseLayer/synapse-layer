@@ -57,6 +57,9 @@ autogen = [
 llamaindex = [
   "llama-index-core>=0.11.0",
 ]
+semantic-kernel = [
+  "semantic-kernel>=1.0.0",
+]
 dev = [
   "pytest>=7.4.0",
   "pytest-cov>=4.1.0",

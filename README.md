@@ -345,6 +345,43 @@ redaction, intent validation, and AES-256 encryption — automatically.
 > strategies, and PRO heuristics are available under separate license.
 > See [synapselayer.org/docs](https://synapselayer.org/docs).
 
+## 🏢 Using Synapse Layer with Semantic Kernel
+
+Synapse Layer provides the enterprise-grade, zero-knowledge memory
+infrastructure for Microsoft Semantic Kernel developers.  Two adapters
+are provided: **SynapseChatHistory** (persistent chat state) and
+**SynapseMemoryStore** (knowledge retrieval).
+
+```bash
+pip install synapse-layer[semantic-kernel]
+```
+
+**Chat History** — sovereign, encrypted conversation state:
+
+```python
+from synapse_memory.integrations.semantic_kernel import SynapseChatHistory
+
+history = SynapseChatHistory(agent_id="copilot-01")
+history.add_user_message("What is our revenue target?")
+history.add_assistant_message("The Q4 target is $12.5M.")
+```
+
+**Memory Store** — persistent knowledge retrieval:
+
+```python
+from synapse_memory.integrations.semantic_kernel import SynapseMemoryStore
+
+store = SynapseMemoryStore(agent_id="enterprise-bot")
+# Use with SemanticTextMemory for full RAG capabilities
+```
+
+Every message and record passes through the Cognitive Security pipeline —
+PII redaction, intent validation, and AES-256 encryption — automatically.
+
+> **Note:** This is the OSS adapter. Advanced scoring, enterprise retrieval
+> strategies, and PRO heuristics are available under separate license.
+> See [synapselayer.org/docs](https://synapselayer.org/docs).
+
 ## Competitive Comparison
 
 | Capability | Synapse Layer | Mem0 | Zep | pgvector (raw) |
@@ -398,7 +435,7 @@ Synapse Layer is not just a library you call — it's **infrastructure your agen
 | Version | Status | Highlights |
 |---|---|---|
 | **v1.0.7** | ✅ **Stable** | Auto-Save Engine, Plugin Architecture, MCP Bridge, Smithery listing |
-| **v1.1.0** | 🚧 In Progress | ✅ LangChain native adapter, ✅ CrewAI integration, ✅ AutoGen integration, ✅ LlamaIndex integration, embedding model selection |
+| **v1.1.0** | 🚧 In Progress | ✅ LangChain native adapter, ✅ CrewAI integration, ✅ AutoGen integration, ✅ LlamaIndex integration, ✅ Semantic Kernel integration, embedding model selection |
 | **v1.2.0** | 📋 Planned | Synapse Forge visual debugger, real-time memory inspector |
 | **v2.0.0** | 📋 Planned | Multi-tenant vault, team memory spaces, RBAC |
 

@@ -13,6 +13,7 @@ License: Apache 2.0
 #   from synapse_memory.integrations.crewai_memory import SynapseCrewStorage
 #   from synapse_memory.integrations.autogen_memory import SynapseAutoGenMemory
 #   from synapse_memory.integrations.llamaindex import SynapseRetriever, SynapseChatStore
+#   from synapse_memory.integrations.semantic_kernel import SynapseChatHistory, SynapseMemoryStore
 
 __all__ = [
     "SynapseChatMessageHistory",
@@ -20,6 +21,8 @@ __all__ = [
     "SynapseAutoGenMemory",
     "SynapseRetriever",
     "SynapseChatStore",
+    "SynapseChatHistory",
+    "SynapseMemoryStore",
 ]
 
 
@@ -39,4 +42,10 @@ def __getattr__(name: str):
     if name == "SynapseChatStore":
         from .llamaindex import SynapseChatStore
         return SynapseChatStore
+    if name == "SynapseChatHistory":
+        from .semantic_kernel import SynapseChatHistory
+        return SynapseChatHistory
+    if name == "SynapseMemoryStore":
+        from .semantic_kernel import SynapseMemoryStore
+        return SynapseMemoryStore
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
