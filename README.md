@@ -309,6 +309,42 @@ invocation — relevant memories are injected as system context, no glue code ne
 > strategies, and PRO heuristics are available under separate license.
 > See [synapselayer.org/docs](https://synapselayer.org/docs).
 
+## 🔍 Using Synapse Layer with LlamaIndex
+
+Synapse Layer enables LlamaIndex agents to have a sovereign, encrypted
+memory that survives across indexes and query engines.  Two adapters
+are provided: **SynapseRetriever** (RAG) and **SynapseChatStore** (chat history).
+
+```bash
+pip install synapse-layer[llamaindex]
+```
+
+**Retriever** — plug into any query engine:
+
+```python
+from synapse_memory.integrations.llamaindex import SynapseRetriever
+
+retriever = SynapseRetriever(agent_id="researcher-01", top_k=5)
+nodes = retriever.retrieve("What is our deployment strategy?")
+```
+
+**Chat Store** — persistent, encrypted chat history:
+
+```python
+from synapse_memory.integrations.llamaindex import SynapseChatStore
+from llama_index.core.memory import ChatMemoryBuffer
+
+store = SynapseChatStore(agent_id="assistant-01")
+memory = ChatMemoryBuffer.from_defaults(chat_store=store, chat_store_key="session-1")
+```
+
+Every message passes through the Cognitive Security pipeline — PII
+redaction, intent validation, and AES-256 encryption — automatically.
+
+> **Note:** This is the OSS adapter. Advanced scoring, enterprise retrieval
+> strategies, and PRO heuristics are available under separate license.
+> See [synapselayer.org/docs](https://synapselayer.org/docs).
+
 ## Competitive Comparison
 
 | Capability | Synapse Layer | Mem0 | Zep | pgvector (raw) |
@@ -362,7 +398,7 @@ Synapse Layer is not just a library you call — it's **infrastructure your agen
 | Version | Status | Highlights |
 |---|---|---|
 | **v1.0.7** | ✅ **Stable** | Auto-Save Engine, Plugin Architecture, MCP Bridge, Smithery listing |
-| **v1.1.0** | 🚧 In Progress | ✅ LangChain native adapter, ✅ CrewAI integration, ✅ AutoGen integration, embedding model selection |
+| **v1.1.0** | 🚧 In Progress | ✅ LangChain native adapter, ✅ CrewAI integration, ✅ AutoGen integration, ✅ LlamaIndex integration, embedding model selection |
 | **v1.2.0** | 📋 Planned | Synapse Forge visual debugger, real-time memory inspector |
 | **v2.0.0** | 📋 Planned | Multi-tenant vault, team memory spaces, RBAC |
 
