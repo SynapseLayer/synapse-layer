@@ -8,9 +8,9 @@
 
   [![CI](https://github.com/SynapseLayer/synapse-layer/actions/workflows/ci.yml/badge.svg)](https://github.com/SynapseLayer/synapse-layer/actions)
   [![Synapse Layer on Smithery](https://smithery.ai/badge/synapselayer/synapse-protocol)](https://smithery.ai/servers/synapselayer/synapse-protocol)
-  [![Documentation](https://img.shields.io/badge/Docs-Mintlify-0D9373)](https://docs.synapselayer.org)
+  [![Documentation](https://img.shields.io/badge/Docs-Mintlify-0D9373)](https://synapselayer.org/docs)
 
-  [Website](https://synapselayer.org) · [Forge](https://forge.synapselayer.org) · [Docs](https://docs.synapselayer.org) · [PyPI](https://pypi.org/project/synapse-layer/) · [Smithery](https://smithery.ai/servers/synapselayer/synapse-protocol)
+  [Website](https://synapselayer.org) · [Forge](https://synapselayer.org/forge) · [Docs](https://synapselayer.org/docs) · [PyPI](https://pypi.org/project/synapse-layer/) · [Smithery](https://smithery.ai/servers/synapselayer/synapse-protocol)
 
   <!-- mcp-name: io.github.SynapseLayer/synapse-secure-memory -->
 
@@ -321,7 +321,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 ### Connect
 
 - 📣 Follow updates on [X (Twitter)](https://x.com/synapselayer)
-- 🧠 Try the [Forge Dashboard](https://forge.synapselayer.org)
+- 🧠 Try the [Forge Dashboard](https://synapselayer.org/forge)
 - 📖 Read the [Technical Deep-Dive on dev.to](https://dev.to/synapselayer/beyond-context-windows-a-zero-knowledge-memory-reference-implementation-for-the-mcp-ecosystem-4bcg)
 - 📦 Install from [PyPI](https://pypi.org/project/synapse-layer/) or [Smithery](https://smithery.ai/servers/synapselayer/synapse-protocol)
 
@@ -338,7 +338,7 @@ Open-core model: the SDK, MCP server, and security pipeline are fully open sourc
 <div align="center">
   <strong>Giving Agents a Past. Giving Models a Soul. ⚗️</strong>
   <br><br>
-  <a href="https://synapselayer.org">Website</a> · <a href="https://forge.synapselayer.org">Forge</a> · <a href="https://docs.synapselayer.org">Docs</a> · <a href="https://github.com/SynapseLayer/synapse-layer">GitHub</a> · <a href="https://pypi.org/project/synapse-layer/">PyPI</a> · <a href="https://smithery.ai/servers/synapselayer/synapse-protocol">Smithery</a>
+  <a href="https://synapselayer.org">Website</a> · <a href="https://synapselayer.org/forge">Forge</a> · <a href="https://synapselayer.org/docs">Docs</a> · <a href="https://github.com/SynapseLayer/synapse-layer">GitHub</a> · <a href="https://pypi.org/project/synapse-layer/">PyPI</a> · <a href="https://smithery.ai/servers/synapselayer/synapse-protocol">Smithery</a>
   <br><br>
-  Built by <a href="https://forge.synapselayer.org">Ismael Marchi</a> · <a href="https://x.com/synapselayer">@synapselayer</a>
+  Built by <a href="https://synapselayer.org">Ismael Marchi</a> · <a href="https://x.com/synapselayer">@synapselayer</a>
 </div>
