@@ -15,6 +15,9 @@ import asyncio
 import pytest
 from unittest.mock import AsyncMock, patch
 
+# Skip entire module if langchain-core is not installed
+pytest.importorskip("langchain_core", reason="langchain-core not installed")
+
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.messages import HumanMessage, AIMessage
 

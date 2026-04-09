@@ -78,6 +78,7 @@ packages = ["synapse_memory", "synapse_memory.engine", "synapse_memory.crypto", 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-v --cov=synapse_memory --cov-report=term-missing"
+asyncio_mode = "auto"
 
 [tool.coverage.report]
 exclude_lines = [

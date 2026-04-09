@@ -18,6 +18,9 @@ from datetime import datetime, timedelta
 
 import pytest
 
+# Skip entire module if crewai is not installed
+pytest.importorskip("crewai", reason="crewai not installed")
+
 from crewai.memory.storage.backend import StorageBackend
 from crewai.memory.types import MemoryRecord, ScopeInfo
 
