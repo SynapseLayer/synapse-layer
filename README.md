@@ -252,6 +252,35 @@ chain_with_history = RunnableWithMessageHistory(
 > strategies, and PRO heuristics are available under separate license.
 > See [synapselayer.org/docs](https://synapselayer.org/docs).
 
+## 🤖 Using Synapse Layer with CrewAI
+
+Synapse Layer plugs into CrewAI as a persistent, encrypted storage backend
+for the unified memory system. Every memory passes through PII redaction,
+intent validation, and AES-256 encryption automatically.
+
+```bash
+pip install synapse-layer[crewai]
+```
+
+```python
+from synapse_memory.integrations.crewai_memory import SynapseCrewStorage
+from crewai.memory.unified_memory import Memory
+from crewai import Crew
+
+crew = Crew(
+    agents=[...],
+    tasks=[...],
+    memory=Memory(storage=SynapseCrewStorage(agent_id="my-crew")),
+)
+```
+
+The adapter implements CrewAI's `StorageBackend` protocol — scope management,
+category filtering, and async variants all work out of the box.
+
+> **Note:** This is the OSS adapter. Advanced scoring, enterprise retrieval
+> strategies, and PRO heuristics are available under separate license.
+> See [synapselayer.org/docs](https://synapselayer.org/docs).
+
 ## Competitive Comparison
 
 | Capability | Synapse Layer | Mem0 | Zep | pgvector (raw) |
@@ -305,7 +334,7 @@ Synapse Layer is not just a library you call — it's **infrastructure your agen
 | Version | Status | Highlights |
 |---|---|---|
 | **v1.0.7** | ✅ **Stable** | Auto-Save Engine, Plugin Architecture, MCP Bridge, Smithery listing |
-| **v1.1.0** | 🚧 In Progress | ✅ LangChain native adapter, CrewAI integration, embedding model selection |
+| **v1.1.0** | 🚧 In Progress | ✅ LangChain native adapter, ✅ CrewAI integration, embedding model selection |
 | **v1.2.0** | 📋 Planned | Synapse Forge visual debugger, real-time memory inspector |
 | **v2.0.0** | 📋 Planned | Multi-tenant vault, team memory spaces, RBAC |
 
