@@ -51,6 +51,9 @@ langchain = [
 crewai = [
   "crewai>=1.14.0",
 ]
+autogen = [
+  "autogen-core>=0.7.0",
+]
 dev = [
   "pytest>=7.4.0",
   "pytest-cov>=4.1.0",

@@ -11,8 +11,9 @@ License: Apache 2.0
 # Users import directly from the submodule they need:
 #   from synapse_memory.integrations.langchain_memory import SynapseChatMessageHistory
 #   from synapse_memory.integrations.crewai_memory import SynapseCrewStorage
+#   from synapse_memory.integrations.autogen_memory import SynapseAutoGenMemory
 
-__all__ = ["SynapseChatMessageHistory", "SynapseCrewStorage"]
+__all__ = ["SynapseChatMessageHistory", "SynapseCrewStorage", "SynapseAutoGenMemory"]
 
 
 def __getattr__(name: str):
@@ -22,4 +23,7 @@ def __getattr__(name: str):
     if name == "SynapseCrewStorage":
         from .crewai_memory import SynapseCrewStorage
         return SynapseCrewStorage
+    if name == "SynapseAutoGenMemory":
+        from .autogen_memory import SynapseAutoGenMemory
+        return SynapseAutoGenMemory
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

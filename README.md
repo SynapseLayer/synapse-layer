@@ -281,6 +281,34 @@ category filtering, and async variants all work out of the box.
 > strategies, and PRO heuristics are available under separate license.
 > See [synapselayer.org/docs](https://synapselayer.org/docs).
 
+## 🧠 Using Synapse Layer with AutoGen
+
+Synapse Layer implements AutoGen's native `Memory` interface (`autogen-core >=0.7`),
+giving agents persistent, encrypted memory that survives across conversations.
+
+```bash
+pip install synapse-layer[autogen]
+```
+
+```python
+from synapse_memory.integrations import SynapseAutoGenMemory
+from autogen_agentchat.agents import AssistantAgent
+
+memory = SynapseAutoGenMemory(agent_id="my-agent", top_k=5)
+agent  = AssistantAgent(
+    name="assistant",
+    model_client=client,
+    memory=[memory],
+)
+```
+
+The agent automatically calls `memory.update_context()` before each LLM
+invocation — relevant memories are injected as system context, no glue code needed.
+
+> **Note:** This is the OSS adapter. Advanced scoring, enterprise retrieval
+> strategies, and PRO heuristics are available under separate license.
+> See [synapselayer.org/docs](https://synapselayer.org/docs).
+
 ## Competitive Comparison
 
 | Capability | Synapse Layer | Mem0 | Zep | pgvector (raw) |
@@ -334,7 +362,7 @@ Synapse Layer is not just a library you call — it's **infrastructure your agen
 | Version | Status | Highlights |
 |---|---|---|
 | **v1.0.7** | ✅ **Stable** | Auto-Save Engine, Plugin Architecture, MCP Bridge, Smithery listing |
-| **v1.1.0** | 🚧 In Progress | ✅ LangChain native adapter, ✅ CrewAI integration, embedding model selection |
+| **v1.1.0** | 🚧 In Progress | ✅ LangChain native adapter, ✅ CrewAI integration, ✅ AutoGen integration, embedding model selection |
 | **v1.2.0** | 📋 Planned | Synapse Forge visual debugger, real-time memory inspector |
 | **v2.0.0** | 📋 Planned | Multi-tenant vault, team memory spaces, RBAC |
 
