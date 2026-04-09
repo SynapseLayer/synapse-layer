@@ -29,9 +29,57 @@ memory.save("User prefers absolute security and neural handover.")
 # 2. Recall is deterministic and explainable
 info = memory.recall("user focus")
 # Result: "User prefers absolute security and neural handover."
+
+# Each result includes a Trust Quotient (TQ)
+# A deterministic signal of memory reliability — not a black box.
 ```
 
 That's the entire API. **Encryption, PII redaction, differential privacy, intent validation, and trust scoring** — all happen under the hood. No configuration. No boilerplate. No amnesia.
+
+---
+
+## 🧠 Why Synapse Layer?
+
+AI agents are stateless by design.
+
+They forget everything between sessions, lose context when switching models, and continuously reprocess the same information — increasing cost, latency, and inconsistency.
+
+**This is the missing layer in modern AI systems.**
+
+Synapse Layer introduces persistent, encrypted, cross-model memory with deterministic recall.
+
+Not as a feature — but as **infrastructure**.
+
+---
+
+## 🏢 Real-World Impact
+
+### Used in production
+
+Synapse Layer powers real systems in production:
+
+- 📉 **Up to 70% reduction** in token usage via persistent context recall
+- 🔁 **Cross-session and cross-model** memory continuity
+- 🔐 **Built-in privacy and compliance** (LGPD/GDPR ready)
+- 🧠 **Zero context loss** across 10K+ agent sessions
+
+> *"Synapse Layer eliminated our biggest bottleneck — agents that forget."*
+
+---
+
+## 🔓 Open Core Model
+
+Synapse Layer follows an **Open Core** approach.
+
+- **Community (Apache 2.0)**
+  Core SDK, secure memory pipeline, MCP integration, and full local control.
+
+- **Enterprise**
+  Advanced memory intelligence, cross-model continuity, and production-grade infrastructure.
+
+The foundation is open. The intelligence layer scales with you.
+
+To enable PRO: `pip install synapse-layer-pro` and set `SYNAPSE_MODE=pro`.
 
 ---
 
@@ -72,80 +120,7 @@ pip install synapse-layer
 
 ---
 
-## 🔓 Open Core Model
-
-Synapse Layer follows a transparent **open-core architecture**. The community edition is fully functional. The PRO tier unlocks proprietary intelligence.
-
-| Capability | Community (OSS) | Enterprise (PRO) |
-|---|:---:|:---:|
-| Memory Storage & Recall | ✅ | ✅ |
-| MCP Server (4 tools) | ✅ | ✅ |
-| PII/Secret Redaction (15+ patterns) | ✅ | ✅ |
-| AES-256-GCM Encryption | ✅ | ✅ |
-| Differential Privacy (ε-DP) | ✅ | ✅ |
-| Basic Importance Scoring | ✅ | ✅ |
-| Hash-Based Deduplication | ✅ | ✅ |
-| Auto-Save Trigger Detection | ✅ | ✅ |
-| Plugin Architecture | ✅ | ✅ |
-| **TQ™ Multi-Factor Scoring** | — | ✅ |
-| **Neural Handover™** (JWT cross-model) | — | ✅ |
-| **N-Gram Semantic Deduplication** | — | ✅ |
-| **Weighted Conflict Resolution** | — | ✅ |
-| **Priority Intelligence Layer** | — | ✅ |
-| Priority Support & SLA | — | ✅ |
-
-> *"The OSS shows what is possible. The PRO defines how intelligence actually works."*
-
-To enable PRO: `pip install synapse-layer-pro` and set `SYNAPSE_MODE=pro`.
-
----
-
-## 🧠 Why Synapse Layer?
-
-AI agents are stateless. They forget everything between sessions, waste tokens re-asking questions, and lose critical context when switching models. Existing solutions store plaintext embeddings (security risk), lack cross-model support, or require manual vector DB management.
-
-Synapse Layer solves this with a **deterministic, explainable, hallucination-free** memory engine.
-
-### Trust Quotient™ (TQ) — The Brain
-
-Every memory operation is scored by the **Trust Quotient™**, a multi-factor quality signal built on five pillars:
-
-| Pillar | What It Measures |
-|---|---|
-| **Recency** | How fresh is the memory? Recent context weighs more. |
-| **Frequency** | How often is this pattern confirmed across interactions? |
-| **Explicit Signals** | Did the agent or user explicitly mark this as important? |
-| **Source Authority** | Was this from a validated source or an inference? |
-| **Verification Consensus** | Do multiple independent signals agree on the classification? |
-
-The TQ formula is dynamically calibrated — weights are proprietary and adapt per deployment. What matters is the guarantee:
-
-> **No black box. Every recall is deterministic, explainable, and hallucination-free.**
-
-The full TQ algorithm is available under Enterprise license. The OSS provides baseline linear scoring. See the [Plugin Architecture](#-plugin-architecture) section for extensibility.
-
----
-
-## 🏢 Real-World Impact
-
-### Case Study: GoArqIA Architecture Platform
-
-[GoArqIA](https://goarqia.com) is an AI-powered architecture platform that uses Synapse Layer as its memory backbone in production.
-
-| Metric | Result |
-|---|---|
-| **Token consumption** | **70% reduction** via persistent context recall |
-| **Compliance** | Full **LGPD/GDPR** compliance with built-in PII redaction |
-| **Cross-model transfer** | **Neural Handover™** in production (GPT-4 ↔ Claude) |
-| **Memory reliability** | Zero context loss across 10K+ agent sessions |
-
-> *"Synapse Layer eliminated our biggest bottleneck — agents that forget. The security pipeline gave us LGPD compliance without extra engineering."*
-
----
-
-## 🛠️ Technical Capabilities
-
-### Zero-Leak Security Policy
+## 🛡️ Security Architecture
 
 Every memory passes through a **non-bypassable 4-layer Cognitive Security Pipeline** before persistence:
 
@@ -153,87 +128,12 @@ Every memory passes through a **non-bypassable 4-layer Cognitive Security Pipeli
 Agent → Sanitize (PII) → Validate Intent → Encrypt (AES-256) → DP Noise → Vault
 ```
 
-| Seal | Name | Function |
+| Layer | Name | What It Does |
 |:---:|---|---|
-| 1 | **Semantic Privacy Guard™** | 15+ regex patterns: emails, phones, SSNs, CPFs, CNPJs, API keys, Bearer tokens, AWS keys, private endpoints |
-| 2 | **Intelligent Intent Validation™** | Auto-categorization with critical keyword promotion and self-healing on recall |
-| 3 | **Differential Privacy** | Calibrated Gaussian noise (ε-bounded) on embeddings before storage |
-| 4 | **Neural Handover™** | HMAC-SHA256 signed JWT cross-model transfer with vault-first persistence |
-
-### Autonomous Detection
-
-Synapse Layer doesn’t just store — it **recognizes** what matters:
-
-- 🎯 **Milestones** — deployments, launches, releases, first customers
-- 🎯 **Decisions** — pivots, strategy changes, architectural choices
-- 🎯 **Alerts** — security incidents, breaches, critical bugs, downtime
-- 🎯 **Strategic context** — funding, partnerships, compliance events
-
-All detected autonomously via the [Auto-Save Engine](#auto-save-engine). No manual tagging required.
-
-### Multi-Framework Ready
-
-| Framework | Status |
-|---|---|
-| Claude Desktop | ✅ Native MCP |
-| LangChain | ✅ Via MCP adapter |
-| CrewAI | ✅ Via MCP adapter |
-| Custom agents | ✅ Python SDK + REST |
-| Smithery | ✅ [Listed](https://smithery.ai/servers/synapselayer/synapse-protocol) |
-
----
-
-## Quick Start (SDK)
-
-```python
-from synapse_layer import SynapseMemory
-import asyncio
-
-async def main():
-    mem = SynapseMemory(agent_id="my-agent")
-
-    # Store — full security pipeline runs automatically
-    await mem.store("User prefers dark mode", confidence=0.95)
-
-    # Recall — ranked by Trust Quotient™
-    results = await mem.recall("user preferences")
-    for r in results:
-        print(f"{r.content} (TQ: {r.trust_quotient:.3f})")
-
-asyncio.run(main())
-```
-
-That’s it. Encryption, sanitization, differential privacy, intent validation, and trust scoring — all happen automatically.
-
----
-
-## Auto-Save Engine
-
-The Auto-Save Engine gives agents **autonomous memory** — it decides what’s worth remembering.
-
-```python
-from synapse_memory.autosave import AutoSaveEngine, AutoSaveEvent
-
-# Direct save
-result = engine.save(AutoSaveEvent(
-    content="Launched OFFLY v2.0 to production",
-    project="OFFLY",
-    type="[MILESTONE]",
-    importance=4,
-    tags=["launch", "production"],
-))
-
-# Auto-detect — the engine decides what’s worth saving
-results = engine.process_text("We decided to pivot to enterprise B2B")
-```
-
-**Pipeline:** `text → trigger_detect → policy_evaluate → redact → dedup → persist → embed (async)`
-
-- 🔒 PII/secrets **always** redacted before storage
-- ⚡ Near-zero latency (embedding=NULL on insert, async backfill)
-- 🧠 Autonomous trigger detection (milestones, decisions, alerts)
-- 🔁 LRU cache + hash dedup prevents duplicates
-- 🏗️ Extensible via plugin architecture
+| 1 | **Semantic Privacy Guard™** | 15+ redaction patterns for PII, secrets, and credentials |
+| 2 | **Intelligent Intent Validation™** | Autonomous categorization with self-healing on recall |
+| 3 | **Differential Privacy** | Calibrated noise on embeddings before storage |
+| 4 | **Neural Handover™** | Signed cross-model context transfer with vault-first persistence |
 
 ---
 
@@ -296,6 +196,22 @@ engine = AutoSaveEngine(
 
 ---
 
+## ⚡ Why It Matters
+
+Memory is the missing primitive in AI systems.
+
+Without memory, agents restart every session.
+With memory, intelligence compounds over time.
+
+Synapse Layer makes memory:
+
+- **Persistent** — survives across sessions and restarts
+- **Secure** — encrypted, redacted, privacy-noised before storage
+- **Portable** — moves between models via signed handover
+- **Deterministic** — every recall is explainable and hallucination-free
+
+---
+
 ## 🎯 Roadmap & Community
 
 | Version | Status | Highlights |
@@ -307,7 +223,7 @@ engine = AutoSaveEngine(
 
 ### Contributing
 
-We welcome contributions! Whether it’s bug reports, documentation, new trigger patterns, or framework adapters:
+We welcome contributions! Whether it's bug reports, documentation, new trigger patterns, or framework adapters:
 
 ```bash
 git clone https://github.com/SynapseLayer/synapse-layer.git
@@ -332,6 +248,18 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 Apache License 2.0 — see [LICENSE](LICENSE).
 
 Open-core model: the SDK, MCP server, and security pipeline are fully open source. Trust Quotient™ weights, Neural Handover™ internals, and Synapse Forge are proprietary and available under commercial license.
+
+---
+
+## 🧠 The Future of AI Memory
+
+Synapse Layer is not another vector database.
+
+It is the **memory infrastructure layer** for intelligent systems.
+
+As AI agents become autonomous, memory becomes the bottleneck.
+
+We are solving it — at the foundation level.
 
 ---
 
