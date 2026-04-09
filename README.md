@@ -1,12 +1,8 @@
 <div align="center">
 
-  # Synapse Layer
+  # Synapse Layer — Long-Term Memory for AI Agents
 
-  ### Autonomous Memory Engine for AI Agents
-
-  **Infinite Memory. Zero Context Loss. Built-in Security.**
-  <br>
-  *The open-core memory standard for the next generation of AI agency.*
+  > **Plug once. Remember forever. Zero-Knowledge. Zero-Amnesia. 🧠**
 
   <br>
 
@@ -20,11 +16,28 @@
   [![Documentation](https://img.shields.io/badge/Docs-Mintlify-0D9373)](https://docs.synapselayer.org)
   [![v1.0.7 Stable](https://img.shields.io/badge/v1.0.7-stable-informational)](CHANGELOG.md)
 
-  [Website](https://synapselayer.org) · [Forge](https://forge.synapselayer.org) · [Docs](https://forge.synapselayer.org/docs) · [PyPI](https://pypi.org/project/synapse-layer/) · [Smithery](https://smithery.ai/servers/synapselayer/synapse-protocol)
+  [Website](https://synapselayer.org) · [Forge](https://forge.synapselayer.org) · [Docs](https://docs.synapselayer.org) · [PyPI](https://pypi.org/project/synapse-layer/) · [Smithery](https://smithery.ai/servers/synapselayer/synapse-protocol)
 
   <!-- mcp-name: io.github.SynapseLayer/synapse-secure-memory -->
 
 </div>
+
+---
+
+```python
+from synapse_layer import SynapseMemory
+
+memory = SynapseMemory(agent_id="my-agent")
+
+# 1. Agents save context automatically
+memory.save("User prefers absolute security and neural handover.")
+
+# 2. Recall is deterministic and explainable
+info = memory.recall("user focus")
+# Result: "User prefers absolute security and neural handover."
+```
+
+That's the entire API. **Encryption, PII redaction, differential privacy, intent validation, and trust scoring** — all happen under the hood. No configuration. No boilerplate. No amnesia.
 
 ---
 
@@ -331,7 +344,7 @@ Open-core model: the SDK, MCP server, and security pipeline are fully open sourc
 <div align="center">
   <strong>Giving Agents a Past. Giving Models a Soul. ⚗️</strong>
   <br><br>
-  <a href="https://synapselayer.org">Website</a> · <a href="https://forge.synapselayer.org">Forge</a> · <a href="https://forge.synapselayer.org/docs">Docs</a> · <a href="https://github.com/SynapseLayer/synapse-layer">GitHub</a> · <a href="https://pypi.org/project/synapse-layer/">PyPI</a> · <a href="https://smithery.ai/servers/synapselayer/synapse-protocol">Smithery</a>
+  <a href="https://synapselayer.org">Website</a> · <a href="https://forge.synapselayer.org">Forge</a> · <a href="https://docs.synapselayer.org">Docs</a> · <a href="https://github.com/SynapseLayer/synapse-layer">GitHub</a> · <a href="https://pypi.org/project/synapse-layer/">PyPI</a> · <a href="https://smithery.ai/servers/synapselayer/synapse-protocol">Smithery</a>
   <br><br>
   Built by <a href="https://forge.synapselayer.org">Ismael Marchi</a> · <a href="https://x.com/synapselayer">@synapselayer</a>
 </div>

@@ -1,33 +1,40 @@
 ---
 title: Introduction
-description: "Infinite Memory. Zero Context Loss. Built-in Security."
+description: "Plug once. Remember forever. Zero-Knowledge. Zero-Amnesia."
 ---
 
-# Synapse Layer
+# Synapse Layer — Long-Term Memory for AI Agents
 
-**The autonomous memory engine for AI agents.**
+> Plug once. Remember forever. Zero-Knowledge. Zero-Amnesia. 🧠
+
+```python
+from synapse_layer import SynapseMemory
+
+memory = SynapseMemory(agent_id="my-agent")
+
+# 1. Agents save context automatically
+memory.save("User prefers absolute security and neural handover.")
+
+# 2. Recall is deterministic and explainable
+info = memory.recall("user focus")
+# Result: "User prefers absolute security and neural handover."
+```
+
+That's the entire API. **Encryption, PII redaction, differential privacy, intent validation, and trust scoring** — all happen under the hood. No configuration. No boilerplate. No amnesia.
 
 Synapse Layer solves the fundamental problem of **agent amnesia** — AI agents forget everything between sessions, waste tokens re-asking questions, and lose critical context when switching models.
 
-With Synapse Layer, your agents get:
-
-- **Persistent memory** that survives across sessions
-- **Built-in security** — PII/secrets redacted before storage
-- **Autonomous detection** — milestones, decisions, and alerts saved automatically
-- **Cross-model transfer** — context moves between GPT-4, Claude, and others via Neural Handover™
-- **Deterministic recall** — every result is explainable, ranked by Trust Quotient™
-
 <CardGroup cols={2}>
-  <Card title="Quick Start" icon="rocket" href="/docs/quickstart">
+  <Card title="Quick Start" icon="rocket" href="https://docs.synapselayer.org/docs/quickstart">
     Install via Smithery, PyPI, or direct MCP connection in under 60 seconds.
   </Card>
-  <Card title="Architecture" icon="brain" href="/docs/architecture">
+  <Card title="Architecture" icon="brain" href="https://docs.synapselayer.org/docs/architecture">
     Understand the TQ Intelligence pipeline and how memory flows through the system.
   </Card>
-  <Card title="Security" icon="shield-halved" href="/docs/security">
+  <Card title="Security" icon="shield-halved" href="https://docs.synapselayer.org/docs/security">
     Zero-Leak Policy: 15+ patterns protect PII and secrets before any I/O.
   </Card>
-  <Card title="MCP Server" icon="plug" href="/docs/mcp-server">
+  <Card title="MCP Server" icon="plug" href="https://docs.synapselayer.org/docs/mcp-server">
     4 tools ready for Claude Desktop, LangChain, CrewAI, and custom agents.
   </Card>
 </CardGroup>
@@ -45,28 +52,6 @@ Synapse Layer is different:
 | No cross-model context | Neural Handover™ with JWT-signed transfer |
 | Black-box recall ranking | Trust Quotient™ — deterministic, explainable scoring |
 | Manual tagging required | Auto-Save Engine detects what matters autonomously |
-
-## The A-ha Moment
-
-```python
-from synapse_layer import SynapseMemory
-import asyncio
-
-async def main():
-    mem = SynapseMemory(agent_id="my-agent")
-
-    # Store — PII redacted, encrypted, privacy-noised automatically
-    await mem.store("User prefers dark mode", confidence=0.95)
-
-    # Recall — ranked by Trust Quotient™, self-healing on conflicts
-    results = await mem.recall("user preferences")
-    for r in results:
-        print(f"{r.content} (TQ: {r.trust_quotient:.3f})")
-
-asyncio.run(main())
-```
-
-That’s it. Encryption, sanitization, differential privacy, intent validation, and trust scoring — all happen under the hood.
 
 <Note>
   Synapse Layer follows an **open-core model**. The SDK, MCP server, and security pipeline are fully open source (Apache 2.0). Advanced scoring and intelligence are available via the PRO tier.
