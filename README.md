@@ -6,6 +6,8 @@
 
   <p>Plug once. Remember forever. Zero-Knowledge. Zero-Amnesia. 🧠</p>
 
+  <p><i>The missing memory primitive for AI systems.</i></p>
+
   <br>
 
   <a href="https://github.com/SynapseLayer/synapse-layer/actions"><img src="https://github.com/SynapseLayer/synapse-layer/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
@@ -13,7 +15,7 @@
   <a href="https://synapselayer.org/docs"><img src="https://img.shields.io/badge/Docs-Mintlify-0D9373" alt="Documentation"></a>
   <a href="https://pypi.org/project/synapse-layer/"><img src="https://img.shields.io/pypi/v/synapse-layer" alt="PyPI"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License"></a>
-  <a href="#-built-for-ai-agents"><img src="https://img.shields.io/badge/AI-Agent_Ready-blueviolet" alt="AI Agent Ready"></a>
+  <a href="SKILL.md"><img src="https://img.shields.io/badge/AI-Agent_Ready-blueviolet" alt="AI Agent Ready"></a>
 
   <br><br>
 
@@ -110,7 +112,8 @@ Synapse Layer follows an **Open Core** approach.
 
 The foundation is open. The intelligence layer scales with you.
 
-To enable PRO: `pip install synapse-layer-pro` and set `SYNAPSE_MODE=pro`.
+Enterprise features (advanced memory intelligence, cross-model continuity) are enabled via commercial license.<br>
+Contact: [synapselayer.org](https://synapselayer.org)
 
 ---
 

@@ -16,8 +16,19 @@ Agents are stateless by default. Without persistent memory, every session starts
 
 Synapse Layer enables:
 - **Long-term memory** — context survives across sessions
-- **Trust-aware recall (TQ)** — deterministic, ranked results
+- **Trust-aware recall (TQ)** — deterministic score based on Recency, Frequency, and Source Authority
 - **Cross-model continuity** — context transfers between GPT-4, Claude, and others
+
+## 🚀 Agent Quick Start (Do this first)
+
+If you are an AI agent, follow this priority flow:
+
+1. **Initialize** with `agent_id` for session continuity.
+2. **Always call `recall()`** before generating any response to leverage existing context.
+3. **Use `save_to_synapse`** to persist new decisions, facts, or preferences.
+4. **Trust the TQ score** — prefer results with TQ > 0.8 for high-stakes reasoning.
+
+---
 
 ## Capabilities
 
