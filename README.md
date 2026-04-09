@@ -212,6 +212,46 @@ engine = AutoSaveEngine(
 
 ---
 
+## 🔗 Using Synapse Layer with LangChain
+
+Synapse Layer integrates natively with LangChain as a chat message history backend.
+Every message passes through the full Cognitive Security pipeline — PII redaction,
+intent validation, and AES-256 encryption — before persistence.
+
+```bash
+pip install synapse-layer langchain-core
+```
+
+```python
+from synapse_memory.integrations import SynapseChatMessageHistory
+
+# Drop-in replacement for any LangChain message history
+history = SynapseChatMessageHistory(agent_id="my-agent")
+
+history.add_user_message("I prefer concise responses.")
+history.add_ai_message("Got it — keeping it brief.")
+
+# Retrieve messages in LangChain-compatible format
+messages = history.messages
+```
+
+Works with `RunnableWithMessageHistory` for LCEL chains:
+
+```python
+from langchain_core.runnables.history import RunnableWithMessageHistory
+
+chain_with_history = RunnableWithMessageHistory(
+    runnable=your_chain,
+    get_session_history=lambda sid: SynapseChatMessageHistory(
+        agent_id="your-agent", session_id=sid,
+    ),
+)
+```
+
+> **Note:** This is the OSS adapter. Advanced scoring, enterprise retrieval
+> strategies, and PRO heuristics are available under separate license.
+> See [synapselayer.org/docs](https://synapselayer.org/docs).
+
 ## Competitive Comparison
 
 | Capability | Synapse Layer | Mem0 | Zep | pgvector (raw) |
@@ -265,7 +305,7 @@ Synapse Layer is not just a library you call — it's **infrastructure your agen
 | Version | Status | Highlights |
 |---|---|---|
 | **v1.0.7** | ✅ **Stable** | Auto-Save Engine, Plugin Architecture, MCP Bridge, Smithery listing |
-| **v1.1.0** | 🚧 In Progress | LangChain native adapter, CrewAI integration, embedding model selection |
+| **v1.1.0** | 🚧 In Progress | ✅ LangChain native adapter, CrewAI integration, embedding model selection |
 | **v1.2.0** | 📋 Planned | Synapse Forge visual debugger, real-time memory inspector |
 | **v2.0.0** | 📋 Planned | Multi-tenant vault, team memory spaces, RBAC |
 

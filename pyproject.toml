@@ -45,6 +45,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+langchain = [
+  "langchain-core>=0.3.0",
+]
 dev = [
   "pytest>=7.4.0",
   "pytest-cov>=4.1.0",
@@ -64,7 +67,7 @@ Changelog = "https://github.com/SynapseLayer/synapse-layer/blob/main/CHANGELOG.m
 Security = "https://github.com/SynapseLayer/synapse-layer/blob/main/SECURITY.md"
 
 [tool.setuptools]
-packages = ["synapse_memory", "synapse_memory.engine", "synapse_memory.crypto"]
+packages = ["synapse_memory", "synapse_memory.engine", "synapse_memory.crypto", "synapse_memory.autosave", "synapse_memory.plugins", "synapse_memory.integrations"]
 
 [tool.setuptools.package-dir]
 "" = "."

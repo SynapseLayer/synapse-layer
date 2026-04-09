@@ -50,6 +50,8 @@ See https://forge.synapselayer.org/docs/pro for details.
 __all__ = [
     # Core
     "SynapseMemory",
+    # Integrations (lazy — import from synapse_memory.integrations)
+    # "SynapseChatMessageHistory",
     "StoreResult",
     "RecallResult",
     # Sanitizer
