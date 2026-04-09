@@ -1,16 +1,18 @@
 <div align="center">
 
-  # Synapse Layer — Long-Term Memory for AI Agents
+  <h1>Synapse Layer — Long-Term Memory for AI Agents</h1>
 
-  > **Plug once. Remember forever. Zero-Knowledge. Zero-Amnesia. 🧠**
+  <p><strong>Plug once. Remember forever. Zero-Knowledge. Zero-Amnesia. 🧠</strong></p>
 
   <br>
 
-  [![CI](https://github.com/SynapseLayer/synapse-layer/actions/workflows/ci.yml/badge.svg)](https://github.com/SynapseLayer/synapse-layer/actions)
-  [![Synapse Layer on Smithery](https://smithery.ai/badge/synapselayer/synapse-protocol)](https://smithery.ai/servers/synapselayer/synapse-protocol)
-  [![Documentation](https://img.shields.io/badge/Docs-Mintlify-0D9373)](https://synapselayer.org/docs)
+  <a href="https://github.com/SynapseLayer/synapse-layer/actions"><img src="https://github.com/SynapseLayer/synapse-layer/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://smithery.ai/servers/synapselayer/synapse-protocol"><img src="https://smithery.ai/badge/synapselayer/synapse-protocol" alt="Synapse Layer on Smithery"></a>
+  <a href="https://synapselayer.org/docs"><img src="https://img.shields.io/badge/Docs-Mintlify-0D9373" alt="Documentation"></a>
 
-  [Website](https://synapselayer.org) · [Forge](https://synapselayer.org/forge) · [Docs](https://synapselayer.org/docs) · [PyPI](https://pypi.org/project/synapse-layer/) · [Smithery](https://smithery.ai/servers/synapselayer/synapse-protocol)
+  <br><br>
+
+  <a href="https://synapselayer.org">Website</a> · <a href="https://synapselayer.org/forge">Forge</a> · <a href="https://synapselayer.org/docs">Docs</a> · <a href="https://pypi.org/project/synapse-layer/">PyPI</a> · <a href="https://smithery.ai/servers/synapselayer/synapse-protocol">Smithery</a>
 
   <!-- mcp-name: io.github.SynapseLayer/synapse-secure-memory -->
 
@@ -29,9 +31,11 @@ memory.save("User prefers absolute security and neural handover.")
 # 2. Recall is deterministic and explainable
 info = memory.recall("user focus")
 # Result: "User prefers absolute security and neural handover."
-
-# Each result includes a Trust Quotient (TQ)
-# A deterministic signal of memory reliability — not a black box.
+#
+# Every result includes a Trust Quotient (TQ) — a deterministic score based on:
+# - Recency (how current the info is)
+# - Frequency (how often it was reinforced)
+# - Source Authority (how reliable the input source is)
 ```
 
 That's the entire API. **Encryption, PII redaction, differential privacy, intent validation, and trust scoring** — all happen under the hood. No configuration. No boilerplate. No amnesia.
@@ -63,7 +67,8 @@ Synapse Layer powers real systems in production:
 - 🔐 **Built-in privacy and compliance** (LGPD/GDPR ready)
 - 🧠 **Zero context loss** across 10K+ agent sessions
 
-> *"Synapse Layer eliminated our biggest bottleneck — agents that forget."*
+> *"Synapse Layer transformed our agents from stochastic parrots into reliable professional partners by giving them an immutable expert memory."*
+> — **Ismael Marchi**, Founder @ [GoArqIA](https://goarqia.com)
 
 ---
 
@@ -265,8 +270,6 @@ We are solving it — at the foundation level.
 
 <div align="center">
   <strong>Giving Agents a Past. Giving Models a Soul. ⚗️</strong>
-  <br><br>
-  <a href="https://synapselayer.org">Website</a> · <a href="https://synapselayer.org/forge">Forge</a> · <a href="https://synapselayer.org/docs">Docs</a> · <a href="https://github.com/SynapseLayer/synapse-layer">GitHub</a> · <a href="https://pypi.org/project/synapse-layer/">PyPI</a> · <a href="https://smithery.ai/servers/synapselayer/synapse-protocol">Smithery</a>
   <br><br>
   Built by <a href="https://synapselayer.org">Ismael Marchi</a> · <a href="https://x.com/synapselayer">@synapselayer</a>
 </div>
