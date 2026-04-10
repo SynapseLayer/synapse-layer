@@ -1,0 +1,105 @@
+# Smithery Registry Configuration
+# https://smithery.ai/docs/build/project-config/smithery-yaml
+
+qualifiedName: "@synapselayer/synapse-protocol"
+displayName: "Synapse Layer — Continuous Consciousness for AI"
+description: >
+  Persistent zero-knowledge memory infrastructure for AI agents.
+  Store, recall and transfer encrypted context across models via MCP.
+  AES-256-GCM encryption, PII redaction, Trust Quotient scoring.
+  The server NEVER stores plaintext — Zero-Knowledge Architecture.
+version: "1.1.0"
+icon: "🧠"
+sourceUrl: "https://github.com/SynapseLayer/synapse-layer"
+homepage: "https://synapselayer.org"
+license: "Apache-2.0"
+author:
+  name: "Ismael Marchi"
+  url: "https://synapselayer.org"
+
+# Remote HTTP-stream endpoint (hosted on Synapse Forge)
+serverUrl: "https://forge.synapselayer.org/api/mcp"
+
+startCommand:
+  type: "http"
+  url: "https://forge.synapselayer.org/api/mcp"
+
+configSchema:
+  type: "object"
+  required: []
+  properties:
+    agent_id:
+      type: "string"
+      description: "Identifier for the agent using the memory layer. Defaults to 'default'."
+      default: "default"
+
+tools:
+  - name: recall
+    description: "Deterministically retrieves past context and decisions. Call before responding when prior context may exist."
+    inputSchema:
+      type: object
+      required: [query]
+      properties:
+        query:
+          type: string
+          description: "What to recall from memory"
+        agent_id:
+          type: string
+          description: "Agent identifier to scope recall. Defaults to 'default'."
+        limit:
+          type: number
+          description: "Maximum memories to return (1-50, default: 10)"
+
+  - name: save_to_synapse
+    description: "Persists user preferences, task progress, and facts with Zero-Knowledge encryption."
+    inputSchema:
+      type: object
+      required: [content]
+      properties:
+        content:
+          type: string
+          description: "Content to persist in encrypted memory"
+        agent_id:
+          type: string
+          description: "Agent identifier. Defaults to 'default'."
+
+  - name: process_text
+    description: "Self-extracting memory engine. Automatically updates long-term memory from text. Never stores secrets, credentials, or financial data."
+    inputSchema:
+      type: object
+      required: [text]
+      properties:
+        text:
+          type: string
+          description: "Text to process and extract memories from"
+        agent_id:
+          type: string
+          description: "Agent identifier. Defaults to 'default'."
+
+  - name: health_check
+    description: "Verify system availability and memory pipeline integrity. Call on first execution."
+    inputSchema:
+      type: object
+      properties: {}
+
+tags:
+  - agent-memory
+  - persistent-context
+  - long-term-memory
+  - mcp-memory
+  - deterministic-recall
+  - zero-knowledge
+  - trust-quotient
+  - aes-256-gcm
+  - continuous-consciousness
+  - pii-redaction
+  - mcp
+  - ai-agents
+  - langchain
+  - crewai
+  - autogen
+  - llamaindex
+  - semantic-kernel
+  - sqlite-backend
+  - privacy
+  - encryption

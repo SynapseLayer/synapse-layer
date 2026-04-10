@@ -91,7 +91,14 @@ plaintext = crypto.decrypt(ciphertext)
 crypto = SynapseCrypto.from_env("SYNAPSE_ENCRYPTION_KEY")
 ```
 
-### MCP Connection
+### MCP Connection (1-Click Setup)
+
+Add to your MCP config file and you're done. No API keys required.
+
+<details>
+<summary><strong>🟣 Claude Desktop</strong></summary>
+
+Edit `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
 
 ```json
 {
@@ -102,6 +109,56 @@ crypto = SynapseCrypto.from_env("SYNAPSE_ENCRYPTION_KEY")
   }
 }
 ```
+Restart Claude Desktop. Done.
+</details>
+
+<details>
+<summary><strong>🟢 Cursor</strong></summary>
+
+Edit `.cursor/mcp.json` in your project root (or global `~/.cursor/mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "synapse-layer": {
+      "url": "https://forge.synapselayer.org/api/mcp"
+    }
+  }
+}
+```
+Restart Cursor. The 4 tools appear in the MCP panel.
+</details>
+
+<details>
+<summary><strong>🔵 Windsurf</strong></summary>
+
+Edit `~/.codeium/windsurf/mcp_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "synapse-layer": {
+      "url": "https://forge.synapselayer.org/api/mcp"
+    }
+  }
+}
+```
+Restart Windsurf.
+</details>
+
+<details>
+<summary><strong>⚙️ Any MCP Client</strong></summary>
+
+```json
+{
+  "mcpServers": {
+    "synapse-layer": {
+      "url": "https://forge.synapselayer.org/api/mcp"
+    }
+  }
+}
+```
+</details>
 
 **4 tools available:**
 
