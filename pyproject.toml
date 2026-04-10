@@ -79,7 +79,7 @@ Changelog = "https://github.com/SynapseLayer/synapse-layer/blob/main/CHANGELOG.m
 Security = "https://github.com/SynapseLayer/synapse-layer/blob/main/SECURITY.md"
 
 [tool.setuptools]
-packages = ["synapse_memory", "synapse_memory.engine", "synapse_memory.crypto", "synapse_memory.autosave", "synapse_memory.plugins", "synapse_memory.integrations"]
+packages = ["synapse_memory", "synapse_memory.engine", "synapse_memory.crypto", "synapse_memory.backends", "synapse_memory.autosave", "synapse_memory.plugins", "synapse_memory.integrations"]
 
 [tool.setuptools.package-dir]
 "" = "."
