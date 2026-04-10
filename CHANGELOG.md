@@ -7,6 +7,74 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [1.1.0] — 2026-04-10
+
+### 🎯 Summary
+
+**Codename: Continuous Consciousness**
+
+This release transforms Synapse Layer from a memory SDK into **Continuous Consciousness Infrastructure**. Agents can now persist memories to disk, encrypt at rest, and wrap any function with 1-line recall+store semantics.
+
+### Added
+
+#### Persistent Storage Backends (`synapse_memory.backends`)
+- **`StorageBackend` Protocol** — Universal interface for pluggable persistence (`save`, `recall`, `delete`, `clear`, `count`)
+- **`MemoryBackend`** — In-memory implementation (default, backward-compatible)
+- **`SqliteBackend`** — Zero-config local persistence using Python stdlib `sqlite3`
+  - WAL mode for concurrent reads, thread-safe via connection-per-thread
+  - Keyword search with `LIKE` matching, ordered by `trust_quotient DESC`
+  - Schema auto-initialization, UPSERT semantics, metadata JSON roundtrip
+- `SynapseMemory.recall()` now dispatches to backend when non-default (SqliteBackend queries DB directly)
+- `SynapseMemory.__init__()` accepts `backend=` parameter
+
+#### AES-256-GCM Encryption Module (`synapse_memory.crypto`)
+- **`SynapseCrypto`** — Authenticated encryption with versioned wire format
+  - Wire format: `[1B version][12B nonce][N bytes ciphertext+tag]`
+  - PBKDF2-HMAC-SHA256 key derivation with 600,000 iterations (OWASP 2023)
+  - `generate_key()` — Cryptographically secure random 256-bit key
+  - `from_password(password, salt)` — Derive key from passphrase
+  - `from_env(var_name)` — Load hex-encoded key from environment
+  - `encrypt()` / `decrypt()` — Raw bytes with optional AAD
+  - `encrypt_str()` / `decrypt_str()` — Convenience hex string helpers
+  - `key_fingerprint()` — SHA-256 truncated fingerprint for audit
+
+#### `@remember` Decorator (`synapse_memory.wrapper`)
+- **Drop-in wrapper** for any async function: auto recall-before + store-after
+- Context injection: recalled memories appended to first string argument
+- Configurable: `auto_store`, `top_k`, `confidence`, `inject_context`
+- Works with both async and sync functions
+
+#### Real MCP Tools (Website)
+- `recall` tool added to MCP endpoint (queries PostgreSQL via Prisma)
+- `save_to_synapse` now writes to real database (was stub)
+- `process_text` performs real intent analysis
+- `health_check` returns live `memory_count` and `database: connected`
+- `backfill_embeddings` removed (simplified to 4 focused tools)
+
+### Changed
+- `SynapseMemory.recall()` dispatches to `self._backend.recall()` for non-MemoryBackend instances
+- `SynapseMemory.store()` persists to both backend and legacy `_memories` list
+- `pyproject.toml` now includes `synapse_memory.backends` package
+- `__init__.py` exports: `StorageBackend`, `MemoryBackend`, `SqliteBackend`, `SynapseCrypto`, `remember`
+- `MemoryBackend.recall("")` now returns all records (was returning empty)
+
+### Fixed
+- In-memory-only persistence gap — agents can now survive restarts with SqliteBackend
+- Empty query returning no results in MemoryBackend
+
+### Improved
+- Test suite: **481 tests** (up from 432)
+- Code coverage: **90%** (up from 35% actual)
+- 20 new backend tests, 22 crypto tests, 7 wrapper tests
+
+### Migration Notes
+- **No breaking changes.** v1.1.0 is fully backward-compatible with v1.0.7
+- Default behavior unchanged (MemoryBackend, in-memory)
+- New `backend=` parameter is optional
+- All new exports are additive
+
+---
+
 ## [1.0.6] — 2026-04-05
 
 ### 🎯 Summary
@@ -214,6 +282,7 @@ This release elevates Synapse Layer from a memory SDK to a **complete Cognitive 
 
 ---
 
+[1.1.0]: https://github.com/SynapseLayer/synapse-layer/compare/v1.0.7...v1.1.0
 [1.0.6]: https://github.com/SynapseLayer/synapse-layer/compare/v1.0.4...v1.0.6
 [1.0.4]: https://github.com/SynapseLayer/synapse-layer/compare/v1.0.3...v1.0.4
 [1.0.3]: https://github.com/SynapseLayer/synapse-layer/compare/v1.0.0...v1.0.3
