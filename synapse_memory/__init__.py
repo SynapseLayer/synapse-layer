@@ -24,6 +24,7 @@ from .engine.handover import (
     HandoverToken,
 )
 from .backends import StorageBackend, MemoryBackend, SqliteBackend
+from .crypto import SynapseCrypto
 from .autosave import AutoSaveEngine, AutoSaveEvent, SaveResult
 from .plugins import (
     ImportanceScorer,
@@ -73,6 +74,8 @@ __all__ = [
     "HandoverPackage",
     "HandoverStatus",
     "HandoverToken",
+    # Crypto
+    "SynapseCrypto",
     # Storage Backends
     "StorageBackend",
     "MemoryBackend",
