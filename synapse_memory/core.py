@@ -15,7 +15,7 @@ import hashlib
 import math
 import time
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 from dataclasses import dataclass, field
 
 from .sanitizer import SynapseSanitizer, SanitizationResult
@@ -33,6 +33,7 @@ from .engine.handover import (
     HandoverStatus,
     HandoverToken,
 )
+from .backends.interface import StorageBackend
 
 logger = logging.getLogger(__name__)
 
@@ -99,6 +100,7 @@ class SynapseMemory:
         privacy_enabled: bool = True,
         privacy_epsilon: float = 0.5,
         aggressive_sanitize: bool = False,
+        backend: Optional[StorageBackend] = None,
     ) -> None:
         """Initialize the memory layer.
 
@@ -108,6 +110,8 @@ class SynapseMemory:
             privacy_enabled: If True, DP noise is applied to embeddings.
             privacy_epsilon: Privacy budget for Gaussian mechanism.
             aggressive_sanitize: If True, sanitizer strips proper nouns.
+            backend: Pluggable storage backend. If None, uses in-memory
+                     (MemoryBackend). Pass SqliteBackend() for persistence.
         """
         if not agent_id or not isinstance(agent_id, str):
             raise ValueError("agent_id must be a non-empty string.")
@@ -131,15 +135,25 @@ class SynapseMemory:
             validate=True,
         )
 
-        # In-memory store — SDK demo only.
-        # Production deployments persist to pgvector + AES-256-GCM.
+        # Storage backend — pluggable persistence layer.
+        # Default: MemoryBackend (in-memory, non-persistent).
+        # Use SqliteBackend() for zero-config local persistence.
+        if backend is not None:
+            self._backend = backend
+        else:
+            from .backends.memory_backend import MemoryBackend
+            self._backend = MemoryBackend()
+
+        # Legacy in-memory list for backward compatibility with
+        # integration adapters that access _memories directly.
         self._memories: List[Dict[str, Any]] = []
 
         logger.info(
             "SynapseMemory initialized: agent=%s, sanitize=%s, "
-            "privacy=%s (ε=%.2f), aggressive=%s",
+            "privacy=%s (ε=%.2f), aggressive=%s, backend=%s",
             agent_id, sanitize_enabled, privacy_enabled,
             privacy_epsilon, aggressive_sanitize,
+            type(self._backend).__name__,
         )
 
     # ══ Public API ═══════════════════════════════════════════════════════
@@ -227,6 +241,9 @@ class SynapseMemory:
             'metadata': metadata or {},
             'timestamp': timestamp,
         }
+        # Persist to backend
+        self._backend.save(record)
+        # Legacy list for backward compatibility with integrations
         self._memories.append(record)
 
         # ── Stage 6: Audit Payload ───────────────────────────────────
@@ -296,26 +313,36 @@ class SynapseMemory:
             List of RecallResult ordered by trust_quotient,
             with self_healing metadata when reclassification occurred.
         """
-        query_lower = query.lower()
+        # ── Retrieve candidates via pluggable backend ────────────────
+        # When a persistent backend is configured (e.g., SqliteBackend),
+        # it handles its own search/ranking.  The legacy in-memory path
+        # is kept for backward compatibility with MemoryBackend.
+        from .backends.memory_backend import MemoryBackend
 
-        # Simple relevance scoring (SDK demo — substring matching).
-        # Production: pgvector cosine similarity with ANN index.
-        scored: List[tuple] = []
-        for mem in self._memories:
-            content_lower = mem['content'].lower()
-            query_words = query_lower.split()
-            hits = sum(1 for w in query_words if w in content_lower)
-            if hits > 0:
-                relevance = hits / len(query_words)
-                scored.append((mem, relevance))
+        if not isinstance(self._backend, MemoryBackend):
+            raw = self._backend.recall(
+                query=query,
+                agent_id=self.agent_id,
+                limit=top_k,
+            )
+            candidates = [(r, 1.0) for r in raw]
+        else:
+            # Legacy in-memory path (substring matching).
+            query_lower = query.lower()
+            scored: List[tuple] = []
+            for mem in self._memories:
+                content_lower = mem['content'].lower()
+                query_words = query_lower.split()
+                hits = sum(1 for w in query_words if w in content_lower)
+                if hits > 0:
+                    relevance = hits / len(query_words)
+                    scored.append((mem, relevance))
 
-        # Sort by trust_quotient * relevance
-        scored.sort(
-            key=lambda x: x[0]['trust_quotient'] * x[1],
-            reverse=True,
-        )
-
-        candidates = scored[:top_k]
+            scored.sort(
+                key=lambda x: x[0]['trust_quotient'] * x[1],
+                reverse=True,
+            )
+            candidates = scored[:top_k]
 
         # ── Self-Healing Pass ───────────────────────────────────────
         # Compare adjacent pairs for category conflicts

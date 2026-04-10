@@ -23,6 +23,7 @@ from .engine.handover import (
     HandoverStatus,
     HandoverToken,
 )
+from .backends import StorageBackend, MemoryBackend, SqliteBackend
 from .autosave import AutoSaveEngine, AutoSaveEvent, SaveResult
 from .plugins import (
     ImportanceScorer,
@@ -72,6 +73,10 @@ __all__ = [
     "HandoverPackage",
     "HandoverStatus",
     "HandoverToken",
+    # Storage Backends
+    "StorageBackend",
+    "MemoryBackend",
+    "SqliteBackend",
     # Auto-Save
     "AutoSaveEngine",
     "AutoSaveEvent",
