@@ -1,3 +1,5 @@
+<!-- mcp-name: io.github.SynapseLayer/synapse-layer -->
+
 <div align="center">
 
   <h1>Synapse Layer</h1>
