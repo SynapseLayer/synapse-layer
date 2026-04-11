@@ -7,6 +7,45 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [1.1.2] — 2026-04-11
+
+### 🎯 Summary
+
+**Codename: Registry Hardening**
+
+Documentation unification and brand alignment for MCP Registry official listing.
+
+### Changed
+
+- **Docs URL**: Unified all documentation links to `synapselayer.org/docs` (deprecated `docs.synapselayer.org` subdomain)
+- **README**: Redesigned header for PyPI + GitHub rendering compatibility (`<p align="center">` over `<div>`)
+- **Badges**: Added MCP Registry Official badge, fixed Smithery badge link, added version badge for docs
+- **Logo**: Professional banner logo centered at 450px width
+- **server.json**: Updated to v1.1.2
+
+### Fixed
+
+- Broken badge links in README (Smithery pointed to Twitter image, Docs pointed to NXDOMAIN)
+- Navigation links in website now use internal `<Link>` components instead of external `<a>` tags
+
+---
+
+## [1.1.1] — 2026-04-10
+
+### 🎯 Summary
+
+**Codename: MCP Compliance**
+
+Version bump for MCP Registry publication. First zero-knowledge memory layer officially listed.
+
+### Changed
+
+- `server.json` schema updated to `2025-12-11` for registry compatibility
+- Added `mcp-name` marker to README for registry indexing
+- Remote endpoint registered: `forge.synapselayer.org/api/mcp`
+
+---
+
 ## [1.1.0] — 2026-04-10
 
 ### 🎯 Summary

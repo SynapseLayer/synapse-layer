@@ -1,31 +1,32 @@
 <!-- mcp-name: io.github.SynapseLayer/synapse-layer -->
 
-<div align="center">
+<p align="center">
+  <img src="https://cdn.abacus.ai/images/a39ccc3c-6b85-46d1-aa53-146d5a839b9e.png" width="450" alt="Synapse Layer — Continuous Consciousness Infrastructure"/>
+</p>
 
-  <p>
-    <img src="https://cdn.abacus.ai/images/a39ccc3c-6b85-46d1-aa53-146d5a839b9e.png" width="480" alt="Synapse Layer — Continuous Consciousness Infrastructure"/>
-  </p>
+<h3 align="center">Continuous Consciousness Infrastructure for AI Systems</h3>
 
-  <p><strong>Continuous Consciousness Infrastructure for AI Systems</strong></p>
+<p align="center">Persistent. Secure. 1-line integration. 🧠</p>
 
-  <p>Persistent. Secure. 1-line integration. 🧠</p>
-
-  <br>
-
+<p align="center">
   <a href="https://github.com/SynapseLayer/synapse-layer/actions"><img src="https://github.com/SynapseLayer/synapse-layer/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://pypi.org/project/synapse-layer/"><img src="https://img.shields.io/pypi/v/synapse-layer" alt="PyPI"></a>
   <a href="https://registry.modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP_Registry-Official-7c3aed" alt="MCP Registry"></a>
   <a href="https://smithery.ai/servers/synapselayer/synapse-protocol"><img src="https://img.shields.io/badge/Smithery-Listed-0ea5e9" alt="Smithery"></a>
-  <a href="https://docs.synapselayer.org"><img src="https://img.shields.io/badge/Docs-Mintlify-0D9373" alt="Docs"></a>
+  <a href="https://synapselayer.org/docs"><img src="https://img.shields.io/badge/Docs-v1.1.2-0D9373" alt="Docs"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License"></a>
   <img src="https://img.shields.io/badge/tests-481_passed-brightgreen" alt="Tests">
   <img src="https://img.shields.io/badge/coverage-90%25-brightgreen" alt="Coverage">
+</p>
 
-  <br><br>
-
-  <a href="https://synapselayer.org">Website</a> · <a href="https://forge.synapselayer.org">Forge</a> · <a href="https://docs.synapselayer.org">Docs</a> · <a href="https://pypi.org/project/synapse-layer/">PyPI</a> · <a href="https://smithery.ai/servers/synapselayer/synapse-protocol">Smithery</a> · <a href="https://registry.modelcontextprotocol.io">MCP Registry</a>
-
-</div>
+<p align="center">
+  <a href="https://synapselayer.org">Website</a> ·
+  <a href="https://forge.synapselayer.org">Forge</a> ·
+  <a href="https://synapselayer.org/docs">Docs</a> ·
+  <a href="https://pypi.org/project/synapse-layer/">PyPI</a> ·
+  <a href="https://smithery.ai/servers/synapselayer/synapse-protocol">Smithery</a> ·
+  <a href="https://registry.modelcontextprotocol.io">MCP Registry</a>
+</p>
 
 ---
 
@@ -222,7 +223,7 @@ Native adapters for every major framework:
 | **Semantic Kernel** | `from synapse_memory.integrations.semantic_kernel import SynapseChatHistory` | ✅ |
 | **MCP (Claude, etc.)** | Direct connection via `forge.synapselayer.org/api/mcp` | ✅ |
 
-See [full integration docs](https://docs.synapselayer.org) for each framework.
+See [full integration docs](https://synapselayer.org/docs) for each framework.
 
 ---
 
@@ -329,7 +330,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 - 📦 **PyPI:** [`pip install synapse-layer`](https://pypi.org/project/synapse-layer/)
 - 🔌 **MCP:** `forge.synapselayer.org/api/mcp`
-- 📖 **Docs:** [docs.synapselayer.org](https://docs.synapselayer.org)
+- 📖 **Docs:** [synapselayer.org/docs](https://synapselayer.org/docs)
 - 📣 **X:** [@synapselayer](https://x.com/synapselayer)
 - 🧠 **Forge:** [forge.synapselayer.org](https://forge.synapselayer.org)
 

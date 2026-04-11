@@ -70,7 +70,7 @@ https://github.com/SynapseLayer/synapse-layer
 https://synapselayer.org
 
 ### Documentation
-https://docs.synapselayer.org
+https://synapselayer.org/docs
 
 ### PyPI
 https://pypi.org/project/synapse-layer/

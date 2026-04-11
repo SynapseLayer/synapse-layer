@@ -95,7 +95,7 @@ Persistent zero-knowledge memory for AI agents. AES-256-GCM encryption, PII reda
 - **PyPI**: https://pypi.org/project/synapse-layer/
 - **Website**: https://synapselayer.org
 - **Forge**: https://forge.synapselayer.org
-- **Docs**: https://docs.synapselayer.org
+- **Docs**: https://synapselayer.org/docs
 - **Smithery**: https://smithery.ai/servers/synapselayer/synapse-protocol
 
 ## server.json
