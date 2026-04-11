@@ -7,6 +7,25 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [1.1.4] — 2026-04-11
+
+### 🎯 Summary
+
+**Codename: Official Brand**
+
+Enforced official dark brand logo asset. Branding is deterministic, not generative.
+
+### Changed
+
+- **Logo**: Replaced AI-generated banner with official `docs/assets/synapse-layer-logo-dark.png` (committed to repo)
+- **Version**: Bumped to 1.1.4 across all manifests
+
+### Removed
+
+- External CDN logo dependency (now self-hosted in repo)
+
+---
+
 ## [1.1.3] — 2026-04-11
 
 ### 🎯 Summary
@@ -337,6 +356,7 @@ This release elevates Synapse Layer from a memory SDK to a **complete Cognitive 
 
 ---
 
+[1.1.4]: https://github.com/SynapseLayer/synapse-layer/compare/v1.1.3...v1.1.4
 [1.1.3]: https://github.com/SynapseLayer/synapse-layer/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/SynapseLayer/synapse-layer/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/SynapseLayer/synapse-layer/compare/v1.1.0...v1.1.1
