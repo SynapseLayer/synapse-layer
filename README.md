@@ -2,7 +2,9 @@
 
 <div align="center">
 
-  <h1>Synapse Layer</h1>
+  <p>
+    <img src="https://cdn.abacus.ai/images/a39ccc3c-6b85-46d1-aa53-146d5a839b9e.png" width="480" alt="Synapse Layer — Continuous Consciousness Infrastructure"/>
+  </p>
 
   <p><strong>Continuous Consciousness Infrastructure for AI Systems</strong></p>
 
@@ -12,7 +14,8 @@
 
   <a href="https://github.com/SynapseLayer/synapse-layer/actions"><img src="https://github.com/SynapseLayer/synapse-layer/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://pypi.org/project/synapse-layer/"><img src="https://img.shields.io/pypi/v/synapse-layer" alt="PyPI"></a>
-  <a href="https://lh4.googleusercontent.com/DhkBYGO5grmi_ahKMnjxcCype9C_8-_TlkLItZ89WOOdWe8b4VR1QjPYQIWdugq0ZUcS0kLX4HMcTq-qwaSMo5i--vtGVVedsEJgnyECIdNFUDiezJJ7ETDT8LbrRPd_wEC7MrNj"><img src="https://pbs.twimg.com/profile_images/2037747646635417601/UIY4HLeJ_400x400.jpg" alt="Smithery"></a>
+  <a href="https://registry.modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP_Registry-Official-7c3aed" alt="MCP Registry"></a>
+  <a href="https://smithery.ai/servers/synapselayer/synapse-protocol"><img src="https://img.shields.io/badge/Smithery-Listed-0ea5e9" alt="Smithery"></a>
   <a href="https://docs.synapselayer.org"><img src="https://img.shields.io/badge/Docs-Mintlify-0D9373" alt="Docs"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License"></a>
   <img src="https://img.shields.io/badge/tests-481_passed-brightgreen" alt="Tests">
@@ -20,7 +23,7 @@
 
   <br><br>
 
-  <a href="https://synapselayer.org">Website</a> · <a href="https://forge.synapselayer.org">Forge</a> · <a href="https://docs.synapselayer.org">Docs</a> · <a href="https://pypi.org/project/synapse-layer/">PyPI</a> · <a href="https://smithery.ai/servers/synapselayer/synapse-protocol">Smithery</a>
+  <a href="https://synapselayer.org">Website</a> · <a href="https://forge.synapselayer.org">Forge</a> · <a href="https://docs.synapselayer.org">Docs</a> · <a href="https://pypi.org/project/synapse-layer/">PyPI</a> · <a href="https://smithery.ai/servers/synapselayer/synapse-protocol">Smithery</a> · <a href="https://registry.modelcontextprotocol.io">MCP Registry</a>
 
 </div>
 
