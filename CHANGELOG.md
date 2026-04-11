@@ -7,6 +7,22 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [1.1.3] — 2026-04-11
+
+### 🎯 Summary
+
+**Codename: Dark Identity**
+
+Brand identity update and version consolidation for PyPI publish.
+
+### Changed
+
+- **Logo**: Updated README banner to dark/grey enterprise branding (replaced blue neon)
+- **Version**: Bumped to 1.1.3 across all manifests (pyproject.toml, server.json, __init__.py)
+- **Docs Badge**: Updated to v1.1.3
+
+---
+
 ## [1.1.2] — 2026-04-11
 
 ### 🎯 Summary
@@ -321,6 +337,9 @@ This release elevates Synapse Layer from a memory SDK to a **complete Cognitive 
 
 ---
 
+[1.1.3]: https://github.com/SynapseLayer/synapse-layer/compare/v1.1.2...v1.1.3
+[1.1.2]: https://github.com/SynapseLayer/synapse-layer/compare/v1.1.1...v1.1.2
+[1.1.1]: https://github.com/SynapseLayer/synapse-layer/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/SynapseLayer/synapse-layer/compare/v1.0.7...v1.1.0
 [1.0.6]: https://github.com/SynapseLayer/synapse-layer/compare/v1.0.4...v1.0.6
 [1.0.4]: https://github.com/SynapseLayer/synapse-layer/compare/v1.0.3...v1.0.4
