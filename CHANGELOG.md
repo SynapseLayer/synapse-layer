@@ -11,14 +11,23 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### 🎯 Summary
 
-**Codename: PyPI Render Fix**
+**Codename: Credibility Hardening**
 
-Fix logo rendering on PyPI by using absolute GitHub Raw URL instead of relative path.
+Clean up legacy code, fix PyPI rendering, and prepare for first stable PyPI release.
 
 ### Fixed
 
-- **Logo**: PyPI requires absolute URLs — changed `docs/assets/...` to `https://raw.githubusercontent.com/SynapseLayer/synapse-layer/main/docs/assets/synapse-layer-logo-dark.png`
+- **Logo**: PyPI requires absolute URLs — changed to GitHub Raw URL for cross-platform rendering
 - **Version**: Bumped to 1.1.5 across all manifests
+
+### Removed
+
+- **`mcp-autosave/`**: Removed legacy standalone Supabase-based MCP server (replaced by `/api/mcp` in Forge)
+- **Backup files**: Cleaned up `README.md.bak.*` artifacts
+
+### Changed
+
+- **README**: Streamlined quickstart, enhanced MCP integration docs, clearer integration examples
 
 ---
 
