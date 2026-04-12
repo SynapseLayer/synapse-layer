@@ -10,6 +10,9 @@ License: Apache 2.0
 from .sanitizer import SynapseSanitizer, SanitizationResult, SensitivityLevel
 from .privacy import DifferentialPrivacy, PrivacyResult
 from .core import SynapseMemory, StoreResult, RecallResult
+
+# Public alias — SynapseClient is the documented name for external consumers
+SynapseClient = SynapseMemory
 from .engine.validator import (
     SynapseValidator,
     ValidationResult,
@@ -39,7 +42,7 @@ from .plugins import (
     load_pro_plugin,
 )
 
-__version__ = "1.1.5"
+__version__ = "1.1.6"
 
 import os as _os
 SYNAPSE_MODE: str = _os.environ.get("SYNAPSE_MODE", "oss").lower()
@@ -53,6 +56,7 @@ See https://forge.synapselayer.org/docs/pro for details.
 __all__ = [
     # Core
     "SynapseMemory",
+    "SynapseClient",
     # Integrations (lazy — import from synapse_memory.integrations)
     # "SynapseChatMessageHistory",
     "StoreResult",

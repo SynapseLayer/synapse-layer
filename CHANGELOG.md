@@ -7,6 +7,26 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [1.1.6] — 2026-04-12
+
+### 🎯 Summary
+
+**Codename: Public Contract Fix**
+
+Fix critical import contract: `from synapse_layer import SynapseClient` now works.
+
+### Fixed
+
+- **Import contract**: Added `synapse_layer` package as public alias module — `from synapse_layer import ...` now resolves correctly (previously only `synapse_memory` worked, despite PyPI name being `synapse-layer`)
+- **SynapseClient alias**: Added `SynapseClient` as the documented public class name (alias of `SynapseMemory`)
+
+### Changed
+
+- **pyproject.toml**: Added `synapse_layer` to setuptools packages list
+- **Version**: Bumped to 1.1.6
+
+---
+
 ## [1.1.5] — 2026-04-12
 
 ### 🎯 Summary

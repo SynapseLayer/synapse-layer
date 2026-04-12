@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "synapse-layer"
-version = "1.1.5"
+version = "1.1.6"
 description = "Zero-Knowledge Memory Layer for AI Agents — Cognitive Security Protocol with 4 proprietary seals. Giving Agents a Past. Giving Models a Soul."
 readme = "README.md"
 license = {text = "Apache 2.0"}
@@ -79,7 +79,7 @@ Changelog = "https://github.com/SynapseLayer/synapse-layer/blob/main/CHANGELOG.m
 Security = "https://github.com/SynapseLayer/synapse-layer/blob/main/SECURITY.md"
 
 [tool.setuptools]
-packages = ["synapse_memory", "synapse_memory.engine", "synapse_memory.crypto", "synapse_memory.backends", "synapse_memory.autosave", "synapse_memory.plugins", "synapse_memory.integrations"]
+packages = ["synapse_layer", "synapse_memory", "synapse_memory.engine", "synapse_memory.crypto", "synapse_memory.backends", "synapse_memory.autosave", "synapse_memory.plugins", "synapse_memory.integrations"]
 
 [tool.setuptools.package-dir]
 "" = "."
