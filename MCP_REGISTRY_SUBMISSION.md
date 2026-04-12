@@ -6,7 +6,7 @@
 |---|---|
 | **Name** | `io.github.SynapseLayer/synapse-layer` |
 | **Title** | Synapse Layer — Continuous Consciousness Infrastructure |
-| **Version** | `1.1.1` |
+| **Version** | `1.1.5` |
 | **License** | Apache-2.0 |
 | **Schema** | `2025-12-11` |
 
@@ -22,7 +22,7 @@ Persistent zero-knowledge memory for AI agents. AES-256-GCM encryption, PII reda
 | **Identifier** | `synapse-layer` |
 | **Transport** | `stdio` (local) + `streamable-http` (remote) |
 | **Runtime Hint** | `uvx` |
-| **PyPI URL** | https://pypi.org/project/synapse-layer/1.1.1/ |
+| **PyPI URL** | https://pypi.org/project/synapse-layer/1.1.5/ |
 | **Verification** | `<!-- mcp-name: io.github.SynapseLayer/synapse-layer -->` in README |
 
 ## Remote Endpoint
@@ -34,12 +34,13 @@ Persistent zero-knowledge memory for AI agents. AES-256-GCM encryption, PII reda
 | **Auth** | None required (public endpoint) |
 | **Latency** | ~60ms average |
 
-## Tools (4)
+## Tools (5)
 
 | Tool | Description |
 |---|---|
 | `recall` | Deterministic memory retrieval with Trust Quotient ranking |
 | `save_to_synapse` | Structured persistence through 4-layer security pipeline |
+| `search` | Cross-agent memory search with full-text matching |
 | `process_text` | Autonomous extraction of decisions, milestones, alerts |
 | `health_check` | System health, DB connectivity, capability report |
 
