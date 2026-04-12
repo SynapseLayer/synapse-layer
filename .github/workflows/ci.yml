@@ -33,3 +33,87 @@ jobs:
       - name: Upload coverage to Codecov
         if: matrix.python-version == '3.11'
         uses: codecov/codecov-action@v4
+
+  public-contract:
+    name: Public Contract Smoke Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install from source (simulates pip install synapse-layer)
+        run: |
+          python -m pip install --upgrade pip
+          pip install .
+
+      - name: "Contract: from synapse_layer import SynapseClient"
+        run: |
+          python -c "
+          from synapse_layer import SynapseClient
+          assert SynapseClient.__name__ == 'SynapseMemory', \
+              f'SynapseClient should be SynapseMemory, got {SynapseClient.__name__}'
+          print('\u2705 from synapse_layer import SynapseClient')
+          "
+
+      - name: "Contract: SynapseClient is SynapseMemory"
+        run: |
+          python -c "
+          from synapse_layer import SynapseClient
+          from synapse_memory import SynapseMemory
+          assert SynapseClient is SynapseMemory, \
+              'SynapseClient and SynapseMemory must be the same class'
+          print('\u2705 SynapseClient is SynapseMemory')
+          "
+
+      - name: "Contract: version consistency"
+        run: |
+          python -c "
+          import importlib.metadata
+          from synapse_layer import __version__ as v_layer
+          from synapse_memory import __version__ as v_memory
+          v_pip = importlib.metadata.version('synapse-layer')
+          assert v_layer == v_memory == v_pip, \
+              f'Version mismatch: layer={v_layer}, memory={v_memory}, pip={v_pip}'
+          print(f'\u2705 Version consistent: {v_pip}')
+          "
+
+      - name: "Contract: core exports accessible from synapse_layer"
+        run: |
+          python -c "
+          from synapse_layer import (
+              SynapseClient,
+              SynapseMemory,
+              SynapseCrypto,
+              SqliteBackend,
+              MemoryBackend,
+              remember,
+              DifferentialPrivacy,
+              SynapseSanitizer,
+              NeuralHandover,
+              AutoSaveEngine,
+          )
+          print('\u2705 All core exports accessible from synapse_layer')
+          "
+
+      - name: "Contract: store + recall persistence"
+        run: |
+          python -c "
+          import asyncio, tempfile, os
+          from synapse_layer import SynapseClient, SqliteBackend
+
+          async def test():
+              db = os.path.join(tempfile.mkdtemp(), 'ci_test.db')
+              client = SynapseClient(agent_id='ci-smoke', backend=SqliteBackend(path=db))
+              result = await client.store('CI smoke test memory', confidence=0.9)
+              assert hasattr(result, 'trust_quotient'), 'StoreResult missing trust_quotient'
+              recalls = await client.recall('CI smoke test')
+              assert len(recalls) > 0, 'recall returned 0 results'
+              assert 'CI smoke test' in recalls[0].content
+              print(f'\u2705 Store + Recall: TQ={result.trust_quotient:.2f}, recalled={len(recalls)}')
+
+          asyncio.run(test())
+          "
