@@ -39,7 +39,7 @@ from .plugins import (
     load_pro_plugin,
 )
 
-__version__ = "1.1.4"
+__version__ = "1.1.5"
 
 import os as _os
 SYNAPSE_MODE: str = _os.environ.get("SYNAPSE_MODE", "oss").lower()

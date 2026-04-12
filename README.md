@@ -1,7 +1,7 @@
 <!-- mcp-name: io.github.SynapseLayer/synapse-layer -->
 
 <p align="center">
-  <img src="docs/assets/synapse-layer-logo-dark.png" width="450" alt="Synapse Layer Logo">
+  <img src="https://raw.githubusercontent.com/SynapseLayer/synapse-layer/main/docs/assets/synapse-layer-logo-dark.png" width="450" alt="Synapse Layer Logo">
 </p>
 
 <h3 align="center">Continuous Consciousness Infrastructure for AI Systems</h3>
@@ -13,7 +13,7 @@
   <a href="https://pypi.org/project/synapse-layer/"><img src="https://img.shields.io/pypi/v/synapse-layer" alt="PyPI"></a>
   <a href="https://registry.modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP_Registry-Official-7c3aed" alt="MCP Registry"></a>
   <a href="https://smithery.ai/servers/synapselayer/synapse-protocol"><img src="https://img.shields.io/badge/Smithery-Listed-0ea5e9" alt="Smithery"></a>
-  <a href="https://synapselayer.org/docs"><img src="https://img.shields.io/badge/Docs-v1.1.4-0D9373" alt="Docs"></a>
+  <a href="https://synapselayer.org/docs"><img src="https://img.shields.io/badge/Docs-v1.1.5-0D9373" alt="Docs"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License"></a>
   <img src="https://img.shields.io/badge/tests-481_passed-brightgreen" alt="Tests">
   <img src="https://img.shields.io/badge/coverage-90%25-brightgreen" alt="Coverage">

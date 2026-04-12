@@ -7,6 +7,21 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [1.1.5] — 2026-04-12
+
+### 🎯 Summary
+
+**Codename: PyPI Render Fix**
+
+Fix logo rendering on PyPI by using absolute GitHub Raw URL instead of relative path.
+
+### Fixed
+
+- **Logo**: PyPI requires absolute URLs — changed `docs/assets/...` to `https://raw.githubusercontent.com/SynapseLayer/synapse-layer/main/docs/assets/synapse-layer-logo-dark.png`
+- **Version**: Bumped to 1.1.5 across all manifests
+
+---
+
 ## [1.1.4] — 2026-04-11
 
 ### 🎯 Summary
@@ -356,6 +371,7 @@ This release elevates Synapse Layer from a memory SDK to a **complete Cognitive 
 
 ---
 
+[1.1.5]: https://github.com/SynapseLayer/synapse-layer/compare/v1.1.4...v1.1.5
 [1.1.4]: https://github.com/SynapseLayer/synapse-layer/compare/v1.1.3...v1.1.4
 [1.1.3]: https://github.com/SynapseLayer/synapse-layer/compare/v1.1.2...v1.1.3
 [1.1.2]: https://github.com/SynapseLayer/synapse-layer/compare/v1.1.1...v1.1.2
