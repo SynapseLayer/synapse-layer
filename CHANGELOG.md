@@ -17,11 +17,15 @@ Dependency audit and CVE remediation targeting MCP Marketplace security score �
 
 ### Security
 
-- **CVE-2026-39892**: `cryptography` buffer overflow — floor raised to `>=44.0.0` (safe from all 2024-2026 CVEs)
-- **CVE-2026-34073**: `cryptography` DNS name constraints — covered by `>=44.0.0`
+- **CVE-2026-39892**: `cryptography` buffer overflow — floor raised to `>=46.0.7`
+- **CVE-2026-34073**: `cryptography` DNS name constraints — covered by `>=46.0.7`
 - **CVE-2024-3772**: `pydantic` ReDoS via email validation — floor raised to `>=2.4.0`
-- **httpx**: Floor raised to `>=0.27.0` (HTTP/2 stability fixes, no direct CVEs but proactive hardening)
+- **httpx**: Floor raised to `>=0.27.0` (HTTP/2 stability fixes, proactive hardening)
 - **python-dotenv**: Floor raised to `>=1.0.1` (maintenance alignment)
+- **MCP Auth Enforcement**: All tool calls (except `health_check`) now require `x-connect-token` or Bearer auth
+- **Quota Enforcement**: `ConnectToken.usedCount` incremented atomically; `QUOTA_EXHAUSTED` on limit
+- **userId Scoping**: All recall/search queries filtered by token owner — zero cross-tenant leakage
+- **file_system permission**: Documented justification — local SqliteBackend only, remote mode uses PostgreSQL
 
 ### Changed
 

@@ -8,7 +8,7 @@ description: >
   Store, recall and transfer encrypted context across models via MCP.
   AES-256-GCM encryption, PII redaction, Trust Quotient scoring.
   The server NEVER stores plaintext — Zero-Knowledge Architecture.
-version: "1.1.0"
+version: "1.1.7"
 icon: "🧠"
 sourceUrl: "https://github.com/SynapseLayer/synapse-layer"
 homepage: "https://synapselayer.org"

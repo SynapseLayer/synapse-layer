@@ -13,7 +13,7 @@
   <a href="https://pypi.org/project/synapse-layer/"><img src="https://img.shields.io/pypi/v/synapse-layer" alt="PyPI"></a>
   <a href="https://registry.modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP_Registry-Official-7c3aed" alt="MCP Registry"></a>
   <a href="https://epolicesupply.com/media/catalog/product/cache/d8322f9a8414f806fa706437e387fe78/s/7/s707.png"><img src="https://img.shields.io/badge/Smithery-Listed-0ea5e9" alt="Smithery"></a>
-  <a href="https://synapselayer.org/docs"><img src="https://img.shields.io/badge/Docs-v1.1.6-0D9373" alt="Docs"></a>
+  <a href="https://synapselayer.org/docs"><img src="https://img.shields.io/badge/Docs-v1.1.7-0D9373" alt="Docs"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License"></a>
   <img src="https://img.shields.io/badge/tests-481_passed-brightgreen" alt="Tests">
   <img src="https://img.shields.io/badge/coverage-90%25-brightgreen" alt="Coverage">
@@ -138,6 +138,15 @@ Agent → Sanitize (PII) → Validate Intent → Encrypt (AES-256-GCM) → DP No
 | 2 | **Intelligent Intent Validation™** | Two-step categorization with self-healing on recall |
 | 3 | **AES-256-GCM Encryption** | Authenticated encryption with PBKDF2 key derivation |
 | 4 | **Differential Privacy** | Calibrated Gaussian noise on embeddings |
+
+### 🔑 MCP Permissions
+
+| Permission | Required? | Justification |
+|---|:---:|---|
+| `file_system` | **Local only** | Used exclusively by `SqliteBackend` for local `.synapse/memories.db` persistence. **Remote mode** (`forge.synapselayer.org/api/mcp`) does **not** use the filesystem — all data is stored in PostgreSQL. |
+| `network` | ✅ | Required for remote MCP endpoint communication. |
+
+> **Note:** If you use the remote MCP endpoint (recommended), no filesystem access is needed. The `file_system` permission only applies when running the SDK locally with `SqliteBackend`.
 
 ---
 
