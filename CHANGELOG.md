@@ -7,6 +7,37 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [1.1.7] — 2026-04-13
+
+### 🎯 Summary
+
+**Codename: Security Hardening**
+
+Dependency audit and CVE remediation targeting MCP Marketplace security score ≥ 9.0.
+
+### Security
+
+- **CVE-2026-39892**: `cryptography` buffer overflow — floor raised to `>=44.0.0` (safe from all 2024-2026 CVEs)
+- **CVE-2026-34073**: `cryptography` DNS name constraints — covered by `>=44.0.0`
+- **CVE-2024-3772**: `pydantic` ReDoS via email validation — floor raised to `>=2.4.0`
+- **httpx**: Floor raised to `>=0.27.0` (HTTP/2 stability fixes, no direct CVEs but proactive hardening)
+- **python-dotenv**: Floor raised to `>=1.0.1` (maintenance alignment)
+
+### Changed
+
+- **Python**: Dropped EOL Python 3.9 support — `requires-python = ">=3.10"`
+- **Classifiers**: Added Python 3.13, removed Python 3.9
+- **Dev deps**: Upgraded pytest ≥8.0, pytest-cov ≥5.0, pytest-asyncio ≥0.23, black ≥24.0, mypy ≥1.8
+- **Dev deps**: Replaced `flake8` with `ruff>=0.3.0` (faster, unified linter)
+- **Version**: Bumped to 1.1.7
+
+### Removed
+
+- `flake8` from dev dependencies (superseded by `ruff`)
+- Python 3.9 support (EOL since Oct 2025)
+
+---
+
 ## [1.1.6] — 2026-04-12
 
 ### 🎯 Summary
