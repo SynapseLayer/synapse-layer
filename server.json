@@ -3,7 +3,7 @@
   "name": "io.github.SynapseLayer/synapse-layer",
   "title": "Synapse Layer \u2014 Continuous Consciousness Infrastructure",
   "description": "Persistent zero-knowledge memory for AI agents. AES-256-GCM encryption, PII redaction.",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "websiteUrl": "https://synapselayer.org",
   "repository": {
     "url": "https://github.com/SynapseLayer/synapse-layer",
@@ -13,7 +13,7 @@
     {
       "registryType": "pypi",
       "identifier": "synapse-layer",
-      "version": "1.1.7",
+      "version": "1.1.8",
       "runtimeHint": "uvx",
       "transport": {
         "type": "stdio"

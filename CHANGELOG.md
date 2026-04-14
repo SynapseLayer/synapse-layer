@@ -7,6 +7,21 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [1.1.8] — 2026-04-13
+
+### 🎯 Summary
+
+**Codename: Distribution Fix**
+
+Patch release to ensure PyPI package ships with the correct `cryptography>=46.0.7` dependency floor.
+The 1.1.7 PyPI artifact was published before the security hardening commit landed.
+
+### Fixed
+
+- **PyPI distribution**: `cryptography` dependency floor now correctly `>=46.0.7` in the published package (was `>=44.0.0` in 1.1.7 artifact)
+
+---
+
 ## [1.1.7] — 2026-04-13
 
 ### 🎯 Summary
