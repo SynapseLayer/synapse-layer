@@ -12,7 +12,7 @@
   <a href="https://github.com/SynapseLayer/synapse-layer/actions"><img src="https://github.com/SynapseLayer/synapse-layer/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://pypi.org/project/synapse-layer/"><img src="https://img.shields.io/pypi/v/synapse-layer" alt="PyPI"></a>
   <a href="https://registry.modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP_Registry-Official-7c3aed" alt="MCP Registry"></a>
-  <a href="https://epolicesupply.com/media/catalog/product/cache/d8322f9a8414f806fa706437e387fe78/s/7/s707.png"><img src="https://img.shields.io/badge/Smithery-Listed-0ea5e9" alt="Smithery"></a>
+  <a href="https://smithery.ai/server/@synapselayer/synapse-protocol"><img src="https://img.shields.io/badge/Smithery-Listed-0ea5e9" alt="Smithery"></a>
   <a href="https://synapselayer.org/docs"><img src="https://img.shields.io/badge/Docs-v1.1.7-0D9373" alt="Docs"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License"></a>
   <img src="https://img.shields.io/badge/tests-481_passed-brightgreen" alt="Tests">
@@ -254,7 +254,7 @@ Interfaces: `ImportanceScorer`, `ConflictResolver`, `DedupStrategy`, `RedactionS
 
 ---
 
-## 📊 v1.1.6 Numbers
+## 📊 v1.1.7 Numbers
 
 - **481 tests** | **90% coverage**
 - **5 framework integrations** (LangChain, CrewAI, AutoGen, LlamaIndex, Semantic Kernel)
