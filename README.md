@@ -13,10 +13,10 @@
   <a href="https://pypi.org/project/synapse-layer/"><img src="https://img.shields.io/pypi/v/synapse-layer" alt="PyPI"></a>
   <a href="https://registry.modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP_Registry-Official-7c3aed" alt="MCP Registry"></a>
   <a href="https://smithery.ai/server/@synapselayer/synapse-protocol"><img src="https://img.shields.io/badge/Smithery-Listed-0ea5e9" alt="Smithery"></a>
-  <a href="https://synapselayer.org/docs"><img src="https://img.shields.io/badge/Docs-v1.1.7-0D9373" alt="Docs"></a>
+  <a href="https://synapselayer.org/docs"><img src="https://img.shields.io/badge/Docs-v1.1.8-0D9373" alt="Docs"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License"></a>
-  <img src="https://img.shields.io/badge/tests-481_passed-brightgreen" alt="Tests">
-  <img src="https://img.shields.io/badge/coverage-90%25-brightgreen" alt="Coverage">
+  <img src="https://img.shields.io/badge/tests-496_passed-brightgreen" alt="Tests">
+  <img src="https://img.shields.io/badge/coverage-88%25-brightgreen" alt="Coverage">
 </p>
 
 <p align="center">
@@ -254,9 +254,9 @@ Interfaces: `ImportanceScorer`, `ConflictResolver`, `DedupStrategy`, `RedactionS
 
 ---
 
-## 📊 v1.1.7 Numbers
+## 📊 v1.1.8 Numbers
 
-- **481 tests** | **90% coverage**
+- **496 tests** | **88% coverage**
 - **5 framework integrations** (LangChain, CrewAI, AutoGen, LlamaIndex, Semantic Kernel)
 - **5 MCP tools** (real DB, not stubs)
 - **2 storage backends** (Memory, SQLite) + custom protocol
@@ -275,7 +275,7 @@ Interfaces: `ImportanceScorer`, `ConflictResolver`, `DedupStrategy`, `RedactionS
 
 | Version | Status | Highlights |
 |---|---|---|
-| **v1.1.x** | ✅ **Stable** | SqliteBackend, AES-256-GCM, `@remember`, 5 MCP tools, 5 framework integrations, 481 tests |
+| **v1.1.x** | ✅ **Stable** | SqliteBackend, AES-256-GCM, `@remember`, 5 MCP tools, 5 framework integrations, 496 tests |
 | **v1.2.0** | 🚧 Next | Embedding model selection, vector similarity search, batch operations |
 | **v2.0.0** | 📋 Planned | Multi-tenant vault, team memory spaces, RBAC |
 
@@ -287,7 +287,7 @@ Interfaces: `ImportanceScorer`, `ConflictResolver`, `DedupStrategy`, `RedactionS
 git clone https://github.com/SynapseLayer/synapse-layer.git
 cd synapse-layer
 pip install -e ".[dev]"
-python -m pytest tests/ -q  # 481 tests
+python -m pytest tests/ -q  # 496 tests
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
