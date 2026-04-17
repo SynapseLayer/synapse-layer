@@ -3,13 +3,13 @@ name: synapse-layer
 version: 0.3.0
 description: Zero-Knowledge persistent memory layer for Hermes Agent. Provides encrypted cross-session memory, Trust Quotient (TQ) scoring, and automatic recall across ALL channels (Telegram, WhatsApp, CLI, Discord).
 homepage: https://synapselayer.org
-credits: Rafa Martins | rafacpti@gmail.com | 5527999082624 | ramelseg.com.br
+credits: Rafa Martins | rafacpti@gmail.com |  | ramelseg.com.br
 metadata: {"synapse":{"category":"memory","requires":{"env":["SYNAPSE_TOKEN"]},"mcp":{"type":"http","url":"https://forge.synapselayer.org/mcp","auth":"Bearer ${SYNAPSE_TOKEN}"}}}
 ---
 
 # Synapse Layer — Persistent Memory for Hermes
 
-**Credits**: Rafa Martins (rafacpti@gmail.com | 5527999082624 | ramelseg.com.br)  
+**Credits**: Rafa Martins (rafacpti@gmail.com |  | ramelseg.com.br)  
 **Website**: [synapselayer.org](https://synapselayer.org) | **Forge**: [forge.synapselayer.org/forge](https://synapselayer.org/forge) | **GitHub**: [github.com/SynapseLayer/synapse-layer](https://github.com/SynapseLayer/synapse-layer)
 
 Zero-Knowledge encrypted memory that persists across ALL Hermes channels. Context survives between sessions, Telegram/WhatsApp/CLI all share the same memory.
@@ -135,7 +135,6 @@ All project-related memories MUST be stored in Synapse Layer. Below is the canon
 - Full name, role, company (Rafa Martins — Analista de Tecnologia na Ramel Tecnologia)
 - Communication style (pt-BR, feminine, cheerful, relaxed, cautious)
 - Voice preference (Edge-TTS Thalita, pt-BR)
-- Contact info (email: rafacpti@gmail.com, phone: 5527999082624)
 - Website: ramelseg.com.br
 - **Save when**: User shares preferences, corrections, or personal details
 
@@ -150,15 +149,15 @@ Every active project the user works on must be stored with:
 - **Save when**: Project mentioned, decision made, status changes
 
 ### 3. SERVER INFRASTRUCTURE
-- Server name/hostname (rafa131)
-- Running services and ports (Open WebUI:3000, Hermes API:8642, Voice Call:8765)
+- Server name/hostname ($server)
+- Running services and ports (Open WebUI:$port, Hermes API:$port, Voice Call:$port)
 - API endpoints and access credentials
 - Docker containers and their configs
 - **Save when**: New service added, config changed, credentials updated
 
 ### 4. API CREDENTIALS & TOKENS
 - Nous Portal token (expires ~15min, renew with `hermes auth list`)
-- Synapse Layer token (sk_connect_e8767ef9551a5d1438d00fb6190d041f)
+- Synapse Layer token (sk-conxxxxxxxxxxxxxx)
 - Naga.ac TTS API key
 - Telegram bot token
 - Aster MCP endpoint
@@ -166,17 +165,15 @@ Every active project the user works on must be stored with:
 
 ### 5. MEL-IA CONFIGURATION
 - Model in use (MiniMax-M2.7 via Nous Portal, renamed to "Mel-IA")
-- API server port (8642)
-- Open WebUI port (3000) with Docker (ghcr.io/open-webui/open-webui:main)
+- API server port ($port)
+- Open WebUI port (#port) with Docker (ghcr.io/open-webui/open-webui:main)
 - Voice: Edge-TTS Thalita
 - **Save when**: Config changes, new model added, port changed
 
 ### 6. VOICE CALL SYSTEM
 - Location: /root/.hermes/voice_call/
 - Stack: Telethon + faster-whisper + Edge-TTS (Thalita) + aiohttp WebSocket HTTPS :8765
-- Session name: melia_session (@Ramelinfor, Ramel Tecnologia)
 - Modes: --mode msg, --mode call
-- API_ID: 30875627
 - Note: PyTgCalls only works for group voice chats, NOT private calls
 - **Save when**: System modified, new mode added, dependency changed
 
