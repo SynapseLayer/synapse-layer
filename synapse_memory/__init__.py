@@ -10,6 +10,7 @@ License: Apache 2.0
 from .sanitizer import SynapseSanitizer, SanitizationResult, SensitivityLevel
 from .privacy import DifferentialPrivacy, PrivacyResult
 from .core import SynapseMemory, StoreResult, RecallResult
+from .client import Synapse
 
 # Public alias — SynapseClient is the documented name for external consumers
 SynapseClient = SynapseMemory
@@ -26,9 +27,17 @@ from .engine.handover import (
     HandoverStatus,
     HandoverToken,
 )
-from .backends import StorageBackend, MemoryBackend, SqliteBackend
+from .backends import StorageBackend, MemoryBackend, SqliteBackend, ForgeBackend
+from .exceptions import (
+    SynapseError,
+    ForgeBackendError,
+    ForgeAuthError,
+    ForgeRateLimitError,
+    ForgeDecryptError,
+)
 from .crypto import SynapseCrypto
 from .wrapper import remember
+from .router import RecallRouter, RecallMode, RouteResult, detect_recall_mode, resolve_recall_mode
 from .autosave import AutoSaveEngine, AutoSaveEvent, SaveResult
 from .plugins import (
     ImportanceScorer,
@@ -42,7 +51,7 @@ from .plugins import (
     load_pro_plugin,
 )
 
-__version__ = "1.1.8"
+__version__ = "1.2.0"
 
 import os as _os
 SYNAPSE_MODE: str = _os.environ.get("SYNAPSE_MODE", "oss").lower()
@@ -55,6 +64,7 @@ See https://forge.synapselayer.org/docs/pro for details.
 
 __all__ = [
     # Core
+    "Synapse",
     "SynapseMemory",
     "SynapseClient",
     # Integrations (lazy — import from synapse_memory.integrations)
@@ -87,6 +97,13 @@ __all__ = [
     "StorageBackend",
     "MemoryBackend",
     "SqliteBackend",
+    "ForgeBackend",
+    # Exceptions
+    "SynapseError",
+    "ForgeBackendError",
+    "ForgeAuthError",
+    "ForgeRateLimitError",
+    "ForgeDecryptError",
     # Auto-Save
     "AutoSaveEngine",
     "AutoSaveEvent",
@@ -101,4 +118,10 @@ __all__ = [
     "DefaultConflictResolver",
     "DefaultDedupStrategy",
     "load_pro_plugin",
+    # RecallRouter
+    "RecallRouter",
+    "RecallMode",
+    "RouteResult",
+    "detect_recall_mode",
+    "resolve_recall_mode",
 ]

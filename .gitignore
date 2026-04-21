@@ -213,6 +213,16 @@ sdk/
 *.pdf
 PRIVATE_REPO_INDEX.md
 
+# Operational scripts that may contain secrets
+scripts/e2e_forge.py
+scripts/test-*.py
+scripts/sim-*.py
+
+# PyPI credentials
+*.pypirc
+.env.local
+.env.production
+
 # Abacus.AI system file
 .abacus.donotdelete
 .mcpregistry_*

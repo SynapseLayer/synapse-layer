@@ -6,9 +6,9 @@ displayName: "Synapse Layer — Continuous Consciousness for AI"
 description: >
   Persistent zero-knowledge memory infrastructure for AI agents.
   Store, recall and transfer encrypted context across models via MCP.
-  AES-256-GCM encryption, PII redaction, Trust Quotient scoring.
+  AES-256-GCM encryption, PII redaction, TRUTH QUOTIENT™ scoring.
   The server NEVER stores plaintext — Zero-Knowledge Architecture.
-version: "1.1.8"
+version: "1.2.0"
 icon: "🧠"
 sourceUrl: "https://github.com/SynapseLayer/synapse-layer"
 homepage: "https://synapselayer.org"
@@ -77,7 +77,7 @@ tools:
           description: "Agent identifier. Defaults to 'default'."
 
   - name: search
-    description: "Cross-agent memory search using PostgreSQL full-text search + TQ ranking. Returns results across all agents matching the query."
+    description: "Cross-agent memory search with TRUTH QUOTIENT™ ranking. Returns results across all agents matching the query."
     inputSchema:
       type: object
       required: [query]
@@ -105,7 +105,7 @@ tags:
   - mcp-memory
   - deterministic-recall
   - zero-knowledge
-  - trust-quotient
+  - truth-quotient
   - aes-256-gcm
   - continuous-consciousness
   - pii-redaction
