@@ -13,7 +13,7 @@ Use this content for the Smithery listing page, GitHub PR body, or registry form
 Synapse Layer — Continuous Consciousness for AI
 
 ### One-Liner
-Persistent zero-knowledge memory infrastructure for AI agents. Store, recall, and transfer encrypted context across models.
+Persistent encrypted memory infrastructure for AI agents. Store, recall, and transfer AES-256-GCM encrypted context across models.
 
 ### Description
 
@@ -26,7 +26,7 @@ Agent → Sanitize (PII) → Validate Intent → Encrypt (AES-256-GCM) → DP No
 **Key capabilities:**
 - **Persistent cross-session memory** — agents remember across restarts
 - **Deterministic recall** — ranked by Trust Quotient™ scoring
-- **Zero-Knowledge Architecture** — server never sees plaintext
+- **AES-256-GCM Encryption** — encrypted at rest with per-operation random IV
 - **AES-256-GCM encryption** with PBKDF2 key derivation (600k iterations)
 - **PII redaction** — 15+ regex patterns for emails, phones, SSNs, credentials
 - **Differential privacy** — calibrated Gaussian noise on embeddings
@@ -82,7 +82,7 @@ Apache-2.0
 Ismael Marchi — [@synapselayer](https://x.com/synapselayer)
 
 ### Tags
-`agent-memory` `persistent-context` `long-term-memory` `mcp-memory` `deterministic-recall` `zero-knowledge` `trust-quotient` `aes-256-gcm` `pii-redaction` `continuous-consciousness` `sqlite-backend` `langchain` `crewai` `autogen` `llamaindex` `semantic-kernel`
+`agent-memory` `persistent-context` `long-term-memory` `mcp-memory` `deterministic-recall` `encrypted-at-rest` `trust-quotient` `aes-256-gcm` `pii-redaction` `continuous-consciousness` `sqlite-backend` `langchain` `crewai` `autogen` `llamaindex` `semantic-kernel`
 
 ### Numbers
 - 481 tests | 90% coverage

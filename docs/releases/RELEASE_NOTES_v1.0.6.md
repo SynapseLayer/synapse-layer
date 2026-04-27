@@ -29,7 +29,7 @@ Cross-agent context transfer with vault-first persistence. Memories are stored i
 
 ### Why This Matters
 
-- **Security posture**: Every memory is sanitized, noise-injected, intent-validated, and encrypted before persistence. The server never sees plaintext.
+- **Security posture**: Every memory is sanitized, noise-injected, intent-validated, and encrypted before persistence. Content is AES-256-GCM encrypted at rest.
 - **Fault tolerance**: Neural Handover™ is persistence-first. Target agent crashes don’t lose data.
 - **Compliance**: Full GDPR/LGPD/HIPAA audit trail with immutable logging and SHA-256 forensic hashes.
 - **Self-defense**: Self-healing prevents category drift attacks. Semantic Privacy Guard™ is mandatory.
@@ -189,7 +189,7 @@ This release upgrades Synapse Layer from a memory SDK to a **complete Cognitive 
 
 ---
 
-*Semantic Privacy Guard™ is now mandatory. The server never sees plaintext.*
+*Semantic Privacy Guard™ is now mandatory. Content is AES-256-GCM encrypted at rest.*
 
 **Giving Agents a Past. Giving Models a Soul. ⚗️**
 ```

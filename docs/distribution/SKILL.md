@@ -1,6 +1,6 @@
 # Synapse Layer Skill
 
-Zero-Knowledge Memory Layer for AI Agents.
+Persistent Encrypted Memory Layer for AI Agents.
 
 ## Overview
 
@@ -62,7 +62,7 @@ memory.recall("preferences")
 - AES-256-GCM encryption at rest
 - 15+ PII redaction patterns (emails, phones, API keys, etc.)
 - Differential privacy on embeddings
-- Zero-knowledge architecture — no plaintext leaves the agent
+- AES-256-GCM encrypted at rest — content cleared after encryption
 
 ## Integration
 

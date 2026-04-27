@@ -22,4 +22,4 @@
 - Tokens never in URLs or logs
 - CI secret scanning on every commit
 - PII redaction pipeline
-- Zero-knowledge: server never sees plaintext
+- Encryption: AES-256-GCM at rest with per-operation random IV — content cleared after encryption

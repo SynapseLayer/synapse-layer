@@ -24,7 +24,7 @@ Your AI agents forget everything between sessions. Synapse Layer fixes that.
 
 | Feature | Description |
 |---------|-------------|
-| 🔐 **Zero-knowledge** | AES-256-GCM — server never sees plaintext |
+| 🔐 **Encrypted at rest** | AES-256-GCM with per-operation random IV and HMAC-SHA-256 integrity |
 | 🧩 **One-click connect** | Claude Desktop, Cursor, LangChain, n8n |
 | 🌐 **Cross-agent memory** | Save in ChatGPT, recall in Claude |
 | ⚡ **MCP-native** | Any MCP-compatible agent |
@@ -40,7 +40,7 @@ Your AI agents forget everything between sessions. Synapse Layer fixes that.
 |---|---|
 | Agent forgets context every session | Persistent memory across all sessions |
 | Memory locked to one model | Cross-agent: save in ChatGPT, recall in Claude |
-| Plaintext stored on servers | AES-256-GCM — server never sees plaintext |
+| Plaintext stored on servers | AES-256-GCM encrypted at rest — content cleared after encryption |
 | Complex integration | `pip install synapse-layer` + 3 lines of code |
 | No audit trail | Full memory lifecycle with Truth Quotient™ scoring |
 
@@ -134,7 +134,7 @@ curl -X POST \
 | Auth | Header-first (`x-connect-token`) |
 | Token exposure | Never in URLs or logs |
 | CI protection | `secret-scan.yml` on every commit |
-| Zero-knowledge | Server never sees plaintext |
+| Encryption | AES-256-GCM at rest with per-operation random IV |
 | Security score | 10.0 / 10 (MCP Marketplace) |
 
 See [SECURITY.md](SECURITY.md) for vulnerability reporting.

@@ -2,11 +2,11 @@
 
 ## System Overview
 
-Synapse Layer is a **Zero-Knowledge Memory Layer for AI Agents** with client-side encryption, intent validation, and trust-based conflict resolution.
+Synapse Layer is a **Persistent Encrypted Memory Layer for AI Agents** with AES-256-GCM encryption at rest, intent validation, and trust-based conflict resolution.
 
 ### Core Principles
 
-1. **Zero-Knowledge:** You own encryption keys; we never see plaintext
+1. **Encrypted at Rest:** AES-256-GCM with per-operation random IV and HMAC-SHA-256 integrity
 2. **Client-Side Sanitization:** PII removal before transmission
 3. **Intent Validation:** Intelligent categorization with self-healing
 4. **Trust Quotient™:** Adaptive conflict resolution algorithm
@@ -318,7 +318,7 @@ Signature: HMAC-SHA256(header.payload, signing_key)
 
 ## Security Principles
 
-- **Zero-Knowledge:** Client controls encryption keys; server never has plaintext
+- **Encrypted at Rest:** AES-256-GCM with per-operation random IV — content cleared after encryption
 - **Client-Side Sanitization:** PII removed before leaving client
 - **Immutable Audit:** Every operation logged; cannot be deleted
 - **Differential Privacy:** Aggregate queries don't leak individual data

@@ -12,7 +12,7 @@
 
 ## Description
 
-Persistent zero-knowledge memory for AI agents. AES-256-GCM encryption, PII redaction.
+Persistent encrypted memory for AI agents. AES-256-GCM at rest, PII redaction, HMAC-SHA-256 integrity.
 
 ## Package
 
@@ -88,7 +88,7 @@ Persistent zero-knowledge memory for AI agents. AES-256-GCM encryption, PII reda
 - AES-256-GCM with PBKDF2 key derivation (600k iterations)
 - 15+ PII regex patterns (emails, phones, SSNs, credentials)
 - Calibrated Gaussian noise on embeddings (differential privacy)
-- Zero-knowledge architecture: server never stores plaintext
+- Encryption: AES-256-GCM at rest with per-operation random IV
 
 ## Links
 
@@ -106,7 +106,7 @@ Persistent zero-knowledge memory for AI agents. AES-256-GCM encryption, PII reda
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.SynapseLayer/synapse-layer",
   "title": "Synapse Layer — Continuous Consciousness Infrastructure",
-  "description": "Persistent zero-knowledge memory for AI agents. AES-256-GCM encryption, PII redaction.",
+  "description": "Persistent encrypted memory for AI agents. AES-256-GCM at rest, PII redaction, HMAC-SHA-256 integrity.",
   "version": "1.1.1",
   "websiteUrl": "https://synapselayer.org",
   "repository": {
