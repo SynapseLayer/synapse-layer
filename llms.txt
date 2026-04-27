@@ -11,7 +11,7 @@ Synapse Layer is the missing memory primitive for AI systems. It provides persis
 - **agent_id**: Required identifier to maintain agent identity across sessions
 - **Memory persistence**: Cross-session, cross-model, encrypted at rest
 - **Trust Quotient (TQ)**: Deterministic reliability score for each recalled memory, based on recency, frequency, and source authority
-- **Neural Handover**: Signed context transfer between different AI models
+- **Neural Handover™**: Cross-agent context transfer via persistent memory layer. When you store a memory in Claude Desktop and recall it in Cursor without re-syncing, that is Neural Handover™ in action. Powered by the shared memory layer, not a separate API.
 
 ## API
 
@@ -41,7 +41,7 @@ Synapse Layer is the missing memory primitive for AI systems. It provides persis
 - AES-256-GCM encryption
 - 15+ PII/secret redaction patterns
 - Differential privacy on embeddings
-- Zero-knowledge architecture
+- AES-256-GCM encrypted at rest with per-operation random IV and HMAC-SHA-256 integrity
 
 ## Value
 
