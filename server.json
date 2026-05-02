@@ -3,7 +3,7 @@
   "name": "io.github.SynapseLayer/synapse-layer",
   "title": "Synapse Layer",
   "description": "Persistent memory infrastructure for AI agents — encrypted, governed, and cross-agent. State Continuity Layer.",
-  "version": "2.3.3",
+  "version": "2.3.5",
   "websiteUrl": "https://synapselayer.org",
   "repository": {
     "url": "https://github.com/SynapseLayer/synapse-layer",
@@ -13,7 +13,7 @@
     {
       "registryType": "pypi",
       "identifier": "synapse-layer",
-      "version": "2.3.3",
+      "version": "2.3.5",
       "runtimeHint": "uvx",
       "transport": {
         "type": "stdio"

@@ -3,7 +3,7 @@ displayName: "Synapse Layer"
 description: >
   Persistent memory infrastructure for AI agents — encrypted,
   governed, and cross-agent. State Continuity Layer.
-version: "2.3.3"
+version: "2.3.5"
 icon: "🧠"
 sourceUrl: "https://github.com/SynapseLayer/synapse-layer"
 homepage: "https://synapselayer.org"
