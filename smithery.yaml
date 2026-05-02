@@ -1,14 +1,11 @@
-# Smithery Registry Configuration
-# https://smithery.ai/docs/build/project-config/smithery-yaml
-
 qualifiedName: "@synapselayer/synapse-protocol"
-displayName: "Synapse Layer — Continuous Consciousness for AI"
+displayName: "Synapse Layer — Persistent Memory for AI Agents"
 description: >
-  Persistent zero-knowledge memory infrastructure for AI agents.
-  Store, recall and transfer encrypted context across models via MCP.
+  Persistent, encrypted memory infrastructure for AI agents.
+  Store, recall and transfer context across models via MCP.
   AES-256-GCM encryption, PII redaction, TRUTH QUOTIENT™ scoring.
-  The server NEVER stores plaintext — Zero-Knowledge Architecture.
-version: "1.2.0"
+  Server never sees plaintext. Works in 30 seconds.
+version: "2.3.0"
 icon: "🧠"
 sourceUrl: "https://github.com/SynapseLayer/synapse-layer"
 homepage: "https://synapselayer.org"
@@ -17,17 +14,21 @@ author:
   name: "Ismael Marchi"
   url: "https://synapselayer.org"
 
-# Remote HTTP-stream endpoint (hosted on Synapse Forge)
 serverUrl: "https://forge.synapselayer.org/api/mcp"
-
 startCommand:
   type: "http"
   url: "https://forge.synapselayer.org/api/mcp"
+  httpHeaders:
+    x-connect-token: "{{config.connect_token}}"
 
 configSchema:
   type: "object"
-  required: []
+  required:
+    - connect_token
   properties:
+    connect_token:
+      type: "string"
+      description: "Your Synapse Connect Token. Get it at synapselayer.org → Dashboard → Connect."
     agent_id:
       type: "string"
       description: "Identifier for the agent using the memory layer. Defaults to 'default'."
@@ -35,7 +36,7 @@ configSchema:
 
 tools:
   - name: recall
-    description: "Deterministically retrieves past context and decisions. Call before responding when prior context may exist."
+    description: "Retrieves past context, decisions, and preferences from encrypted memory. Call before responding when prior context may exist."
     inputSchema:
       type: object
       required: [query]
@@ -51,7 +52,7 @@ tools:
           description: "Maximum memories to return (1-50, default: 10)"
 
   - name: save_to_synapse
-    description: "Persists user preferences, task progress, and facts with Zero-Knowledge encryption."
+    description: "Persists user preferences, task progress, and facts with AES-256-GCM encryption. Server never sees plaintext."
     inputSchema:
       type: object
       required: [content]
@@ -64,7 +65,7 @@ tools:
           description: "Agent identifier. Defaults to 'default'."
 
   - name: process_text
-    description: "Self-extracting memory engine. Automatically updates long-term memory from text. Never stores secrets, credentials, or financial data."
+    description: "Self-extracting memory engine. Automatically identifies and stores relevant facts from text. Never stores secrets, credentials, or financial data."
     inputSchema:
       type: object
       required: [text]
@@ -77,14 +78,14 @@ tools:
           description: "Agent identifier. Defaults to 'default'."
 
   - name: search
-    description: "Cross-agent memory search with TRUTH QUOTIENT™ ranking. Returns results across all agents matching the query."
+    description: "Cross-agent semantic memory search with TRUTH QUOTIENT™ ranking. Returns results across all agents matching the query."
     inputSchema:
       type: object
       required: [query]
       properties:
         query:
           type: string
-          description: "Search query — natural language or keywords to find across all stored memories"
+          description: "Search query — natural language or keywords"
         agent_id:
           type: string
           description: "Optional agent filter. Omit to search across all agents."
@@ -103,11 +104,8 @@ tags:
   - persistent-context
   - long-term-memory
   - mcp-memory
-  - deterministic-recall
-  - zero-knowledge
   - truth-quotient
   - aes-256-gcm
-  - continuous-consciousness
   - pii-redaction
   - mcp
   - ai-agents
@@ -116,6 +114,7 @@ tags:
   - autogen
   - llamaindex
   - semantic-kernel
-  - sqlite-backend
   - privacy
   - encryption
+  - cross-agent
+  - state-continuity
