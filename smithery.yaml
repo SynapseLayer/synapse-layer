@@ -1,9 +1,9 @@
 qualifiedName: "@synapselayer/synapse-protocol"
-displayName: "Synapse Layer — Persistent Memory Infrastructure"
+displayName: "Synapse Layer"
 description: >
   Persistent memory infrastructure for AI agents — encrypted,
-  governed, and cross-agent. Server never sees plaintext.
-version: "2.3.0"
+  governed, and cross-agent. State Continuity Layer.
+version: "2.3.2"
 icon: "🧠"
 sourceUrl: "https://github.com/SynapseLayer/synapse-layer"
 homepage: "https://synapselayer.org"
@@ -34,7 +34,7 @@ configSchema:
 
 tools:
   - name: recall
-    description: "Retrieves past context, decisions, and preferences from encrypted memory. Call before responding when prior context may exist."
+    description: "Retrieves relevant past context and decisions to maintain continuity across interactions."
     inputSchema:
       type: object
       required: [query]
@@ -50,7 +50,7 @@ tools:
           description: "Maximum memories to return (1-50, default: 10)"
 
   - name: save_to_synapse
-    description: "Persists user preferences, task progress, and facts with AES-256-GCM encryption. Server never sees plaintext."
+    description: "Stores structured memory securely using AES-256-GCM encryption. Server never sees plaintext."
     inputSchema:
       type: object
       required: [content]
@@ -63,7 +63,7 @@ tools:
           description: "Agent identifier. Defaults to 'default'."
 
   - name: process_text
-    description: "Self-extracting memory engine. Automatically identifies and stores relevant facts from text. Never stores secrets, credentials, or financial data."
+    description: "Extracts and persists structured memory from text input to maintain long-term context."
     inputSchema:
       type: object
       required: [text]
@@ -76,7 +76,7 @@ tools:
           description: "Agent identifier. Defaults to 'default'."
 
   - name: search
-    description: "Cross-agent semantic memory search with TRUTH QUOTIENT™ ranking. Returns results across all agents matching the query."
+    description: "Searches across stored memory using semantic retrieval. Returns results ranked by relevance and confidence."
     inputSchema:
       type: object
       required: [query]
@@ -92,7 +92,7 @@ tools:
           description: "Maximum results to return (1-50, default: 20)"
 
   - name: health_check
-    description: "Verify system availability and memory pipeline integrity. Call on first execution."
+    description: "Verify system availability and memory pipeline integrity."
     inputSchema:
       type: object
       properties: {}
@@ -102,7 +102,6 @@ tags:
   - persistent-context
   - long-term-memory
   - mcp-memory
-  - truth-quotient
   - aes-256-gcm
   - pii-redaction
   - mcp
