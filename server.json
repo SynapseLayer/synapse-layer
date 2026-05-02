@@ -1,21 +1,61 @@
 {
-  "name": "synapse-layer",
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.SynapseLayer/synapse-layer",
+  "title": "Synapse Layer — Persistent Memory Infrastructure",
+  "description": "Persistent encrypted memory for AI agents. AES-256-GCM at rest, PII redaction, HMAC-SHA-256 integrity. Server never sees plaintext.",
   "version": "2.3.0",
-  "description": "Persistent, encrypted memory infrastructure for AI agents. Server never sees plaintext.",
-  "protocol": "mcp",
-  "transport": "streamable-http",
-  "auth": {
-    "type": "header",
-    "header": "x-connect-token",
-    "description": "Get your token at synapselayer.org → Dashboard → Connect"
+  "websiteUrl": "https://synapselayer.org",
+  "repository": {
+    "url": "https://github.com/SynapseLayer/synapse-layer",
+    "source": "github"
   },
-  "endpoints": {
-    "post": "/mcp",
-    "health": "/api/health"
-  },
-  "capabilities": {
-    "tools": true,
-    "resources": false,
-    "prompts": false
-  }
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "synapse-layer",
+      "version": "2.3.0",
+      "runtimeHint": "uvx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "SYNAPSE_AGENT_ID",
+          "description": "Identifier for the agent using the memory layer.",
+          "isRequired": false,
+          "isSecret": false,
+          "default": "default-agent"
+        },
+        {
+          "name": "SYNAPSE_PRIVACY_EPSILON",
+          "description": "Differential privacy epsilon parameter. Lower = stronger privacy. Range: 0.1–2.0.",
+          "isRequired": false,
+          "isSecret": false,
+          "default": "0.5"
+        },
+        {
+          "name": "SYNAPSE_ENCRYPTION_KEY",
+          "description": "AES-256-GCM encryption key for at-rest memory encryption. Auto-generated if not provided.",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "LOG_LEVEL",
+          "description": "Logging verbosity: DEBUG, INFO, WARNING, ERROR.",
+          "isRequired": false,
+          "isSecret": false,
+          "default": "INFO"
+        }
+      ]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://forge.synapselayer.org/api/mcp",
+      "headers": {
+        "x-connect-token": "{CONNECT_TOKEN}"
+      }
+    }
+  ]
 }
