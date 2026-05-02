@@ -1,10 +1,8 @@
 qualifiedName: "@synapselayer/synapse-protocol"
-displayName: "Synapse Layer — Persistent Memory for AI Agents"
+displayName: "Synapse Layer — Persistent Memory Infrastructure"
 description: >
-  Persistent, encrypted memory infrastructure for AI agents.
-  Store, recall and transfer context across models via MCP.
-  AES-256-GCM encryption, PII redaction, TRUTH QUOTIENT™ scoring.
-  Server never sees plaintext. Works in 30 seconds.
+  Persistent memory infrastructure for AI agents — encrypted,
+  governed, and cross-agent. Server never sees plaintext.
 version: "2.3.0"
 icon: "🧠"
 sourceUrl: "https://github.com/SynapseLayer/synapse-layer"
