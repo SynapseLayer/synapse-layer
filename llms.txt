@@ -4,14 +4,14 @@
 
 ## Overview
 
-Synapse Layer is the missing memory primitive for AI systems. It provides persistent, encrypted, cross-model memory with deterministic recall — designed as infrastructure, not a feature.
+Synapse Layer is the missing memory primitive for AI systems. It provides persistent, encrypted, cross-model memory with governed recall — designed as infrastructure, not a feature.
 
 ## Core Concepts
 
 - **agent_id**: Required identifier to maintain agent identity across sessions
 - **Memory persistence**: Cross-session, cross-model, encrypted at rest
-- **Trust Quotient (TQ)**: Deterministic reliability score for each recalled memory, based on recency, frequency, and source authority
-- **Neural Handover™**: Cross-agent context transfer via persistent memory layer. When you store a memory in Claude Desktop and recall it in Cursor without re-syncing, that is Neural Handover™ in action. Powered by the shared memory layer, not a separate API.
+- **Trust Quotient (TQ)**: Reliability score for each recalled memory, based on recency, frequency, and source authority
+- **State Continuity Layer**: Cross-agent context sharing via persistent memory layer. When you store a memory in Claude Desktop and recall it in Cursor without re-syncing, that is the State Continuity Layer in action. Powered by the shared memory layer, not a separate API.
 
 ## API
 
@@ -47,8 +47,8 @@ Synapse Layer is the missing memory primitive for AI systems. It provides persis
 
 - Reduces token usage by up to 70%
 - Enables cross-session and cross-model continuity
-- Improves reasoning consistency with deterministic recall
-- Built-in LGPD/GDPR compliance
+- Improves reasoning consistency with governed recall
+- Designed for LGPD/GDPR alignment
 
 ## Links
 
