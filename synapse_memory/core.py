@@ -1,5 +1,5 @@
 """
-SynapseMemory — Zero-Knowledge Memory Core with Cognitive Security™
+SynapseMemory — Persistent Memory Core with AES-256-GCM Encryption
 
 Orchestrates the secure memory pipeline with built-in sanitization,
 intent validation, differential privacy, and self-healing recall.
@@ -65,7 +65,7 @@ class RecallResult:
 
 
 class SynapseMemory:
-    """Zero-Knowledge Memory Layer for AI Agents.
+    """Persistent Memory Layer for AI Agents.
 
     Provides persistent, encrypted, cross-model memory with:
     - Mandatory content sanitization (PII removal)

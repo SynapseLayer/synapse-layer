@@ -1,5 +1,5 @@
 """
-Synapse Layer — Forge Backend (True Zero-Knowledge)
+Synapse Layer — Forge Backend (AES-256-GCM Encrypted)
 
 Production-grade backend for Synapse Layer Forge API.
 
@@ -63,7 +63,7 @@ _EMBEDDING_DIM = 1536  # Forge API expects 1536-dim vectors
 
 
 class ForgeBackend:
-    """True Zero-Knowledge backend for Synapse Layer Forge API.
+    """AES-256-GCM encrypted backend for Synapse Layer Forge API.
 
     Store encrypts content CLIENT-SIDE (AES-256-GCM) BEFORE the HTTP
     POST — the server NEVER receives or sees plaintext.
@@ -320,7 +320,7 @@ class ForgeBackend:
         embedding: Optional[List[float]] = None,
         source: str = "sdk",
     ) -> str:
-        """Store a memory via Forge API — True Zero-Knowledge.
+        """Store a memory via Forge API — server never sees plaintext.
 
         Flow:
             1. Encrypt content CLIENT-SIDE (AES-256-GCM)

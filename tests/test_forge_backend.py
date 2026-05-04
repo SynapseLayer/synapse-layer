@@ -1,7 +1,7 @@
 """
 Synapse Layer — ForgeBackend Unit Tests
 
-Verifies TRUE Zero-Knowledge guarantees:
+Verifies encryption guarantees (server never sees plaintext):
   - TEST-ZK-1: store() encrypts client-side — NO plaintext in HTTP payload
   - TEST-2: recall() decrypts encrypted envelope before returning
   - TEST-3, TEST-4: Auth failures raised correctly
@@ -77,7 +77,7 @@ def _make_encrypted_payload(key: bytes, plaintext: str) -> dict:
 async def test_zk_store_no_plaintext_in_payload(backend: ForgeBackend) -> None:
     """⚡ CRITICAL: Plaintext must NEVER appear in the HTTP payload.
     SDK encrypts client-side BEFORE POST.  Server NEVER sees plaintext.
-    This is THE definitive Zero-Knowledge test.
+    This is THE definitive encryption test — server never sees plaintext.
     """
     secret_content = "My SSN is 123-45-6789 and my password is hunter2"
     captured_body: dict = {}

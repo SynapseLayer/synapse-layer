@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "synapse-layer"
 version = "1.2.0"
-description = "Zero-Knowledge Memory Layer for AI Agents — Cognitive Security Protocol with 4 proprietary seals. Giving Agents a Past. Giving Models a Soul."
+description = "Persistent memory infrastructure for AI agents — encrypted, governed, and cross-agent. Server never sees plaintext."
 readme = "README.md"
 license = {text = "Apache 2.0"}
 authors = [{name = "Ismael Marchi", email = "founder.synapselayer@proton.me"}]
@@ -13,7 +13,7 @@ authors = [{name = "Ismael Marchi", email = "founder.synapselayer@proton.me"}]
 keywords = [
   "ai-agents",
   "memory",
-  "zero-knowledge",
+  "persistent-memory",
   "encryption",
   "mcp",
   "agentic-ai",

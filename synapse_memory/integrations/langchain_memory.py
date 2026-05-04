@@ -191,7 +191,7 @@ class SynapseChatMessageHistory(BaseChatMessageHistory):
     def clear(self) -> None:
         """Clear is a no-op in the OSS adapter.
 
-        Synapse Layer's zero-knowledge architecture does not support
+        Synapse Layer's encrypted architecture does not support
         bulk deletion from the SDK. In production deployments,
         memory lifecycle is managed via retention policies.
         """

@@ -6,14 +6,14 @@ Pluggable persistence layer for SynapseMemory.
 Available backends:
     - MemoryBackend:  In-memory (default, non-persistent)
     - SqliteBackend:  Zero-config local persistence via sqlite3
-    - ForgeBackend:   Zero-Knowledge cloud via Forge API (AES-256-GCM)
+    - ForgeBackend:   Encrypted cloud via Forge API (AES-256-GCM)
 
 Usage::
 
     from synapse_memory.backends import SqliteBackend
     memory = SynapseMemory(agent_id="my-agent", backend=SqliteBackend())
 
-    # Zero-Knowledge cloud backend
+    # Encrypted cloud backend
     from synapse_memory.backends import ForgeBackend
     backend = ForgeBackend(api_key="sk_connect_...", encryption_key=b"\\x00"*32)
 
