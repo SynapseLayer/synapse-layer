@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.3.7] - 2026-05-04
+
+### Changed
+- Public surface governance: claims matrix v1.0 applied
+- Removed deprecated claims from all public surfaces
+- Aligned descriptions, topics and metadata across all public repos
+- Version synchronized across all distribution channels
+
+
 ## [1.2.0] — 2026-04-21
 
 ### Added

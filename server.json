@@ -2,8 +2,8 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.SynapseLayer/synapse-layer",
   "title": "Synapse Layer",
-  "description": "Persistent memory infrastructure for AI agents — encrypted, governed, and cross-agent. State Continuity Layer.",
-  "version": "2.3.3",
+  "description": "Persistent memory infrastructure for AI agents \u2014 encrypted, governed, and cross-agent. State Continuity Layer.",
+  "version": "2.3.7",
   "websiteUrl": "https://synapselayer.org",
   "repository": {
     "url": "https://github.com/SynapseLayer/synapse-layer",
@@ -13,7 +13,7 @@
     {
       "registryType": "pypi",
       "identifier": "synapse-layer",
-      "version": "2.3.3",
+      "version": "2.3.7",
       "runtimeHint": "uvx",
       "transport": {
         "type": "stdio"
@@ -28,7 +28,7 @@
         },
         {
           "name": "SYNAPSE_PRIVACY_EPSILON",
-          "description": "Differential privacy epsilon parameter. Lower = stronger privacy. Range: 0.1–2.0.",
+          "description": "Differential privacy epsilon parameter. Lower = stronger privacy. Range: 0.1\u20132.0.",
           "isRequired": false,
           "isSecret": false,
           "default": "0.5"
