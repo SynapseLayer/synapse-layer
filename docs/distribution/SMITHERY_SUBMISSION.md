@@ -10,7 +10,7 @@ Use this content for the Smithery listing page, GitHub PR body, or registry form
 `@synapselayer/synapse-protocol`
 
 ### Display Name
-Synapse Layer — Continuous Consciousness for AI
+Synapse Layer — Persistent Memory for AI Agents
 
 ### One-Liner
 Persistent encrypted memory infrastructure for AI agents. Store, recall, and transfer AES-256-GCM encrypted context across models.

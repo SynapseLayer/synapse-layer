@@ -84,7 +84,7 @@ def main():
     print(f"  Categories: {info.categories}")
     print()
 
-    print("Done. Memory persists across sessions with zero-knowledge security.")
+    print("Done. Memory persists across sessions with encrypted persistent memory.")
 
 
 if __name__ == "__main__":

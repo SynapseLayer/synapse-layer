@@ -1,7 +1,7 @@
 """
-Synapse Memory — Zero-Knowledge Memory Layer for AI Agents
+Synapse Memory — Persistent Memory Infrastructure for AI Agents
 
-Giving Agents a Past. Giving Models a Soul.
+Memory that survives across sessions, models, and tools.
 
 Author: Security & Architecture Team @ Synapse Layer
 License: Apache 2.0

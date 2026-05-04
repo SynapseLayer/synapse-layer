@@ -191,7 +191,7 @@ This release upgrades Synapse Layer from a memory SDK to a **complete Cognitive 
 
 *Semantic Privacy Guard™ is now mandatory. Content is AES-256-GCM encrypted at rest.*
 
-**Giving Agents a Past. Giving Models a Soul. ⚗️**
+<!-- Tagline updated: see PUBLIC_CLAIMS_MATRIX.md -->
 ```
 
 ---

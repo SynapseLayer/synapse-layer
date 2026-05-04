@@ -5,7 +5,7 @@
 | Field | Value |
 |---|---|
 | **Name** | `io.github.SynapseLayer/synapse-layer` |
-| **Title** | Synapse Layer — Continuous Consciousness Infrastructure |
+| **Title** | Synapse Layer — Persistent Memory Infrastructure |
 | **Version** | `1.1.5` |
 | **License** | Apache-2.0 |
 | **Schema** | `2025-12-11` |
@@ -105,7 +105,7 @@ Persistent encrypted memory for AI agents. AES-256-GCM at rest, PII redaction, H
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.SynapseLayer/synapse-layer",
-  "title": "Synapse Layer — Continuous Consciousness Infrastructure",
+  "title": "Synapse Layer — Persistent Memory Infrastructure",
   "description": "Persistent encrypted memory for AI agents. AES-256-GCM at rest, PII redaction, HMAC-SHA-256 integrity.",
   "version": "1.1.1",
   "websiteUrl": "https://synapselayer.org",

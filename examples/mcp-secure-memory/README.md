@@ -1,4 +1,4 @@
-# Reference Implementation: Zero-Knowledge Secure Memory for MCP
+# Reference Implementation: Encrypted Persistent Memory for MCP
 
 > **Give any MCP-compatible agent a privacy-first, audit-ready memory layer in under 5 minutes.**
 
@@ -43,7 +43,7 @@ Raw Input ──► PII Sanitization ──► Intent Validation ──► DP No
 | **Intent Validation** | Every memory is classified by intent category with confidence scoring |
 | **Self-Healing** | Conflicting memories with overlapping semantics are automatically reclassified via keyword consensus |
 | **Audit Trail** | Every `store` returns: `memory_id`, `content_hash` (SHA-256), `trust_quotient`, and full sanitization/privacy details |
-| **Zero-Knowledge** | The SDK processes all data locally — no external API calls, no telemetry, no data leaves your environment |
+| **Privacy-First** | The SDK processes all data locally — no external API calls, no telemetry, no data leaves your environment |
 
 ---
 

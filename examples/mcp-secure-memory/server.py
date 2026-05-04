@@ -1,5 +1,5 @@
 """
-Reference Implementation: Zero-Knowledge Secure Memory for MCP (Synapse Layer)
+Reference Implementation: Encrypted Persistent Memory for MCP (Synapse Layer)
 
 A minimal MCP server that exposes two tools — store_memory and recall_memory —
 backed by Synapse Layer's privacy-first memory SDK. Every memory goes through

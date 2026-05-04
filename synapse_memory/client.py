@@ -1,7 +1,7 @@
 """Synapse Layer — Simple Client (sync one-liner API).
 
 Sync HTTP client for Forge API endpoints. Server-side AES-256-GCM
-encryption; the server owns the master key. For client-side zero-knowledge,
+encryption; the server owns the master key. For client-side encrypted storage,
 use :class:`synapse_memory.backends.forge_backend.ForgeBackend` instead.
 
 Usage::

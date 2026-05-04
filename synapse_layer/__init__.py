@@ -1,5 +1,5 @@
 """
-Synapse Layer — Zero-Knowledge Memory Layer for AI Agents
+Synapse Layer — Persistent Memory Infrastructure for AI Agents
 
 This module provides the public API surface matching the package name.
 ``from synapse_layer import ...`` works as expected after
