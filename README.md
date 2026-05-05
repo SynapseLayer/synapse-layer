@@ -20,6 +20,25 @@
 
 ---
 
+## ⚡ 30-Second Quickstart
+
+```bash
+pip install synapse-layer
+```
+
+```python
+from synapse_layer import Synapse
+
+s = Synapse(token="sk_connect_YOUR_TOKEN")
+
+s.save("user likes coffee")
+print(s.recall("what does user like?"))
+```
+
+Get your token at [forge.synapselayer.org](https://forge.synapselayer.org) → Dashboard → Connect
+
+---
+
 ## What is Synapse Layer?
 
 The **persistent memory layer for AI agents** — the missing piece between stateless LLMs and real continuity of context.
