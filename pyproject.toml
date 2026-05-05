@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "synapse-layer"
 version = "1.2.0"
-description = "Persistent memory infrastructure for AI agents — encrypted, governed, and cross-agent. Server never sees plaintext."
+description = "Persistent memory infrastructure for AI agents — encrypted, governed, and cross-agent. State Continuity Layer."
 readme = "README.md"
 license = {text = "Apache 2.0"}
 authors = [{name = "Ismael Marchi", email = "founder.synapselayer@proton.me"}]
@@ -20,7 +20,8 @@ keywords = [
   "lgpd",
   "cognitive-security",
   "differential-privacy",
-  "neural-handover",
+  "state-continuity",
+  "cross-agent-memory",
 ]
 
 classifiers = [
