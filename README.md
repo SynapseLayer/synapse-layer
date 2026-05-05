@@ -1,16 +1,20 @@
 <div align="center">
 
 # 🧠 Synapse Layer
-**Persistent memory infrastructure for AI agents**
+
+### RAG retrieves. Synapse remembers.
+
+**Persistent memory infrastructure for AI agents — encrypted, governed, and cross-agent.**
+
+*The OAuth for AI Memory. State Continuity Layer for autonomous systems.*
 
 [![PyPI](https://img.shields.io/pypi/v/synapse-layer)](https://pypi.org/project/synapse-layer/)
 [![Python](https://img.shields.io/pypi/pyversions/synapse-layer)](https://pypi.org/project/synapse-layer/)
 [![Downloads](https://img.shields.io/pypi/dm/synapse-layer)](https://pypi.org/project/synapse-layer/)
-[![MCP Approved](https://img.shields.io/badge/MCP-Approved-blue)](https://mcp-marketplace.io)
-[![Security](https://img.shields.io/badge/Security-10.0%2F10-brightgreen)](https://mcp-marketplace.io)
+[![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-6B4FBB)](https://modelcontextprotocol.io)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 
-[Website](https://synapselayer.org) · [Docs](https://synapselayer.org/docs) · [PyPI](https://pypi.org/project/synapse-layer/) · [Forge](https://forge.synapselayer.org)
+[Website](https://synapselayer.org) · [Docs](https://forge.synapselayer.org/docs) · [PyPI](https://pypi.org/project/synapse-layer/) · [Forge](https://forge.synapselayer.org)
 
 </div>
 
@@ -25,10 +29,11 @@ Your AI agents forget everything between sessions. Synapse Layer fixes that.
 | Feature | Description |
 |---------|-------------|
 | 🔐 **Encrypted at rest** | AES-256-GCM with per-operation random IV and HMAC-SHA-256 integrity |
-| 🧩 **One-click connect** | Claude Desktop, Cursor, LangChain, n8n |
+| 🧩 **One-click connect** | Claude Desktop, Cursor, LangChain, CrewAI, n8n |
 | 🌐 **Cross-agent memory** | Save in ChatGPT, recall in Claude |
 | ⚡ **MCP-native** | Any MCP-compatible agent |
 | 🔒 **Header-first auth** | Tokens never in URLs or logs |
+| 🎯 **Trust Quotient** | Deterministic recall — memories ranked by confidence, not recency alone |
 
 ---
 
@@ -40,9 +45,11 @@ Your AI agents forget everything between sessions. Synapse Layer fixes that.
 |---|---|
 | Agent forgets context every session | Persistent memory across all sessions |
 | Memory locked to one model | Cross-agent: save in ChatGPT, recall in Claude |
-| Plaintext stored on servers | AES-256-GCM encrypted at rest — content cleared after encryption |
+| No audit trail | Trust Quotient™ scoring on every memory |
 | Complex integration | `pip install synapse-layer` + 3 lines of code |
-| No audit trail | Full memory lifecycle with Truth Quotient™ scoring |
+| Plaintext stored on servers | AES-256-GCM encrypted at rest |
+
+---
 
 ## Install
 
@@ -56,7 +63,7 @@ pip install synapse-layer
 
 ```python
 import asyncio
-from synapse_layer import SynapseClient  # canonical public import
+from synapse_layer import SynapseClient
 
 async def main():
     memory = SynapseClient(agent_id="my-agent")
@@ -84,7 +91,9 @@ for r in results:
     print(r["content"])
 ```
 
-Get your token at [synapselayer.org](https://synapselayer.org) → Dashboard → Connect
+Get your token at [forge.synapselayer.org](https://forge.synapselayer.org) → Dashboard → Connect
+
+---
 
 ## MCP Integration (Claude Desktop / Cursor)
 
@@ -111,6 +120,8 @@ Config file location:
 - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
 - Linux: `~/.config/Claude/claude_desktop_config.json`
 
+---
+
 ## API — Header-First Auth
 
 ```bash
@@ -126,19 +137,30 @@ curl -X POST \
   https://forge.synapselayer.org/api/v1/capture
 ```
 
+---
+
 ## Security
 
 | Feature | Implementation |
 |---------|---------------|
-| Encryption | AES-256-GCM at rest |
-| Auth | Header-first (`x-connect-token`) |
-| Token exposure | Never in URLs or logs |
-| CI protection | `secret-scan.yml` on every commit |
 | Encryption | AES-256-GCM at rest with per-operation random IV |
-| Security score | 10.0 / 10 (MCP Marketplace) |
+| Integrity | HMAC-SHA-256 on content |
+| Auth | Header-first (`x-connect-token`) — tokens never in URLs or logs |
+| Privacy | PII redaction pipeline + differential privacy on embeddings |
+| Isolation | 1 user = 1 tenant = 1 private mind |
 
 See [SECURITY.md](SECURITY.md) for vulnerability reporting.
 
+---
+
+## Governance
+
+- All public claims follow the [Public Claims Matrix](docs/PUBLIC_CLAIMS_MATRIX.md).
+- Architecture details that reveal benefits are public; mechanisms that enable them are private.
+- Claim = Reality. If it's not implemented, it's not in the README.
+
+---
+
 ## License
 
-Apache-2.0 © Synapse Layer — v1.2.0
+Apache-2.0 © Synapse Layer
