@@ -50,7 +50,7 @@ tools:
           description: "Maximum memories to return (1-50, default: 10)"
 
   - name: save_to_synapse
-    description: "Stores structured memory securely using AES-256-GCM encryption. Server never sees plaintext."
+    description: "Stores structured memory securely using AES-256-GCM encryption at rest."
     inputSchema:
       type: object
       required: [content]
