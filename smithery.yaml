@@ -26,76 +26,246 @@ configSchema:
   properties:
     connect_token:
       type: "string"
+      title: "Synapse Connect Token"
       description: "Your Synapse Connect Token. Get it at synapselayer.org → Dashboard → Connect."
     agent_id:
       type: "string"
+      title: "Agent ID"
       description: "Identifier for the agent using the memory layer. Defaults to 'default'."
       default: "default"
 
 tools:
   - name: recall
-    description: "Retrieves relevant past context and decisions to maintain continuity across interactions."
+    description: "Retrieves relevant past context and decisions. Supports routing modes (auto/temporal/semantic/priority/hybrid)."
     inputSchema:
       type: object
-      required: [query]
+      required: [query, reason]
       properties:
         query:
           type: string
-          description: "What to recall from memory"
+          description: "What to recall — natural language query for memory retrieval."
+        reason:
+          type: string
+          description: "Human-readable justification for the recall request (10–200 chars)."
+        scope:
+          type: string
+          description: "Memory scope. 'agent' (default) limits to current agent, 'tenant' searches across all agents."
+          enum: [agent, tenant]
         agent_id:
           type: string
-          description: "Agent identifier to scope recall. Defaults to 'default'."
+          description: "Agent identifier for scoped recall. Defaults to 'default'."
         limit:
           type: number
-          description: "Maximum memories to return (1-50, default: 10)"
+          description: "Maximum memories to return (1–50, default: 10)."
+        mode:
+          type: string
+          description: "Recall routing mode."
+          enum: [auto, temporal, semantic, priority, hybrid]
 
   - name: save_to_synapse
-    description: "Stores structured memory securely using AES-256-GCM encryption at rest."
+    description: "Stores structured memory securely using AES-256-GCM encryption at rest with sanitization and deduplication."
     inputSchema:
       type: object
       required: [content]
       properties:
         content:
           type: string
-          description: "Content to persist in encrypted memory"
+          description: "The memory content to store securely."
         agent_id:
           type: string
-          description: "Agent identifier. Defaults to 'default'."
+          description: "Agent identifier for memory isolation. Defaults to 'default'."
+        project:
+          type: string
+          description: "Project identifier (e.g., SYNAPSE_LAYER)."
+        type:
+          type: string
+          description: "Event type: MILESTONE, DECISION, ALERT, AUTO-STRAT, AUTO-OP, AUTO-INSIGHT."
+        importance:
+          type: number
+          description: "Importance level 1–5 (default: 3)."
+        tags:
+          type: array
+          description: "Tags for categorization."
+          items:
+            type: string
 
   - name: process_text
-    description: "Extracts and persists structured memory from text input to maintain long-term context."
+    description: "Extracts and persists structured memory from free-form text. Detects milestones, decisions, and alerts."
     inputSchema:
       type: object
       required: [text]
       properties:
         text:
           type: string
-          description: "Text to process and extract memories from"
+          description: "Free-form text to scan for auto-save triggers."
         agent_id:
           type: string
           description: "Agent identifier. Defaults to 'default'."
+        project:
+          type: string
+          description: "Project identifier. Auto-detected if omitted."
+        source:
+          type: string
+          description: "Source identifier (default: mcp)."
 
   - name: search
-    description: "Searches across stored memory using semantic retrieval. Returns results ranked by relevance and confidence."
+    description: "Cross-agent memory search with full-text and semantic matching. Supports scope filtering."
     inputSchema:
       type: object
       required: [query]
       properties:
         query:
           type: string
-          description: "Search query — natural language or keywords"
+          description: "Search query — natural language or keywords."
+        scope:
+          type: string
+          description: "Search scope. 'agent' (default) or 'tenant' for cross-agent search."
+          enum: [agent, tenant]
         agent_id:
           type: string
-          description: "Optional agent filter. Omit to search across all agents."
+          description: "Agent identifier for scoped search."
         limit:
           type: number
-          description: "Maximum results to return (1-50, default: 20)"
+          description: "Maximum results to return (1–50, default: 20)."
 
   - name: health_check
     description: "Verify system availability and memory pipeline integrity."
     inputSchema:
       type: object
       properties: {}
+
+  - name: initialize_context
+    description: "Loads persistent memory context and user profile at conversation start."
+    inputSchema:
+      type: object
+      properties: {}
+
+  - name: save_memory
+    description: "Save a memory with AES-256-GCM encryption. Alias for save_to_synapse with tag support."
+    inputSchema:
+      type: object
+      required: [content]
+      properties:
+        content:
+          type: string
+          description: "The memory content to store securely."
+        agent_id:
+          type: string
+          description: "Agent identifier for memory isolation."
+        tags:
+          type: array
+          description: "Tags for categorization."
+          items:
+            type: string
+
+  - name: store_memory
+    description: "Store context, preferences, or facts with AES-256-GCM encryption. Canonical memory persistence endpoint."
+    inputSchema:
+      type: object
+      required: [content]
+      properties:
+        content:
+          type: string
+          description: "The memory content to store securely."
+        agent_id:
+          type: string
+          description: "Agent identifier. Defaults to 'default'."
+        tags:
+          type: array
+          description: "Tags for categorization."
+          items:
+            type: string
+
+  - name: recall_memory
+    description: "Retrieves long-term memory (alias for recall). Supports routing modes and scope filtering."
+    inputSchema:
+      type: object
+      required: [query, reason]
+      properties:
+        query:
+          type: string
+          description: "What to recall — natural language query."
+        reason:
+          type: string
+          description: "Justification for the recall request (10–200 chars)."
+        scope:
+          type: string
+          description: "Memory scope: 'agent' (default) or 'tenant'."
+          enum: [agent, tenant]
+        agent_id:
+          type: string
+          description: "Agent identifier for scoped recall."
+        limit:
+          type: number
+          description: "Maximum memories to return (1–50, default: 10)."
+        mode:
+          type: string
+          description: "Recall routing mode."
+          enum: [auto, temporal, semantic, priority, hybrid]
+
+  - name: list_memories
+    description: "List memory metadata (id, createdAt, tags, summary) without exposing plaintext content."
+    inputSchema:
+      type: object
+      properties:
+        scope:
+          type: string
+          description: "Memory scope: 'agent' (default) or 'tenant'."
+          enum: [agent, tenant]
+        agent_id:
+          type: string
+          description: "Agent identifier for scoped listing."
+        limit:
+          type: number
+          description: "Maximum rows to return (default: 5, max: 10)."
+
+  - name: memory_feedback
+    description: "Record feedback on a recalled memory to improve future recall quality."
+    inputSchema:
+      type: object
+      required: [memoryId, signal]
+      properties:
+        memoryId:
+          type: string
+          description: "ID of the memory to provide feedback on."
+        signal:
+          type: string
+          description: "Feedback signal."
+          enum: [used, ignored, helpful, irrelevant]
+        sessionId:
+          type: string
+          description: "Optional session identifier for tracking."
+
+  - name: neural_handover
+    description: "Neural Handover V2 — Consume a one-time encrypted handover token from another agent context."
+    inputSchema:
+      type: object
+      required: [token, reason]
+      properties:
+        token:
+          type: string
+          description: "Handover token (64 hex chars). Generated in Forge UI or API."
+        reason:
+          type: string
+          description: "Justification for consuming this handover (10–200 chars)."
+        consuming_agent:
+          type: string
+          description: "Agent identifier consuming the handover."
+
+  - name: slo_report
+    description: "Admin-only SLO observability report with percentile latencies and per-tool breakdown."
+    inputSchema:
+      type: object
+      required: [admin_token]
+      properties:
+        admin_token:
+          type: string
+          description: "Admin authentication token."
+        window_hours:
+          type: array
+          description: "Time windows in hours (default: [24, 168])."
+          items:
+            type: number
 
 tags:
   - agent-memory
