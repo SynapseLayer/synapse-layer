@@ -165,7 +165,7 @@ curl -X POST \
 | Encryption | AES-256-GCM at rest with per-operation random IV |
 | Integrity | HMAC-SHA-256 on content |
 | Auth | Header-first (`x-connect-token`) — tokens never in URLs or logs |
-| Privacy | PII redaction pipeline + differential privacy on embeddings |
+| Privacy | Content sanitization + tenant-scoped encrypted storage |
 | Isolation | 1 user = 1 tenant = 1 private mind |
 
 See [SECURITY.md](SECURITY.md) for vulnerability reporting.

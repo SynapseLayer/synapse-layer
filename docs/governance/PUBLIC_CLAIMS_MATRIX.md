@@ -19,8 +19,8 @@
 | 8 | Tenant-isolated (1 user = 1 private mind) | `WHERE tenantId` em toda query, fail-closed | Security, compliance |
 | 9 | Sub-second perceived recall | Cache layer: perceived p50 = 0ms | Performance claims (com "perceived") |
 | 10 | Fail-closed security | 401 confirmado para no-auth e invalid-token | Security positioning |
-| 11 | PII redaction pipeline | Sanitização automática antes do store | Privacy, LGPD |
-| 12 | LGPD-ready | delete_memory (soft+hard), PII redaction, tenant isolation | Compliance docs |
+| 11 | ~~PII redaction pipeline~~ | REMOVED (v1.1.5) — replaced by content sanitization | — |
+| 12 | LGPD-ready | delete_memory (soft+hard), content sanitization, tenant isolation | Compliance docs |
 | 13 | 5 recall modes | auto/temporal/semantic/priority/hybrid — RecallRouter live | Technical docs |
 | 14 | pgvector semantic search | HNSW index + text-embedding-3-small (1536d) | Technical docs |
 | 15 | pip install synapse-layer (<10s) | Confirmado: 3s em clean venv | Onboarding, README |
@@ -43,7 +43,7 @@
 
 | # | Claim | Motivo |
 |---|-------|--------|
-| 1 | Zero-Knowledge | Sem auditoria formal de ZK; encriptação é server-side, não client-side |
+| 1 | ~~Zero-Knowledge~~ | REMOVED (v1.3.0) — server-side AES-256-GCM, not ZK |
 | 2 | Continuous Consciousness Infrastructure | Overclaim — não há "consciência" |
 | 3 | Consciência Sintética / Imortalidade Cognitiva | Risco reputacional extremo |
 | 4 | Giving Models a Soul | Marketing enganoso |

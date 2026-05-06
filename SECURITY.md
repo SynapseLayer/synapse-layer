@@ -21,5 +21,5 @@
 - Header-first auth (`x-connect-token`)
 - Tokens never in URLs or logs
 - CI secret scanning on every commit
-- PII redaction pipeline
+- Content sanitization before encryption
 - Encryption: AES-256-GCM at rest with per-operation random IV — content cleared after encryption

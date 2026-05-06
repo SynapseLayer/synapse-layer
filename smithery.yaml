@@ -103,7 +103,6 @@ tags:
   - long-term-memory
   - mcp-memory
   - aes-256-gcm
-  - pii-redaction
   - mcp
   - ai-agents
   - langchain

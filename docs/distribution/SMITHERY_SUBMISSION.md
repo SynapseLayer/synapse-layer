@@ -28,7 +28,7 @@ Agent → Sanitize (PII) → Validate Intent → Encrypt (AES-256-GCM) → DP No
 - **Deterministic recall** — ranked by Trust Quotient™ scoring
 - **AES-256-GCM Encryption** — encrypted at rest with per-operation random IV
 - **AES-256-GCM encryption** with PBKDF2 key derivation (600k iterations)
-- **PII redaction** — 15+ regex patterns for emails, phones, SSNs, credentials
+- **Content sanitization** — input validation and sanitization before encryption
 - **Differential privacy** — calibrated Gaussian noise on embeddings
 - **1-line integration** — `@remember` decorator wraps any function
 
@@ -82,7 +82,7 @@ Apache-2.0
 Ismael Marchi — [@synapselayer](https://x.com/synapselayer)
 
 ### Tags
-`agent-memory` `persistent-context` `long-term-memory` `mcp-memory` `deterministic-recall` `encrypted-at-rest` `trust-quotient` `aes-256-gcm` `pii-redaction` `continuous-consciousness` `sqlite-backend` `langchain` `crewai` `autogen` `llamaindex` `semantic-kernel`
+`agent-memory` `persistent-context` `long-term-memory` `mcp-memory` `deterministic-recall` `encrypted-at-rest` `trust-quotient` `aes-256-gcm` `encrypted-at-rest` `continuous-consciousness` `sqlite-backend` `langchain` `crewai` `autogen` `llamaindex` `semantic-kernel`
 
 ### Numbers
 - 481 tests | 90% coverage

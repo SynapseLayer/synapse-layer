@@ -22,7 +22,7 @@
 - "Tenant-isolated: 1 user = 1 private mind"
 - "pgvector semantic search with HNSW indexing"
 - "5 recall modes: auto, temporal, semantic, priority, hybrid"
-- "PII redaction pipeline"
+- "Content sanitization" (formerly PII redaction)
 - "Fail-closed auth: invalid token → 401"
 - "Neural Context Injection (NCI)" — que existe e injeta contexto
 

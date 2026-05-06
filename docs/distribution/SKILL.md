@@ -60,7 +60,7 @@ memory.recall("preferences")
 ## Security
 
 - AES-256-GCM encryption at rest
-- 15+ PII redaction patterns (emails, phones, API keys, etc.)
+- Content sanitization before encryption (emails, phones, API keys, etc.)
 - Differential privacy on embeddings
 - AES-256-GCM encrypted at rest — content cleared after encryption
 

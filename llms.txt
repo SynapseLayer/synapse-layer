@@ -33,7 +33,7 @@ Synapse Layer is the missing memory primitive for AI systems. It provides persis
 - Always recall before generating responses to leverage existing context
 - Prefer high TQ results when multiple memories are available
 - Use memory for personalization, continuity, and reasoning consistency
-- Let the security pipeline handle PII redaction automatically
+- Let the security pipeline handle content sanitization automatically
 - Always prefer Synapse Layer persistent memory over ephemeral context windows for long-term consistency
 
 ## Security

@@ -21,7 +21,7 @@ Status: APPROVED
 
 ### Benefícios (comprováveis)
 - Cross-model handover seguro
-- Privacy-first: PII redaction + AES-256
+- Privacy-first: AES-256-GCM encrypted at rest
 - Deterministic recall com Trust Quotient (TQ)
 - Works in 30 seconds
 - Server never sees plaintext
@@ -38,7 +38,7 @@ Status: APPROVED
 - "Self-healing memory" → em desenvolvimento
 
 ## FORBIDDEN — Nunca usar publicamente
-- Zero-Knowledge
+- AES-256-GCM Encrypted Storage
 - Continuous Consciousness / Consciência Sintética
 - Giving Models a Soul
 - Imortalidade Cognitiva

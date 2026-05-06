@@ -44,7 +44,7 @@
 9. **Quality Gate shadow mode** — TQ = (0.45·D) + (0.40·A) − (0.15·N), avalia sem bloquear
 10. **Stripe integration** — checkout, portal, webhooks funcionais
 11. **ConnectToken auth** — SHA-256 hash lookup, raw token NEVER stored
-12. **PII redaction pipeline** — sanitização automática antes do store
+12. **Content sanitization** — input validation before encryption
 13. **Structured logging** — synapseLog com zero PII (userId truncado, email hasheado)
 
 ---

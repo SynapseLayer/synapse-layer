@@ -12,7 +12,7 @@
 
 ## Description
 
-Persistent encrypted memory for AI agents. AES-256-GCM at rest, PII redaction, HMAC-SHA-256 integrity.
+Persistent encrypted memory for AI agents. AES-256-GCM at rest, content sanitization, HMAC-SHA-256 integrity.
 
 ## Package
 
@@ -59,7 +59,7 @@ Persistent encrypted memory for AI agents. AES-256-GCM at rest, PII redaction, H
 
 1. **Non-bypassable 4-layer Cognitive Security Pipeline**
    ```
-   Agent → PII Redaction → Intent Validation → AES-256-GCM Encryption → DP Noise → Vault
+   Agent → Content Sanitization → Intent Validation → AES-256-GCM Encryption → DP Noise → Vault
    ```
 
 2. **Production-grade quality**
@@ -106,7 +106,7 @@ Persistent encrypted memory for AI agents. AES-256-GCM at rest, PII redaction, H
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.SynapseLayer/synapse-layer",
   "title": "Synapse Layer — Persistent Memory Infrastructure",
-  "description": "Persistent encrypted memory for AI agents. AES-256-GCM at rest, PII redaction, HMAC-SHA-256 integrity.",
+  "description": "Persistent encrypted memory for AI agents. AES-256-GCM at rest, content sanitization, HMAC-SHA-256 integrity.",
   "version": "1.1.1",
   "websiteUrl": "https://synapselayer.org",
   "repository": {
