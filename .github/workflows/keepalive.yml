@@ -1,0 +1,14 @@
+name: Synapse Keepalive Ping
+on:
+  schedule:
+    - cron: '*/10 * * * *' # A cada 10 minutos
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run keepalive pings
+        run: |
+          sleep $((RANDOM % 60))
+          for url in "https://forge.synapselayer.org/api/health" "https://forge.synapselayer.org/api/ping" "https://forge.synapselayer.org/api/mcp"; do
+            curl -s -m 30 "$url" -H "User-Agent: SynapseKeepAlive/1.0" || true
+          done
