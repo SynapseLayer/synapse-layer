@@ -34,7 +34,7 @@
 | 1 | "Works in 30 seconds" | Install ok, mas E2E com agente externo não validado | Bloco B (user test) |
 | 2 | Quality Gate TQ scoring live | Fix deployed (C4.7), scores reais pendentes em volume | Monitorar 7 dias |
 | 3 | HNSW index accelerates recall | Ativo mas SeqScan usado para <300 rows | Quando >1000 memories |
-| 4 | Neural Handover™ production-ready | V2 implementado, 0 sessions em produção | Primeiro uso real |
+| 4 | Neural Handover production-ready | V2 implementado, 0 sessions em produção | Primeiro uso real |
 | 5 | Smithery verified listing | Listing existe, re-publish pendente (latency) | Quando warm <200ms |
 
 ---

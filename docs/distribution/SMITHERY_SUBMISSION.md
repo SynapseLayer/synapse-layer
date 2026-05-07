@@ -25,7 +25,7 @@ Agent → Sanitize (PII) → Validate Intent → Encrypt (AES-256-GCM) → DP No
 
 **Key capabilities:**
 - **Persistent cross-session memory** — agents remember across restarts
-- **Deterministic recall** — ranked by Trust Quotient™ scoring
+- **Deterministic recall** — ranked by Trust Quotient scoring
 - **AES-256-GCM Encryption** — encrypted at rest with per-operation random IV
 - **AES-256-GCM encryption** with PBKDF2 key derivation (600k iterations)
 - **Content sanitization** — input validation and sanitization before encryption

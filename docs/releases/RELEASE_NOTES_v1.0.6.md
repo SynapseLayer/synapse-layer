@@ -15,24 +15,24 @@ This is not an incremental update. It is a protocol-level upgrade.
 
 ### The Four Seals
 
-**Seal 1 — Semantic Privacy Guard™** (mandatory, cannot be bypassed)  
+**Seal 1 — Semantic Privacy Guard** (mandatory, cannot be bypassed)  
 PII is detected and removed at the semantic level using 12 precompiled regex patterns. SHA-256 forensic hashes enable non-repudiation without exposing redacted content. Aggressive mode strips proper nouns to prevent cross-pool correlation attacks.
 
 **Seal 2 — Differential Privacy**  
 Calibrated Gaussian noise is injected into embedding vectors before pgvector storage. Even with full database access, the original semantic fingerprint cannot be reconstructed. Configurable ε budget (default 0.5) with SNR audit metrics.
 
-**Seal 3 — Intelligent Intent Validation™**  
+**Seal 3 — Intelligent Intent Validation**  
 Every `store()` call passes through a two-step validation: the agent suggests an intent category, then Synapse validates independently with a confidence gate (≥ 0.85). 19 critical keywords trigger automatic promotion. Self-healing on `recall()` corrects category drift attacks via keyword consensus.
 
-**Seal 4 — Persistence-First Neural Handover™**  
+**Seal 4 — Persistence-First Neural Handover**  
 Cross-agent context transfer with vault-first persistence. Memories are stored in the Status Ledger before any network operation. HMAC-SHA256 signed JWT tokens, Emergency Checkpoints on failure, and 15-minute grace period with auto-summary.
 
 ### Why This Matters
 
 - **Security posture**: Every memory is sanitized, noise-injected, intent-validated, and encrypted before persistence. Content is AES-256-GCM encrypted at rest.
-- **Fault tolerance**: Neural Handover™ is persistence-first. Target agent crashes don’t lose data.
+- **Fault tolerance**: Neural Handover is persistence-first. Target agent crashes don’t lose data.
 - **Compliance**: Full GDPR/LGPD/HIPAA audit trail with immutable logging and SHA-256 forensic hashes.
-- **Self-defense**: Self-healing prevents category drift attacks. Semantic Privacy Guard™ is mandatory.
+- **Self-defense**: Self-healing prevents category drift attacks. Semantic Privacy Guard is mandatory.
 
 ---
 
@@ -106,10 +106,10 @@ release: v1.0.6 — Cognitive Security Protocol
 
 Introduce four proprietary security seals protecting every memory operation:
 
-- Seal 1: Semantic Privacy Guard™ (mandatory PII sanitization + SHA-256 forensic hashes)
+- Seal 1: Semantic Privacy Guard (mandatory PII sanitization + SHA-256 forensic hashes)
 - Seal 2: Differential Privacy (Gaussian noise on embeddings, ε-bounded)
-- Seal 3: Intelligent Intent Validation™ (confidence gate ≥ 0.85, 19 critical keywords, self-healing)
-- Seal 4: Persistence-First Neural Handover™ (JWT-signed vault-first transfers, Status Ledger, Emergency Checkpoint)
+- Seal 3: Intelligent Intent Validation (confidence gate ≥ 0.85, 19 critical keywords, self-healing)
+- Seal 4: Persistence-First Neural Handover (JWT-signed vault-first transfers, Status Ledger, Emergency Checkpoint)
 
 New: NeuralHandover engine with HMAC-SHA256 tokens, HandoverStatus state machine,
 grace period protocol, and Emergency Checkpoint fault tolerance.
@@ -124,7 +124,7 @@ Updated: Website with cognitive security pipeline, competitive comparison table,
 updated pricing (Pro $29), waitlist CTA, and 4-seal hero section.
 
 No breaking changes. Fully backward-compatible with v1.0.4+.
-Semantic Privacy Guard™ is now mandatory — cannot be bypassed in the standard pipeline.
+Semantic Privacy Guard is now mandatory — cannot be bypassed in the standard pipeline.
 
 Signed-off-by: Ismael Marchi <founder.synapselayer@proton.me>
 ```
@@ -149,10 +149,10 @@ This release upgrades Synapse Layer from a memory SDK to a **complete Cognitive 
 
 | Seal | Component | New in |
 |------|-----------|--------|
-| 🛡️ | **Semantic Privacy Guard™** — PII sanitization + SHA-256 forensic hashes | v1.0.4 |
+| 🛡️ | **Semantic Privacy Guard** — PII sanitization + SHA-256 forensic hashes | v1.0.4 |
 | 🔐 | **Differential Privacy** — Gaussian noise on embeddings (ε-bounded) | v1.0.4 |
-| 🧠 | **Intelligent Intent Validation™** — Two-step confidence gate + self-healing | v1.0.5 |
-| ⚡ | **Persistence-First Neural Handover™** — JWT-signed vault-first transfers | v1.0.6 |
+| 🧠 | **Intelligent Intent Validation** — Two-step confidence gate + self-healing | v1.0.5 |
+| ⚡ | **Persistence-First Neural Handover** — JWT-signed vault-first transfers | v1.0.6 |
 
 ### Key Changes
 
@@ -189,7 +189,7 @@ This release upgrades Synapse Layer from a memory SDK to a **complete Cognitive 
 
 ---
 
-*Semantic Privacy Guard™ is now mandatory. Content is AES-256-GCM encrypted at rest.*
+*Semantic Privacy Guard is now mandatory. Content is AES-256-GCM encrypted at rest.*
 
 <!-- Tagline updated: see PUBLIC_CLAIMS_MATRIX.md -->
 ```
