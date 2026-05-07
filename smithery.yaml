@@ -28,6 +28,10 @@ configSchema:
       type: "string"
       title: "Synapse Connect Token"
       description: "Your Synapse Connect Token. Get it at synapselayer.org → Dashboard → Connect."
+      x-from:
+        header: "x-connect-token"
+      x-to:
+        header: "x-connect-token"
     agent_id:
       type: "string"
       title: "Agent ID"
