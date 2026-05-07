@@ -64,7 +64,7 @@ Your AI agents forget everything between sessions. Synapse Layer fixes that.
 |---|---|
 | Agent forgets context every session | Persistent memory across all sessions |
 | Memory locked to one model | Cross-agent: save in ChatGPT, recall in Claude |
-| No audit trail | Trust Quotient™ scoring on every memory |
+| No audit trail | Trust Quotient scoring on every memory |
 | Complex integration | `pip install synapse-layer` + 3 lines of code |
 | Plaintext stored on servers | AES-256-GCM encrypted at rest |
 

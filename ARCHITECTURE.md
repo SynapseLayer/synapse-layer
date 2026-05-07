@@ -9,7 +9,7 @@ Synapse Layer is a **Persistent Encrypted Memory Layer for AI Agents** with AES-
 1. **Encrypted at Rest:** AES-256-GCM with per-operation random IV and HMAC-SHA-256 integrity
 2. **Client-Side Sanitization:** PII removal before transmission
 3. **Intent Validation:** Intelligent categorization with self-healing
-4. **Trust Quotient™:** Adaptive conflict resolution algorithm
+4. **Trust Quotient:** Adaptive conflict resolution algorithm
 5. **Immutable Pipeline:** sanitize → validate → encrypt → embed → store
 
 ---
@@ -169,7 +169,7 @@ CREATE POLICY agent_isolation
 - Immutable audit trail
 - Automatic deletion on TTL
 
-### 6. Trust Quotient™ Calculation
+### 6. Trust Quotient Calculation
 
 ```
 TQ = f(Recency, Consistency, Confidence, Relevance)
@@ -230,7 +230,7 @@ synapse-layer/
 
 ---
 
-## Neural Handover™ — Persistence-First Architecture
+## Neural Handover — Persistence-First Architecture
 
 Cross-agent context transfer with Status Ledger, JWT signing, and automatic fallback.
 
@@ -266,7 +266,7 @@ sequenceDiagram
 
     A->>S: create_handover(memories, target_agent)
     S->>S: Sanitize content (PII removal)
-    S->>S: Validate intent (Cognitive Security™)
+    S->>S: Validate intent (Cognitive Security)
     S->>S: Sign JWT (HMAC-SHA256)
     S->>V: Persist as PENDING
     S-->>A: HandoverResult {token, handover_id}
