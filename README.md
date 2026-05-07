@@ -4,9 +4,9 @@
 
 ### RAG retrieves. Synapse remembers.
 
-**Persistent memory infrastructure for AI agents — encrypted, governed, and cross-agent.**
+**Persistent memory infrastructure for AI agents — AES-256-GCM encrypted at rest, semantic search, MCP-native.**
 
-*The OAuth for AI Memory. State Continuity Layer for autonomous systems.*
+Synapse Layer is open-source persistent memory infrastructure for AI agents and assistants. Memories are encrypted at rest with AES-256-GCM, indexed via pgvector HNSW for semantic recall, and exposed through MCP JSON-RPC for native integration with Claude, GPT, Gemini, and any MCP-compatible client. Apache 2.0 licensed.
 
 [![PyPI](https://img.shields.io/pypi/v/synapse-layer)](https://pypi.org/project/synapse-layer/)
 [![Python](https://img.shields.io/pypi/pyversions/synapse-layer)](https://pypi.org/project/synapse-layer/)
@@ -169,6 +169,16 @@ curl -X POST \
 | Isolation | 1 user = 1 tenant = 1 private mind |
 
 See [SECURITY.md](SECURITY.md) for vulnerability reporting.
+
+---
+
+## Related Projects
+
+| Project | Description |
+|---------|-------------|
+| [synapse-sdk-python](https://github.com/SynapseLayer/synapse-sdk-python) | Python SDK — LangChain, CrewAI, and A2A protocol adapters |
+| [synapse-layer-skill](https://github.com/SynapseLayer/synapse-layer-skill) | MCP skill configuration for Claude Desktop, Cursor, Windsurf |
+| [synapse-layer-langgraph](https://github.com/SynapseLayer/synapse-layer-langgraph) | LangGraph checkpoint saver with encrypted state persistence |
 
 ---
 
