@@ -1,5 +1,24 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- **GC Cron for expired memories** (P1, LGPD compliance)
+  - `POST /api/cron/gc` — automated garbage collection endpoint
+  - Bearer token auth via `CRON_SECRET` (constant-time comparison)
+  - Hard-deletes `ForgeMemory` rows where `expiresAt < NOW()`
+  - Batched: 50 rows per DELETE, max 10 iterations (500 rows/run cap)
+  - `ForgeGcAuditLog` table — append-only audit trail (ranAt, deletedCount, durationMs, status)
+  - FK-aware: cascades QualityGateResult cleanup before memory deletion
+  - Fail-closed: missing env → 503, wrong/missing auth → 401, never 200 on auth failure
+
+### Security
+- LGPD Article 16 compliance: expired data is hard-deleted (erasure), not soft-deleted
+- Zero PII in logs (only counts + duration)
+- Parameterized queries only (zero string interpolation)
+- Constant-time secret comparison (`crypto.timingSafeEqual`)
+
+
 ## [2.3.7] - 2026-05-04
 
 ### Changed

@@ -23,3 +23,14 @@
 - CI secret scanning on every commit
 - Content sanitization before encryption
 - Encryption: AES-256-GCM at rest with per-operation random IV — content cleared after encryption
+
+## Data Retention
+
+Memories with a TTL (`expiresAt` field) are automatically hard-deleted when expired:
+
+- **Mechanism**: Automated GC cron runs daily, deleting expired rows in batches
+- **Auth**: Bearer token (`CRON_SECRET`) with constant-time comparison
+- **Batching**: Max 50 rows per query, max 10 iterations per run (500 rows cap)
+- **Audit**: Every GC run is logged to `ForgeGcAuditLog` (timestamp, count, duration, status)
+- **LGPD/GDPR**: Hard delete (erasure) — no soft-delete for expired data
+- **Fail-closed**: Auth failure returns 401, never exposes data
