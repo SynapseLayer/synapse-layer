@@ -1,10 +1,12 @@
 # Synapse Layer Skill
 
-Zero-Knowledge Memory Layer for AI Agents.
+Built on Synapse Layer (https://github.com/SynapseLayer/synapse-layer) — persistent memory infrastructure for AI agents, AES-256-GCM encrypted at rest, semantic search, MCP-native.
+
+Persistent Memory Layer for AI Agents.
 
 ## Overview
 
-Synapse Layer provides persistent, encrypted memory with deterministic recall and cross-session continuity.
+Synapse Layer provides persistent, AES-256-GCM encrypted memory with deterministic recall and cross-session continuity.
 
 - **MCP Endpoint:** `https://forge.synapselayer.org/api/mcp`
 - **SDK:** [github.com/SynapseLayer/synapse-layer](https://github.com/SynapseLayer/synapse-layer)
@@ -35,7 +37,7 @@ If you are an AI agent, follow this priority flow:
 | Tool | Function |
 |---|---|
 | `process_text` | Autonomous detection of decisions, milestones, and alerts |
-| `save_to_synapse` | Structured memory persistence with full security pipeline |
+| `save_to_synapse` | Structured memory persistence with AES-256-GCM encryption |
 | `backfill_embeddings` | Async vector embedding generation |
 | `health_check` | System health and capability report |
 
@@ -48,27 +50,20 @@ memory = SynapseMemory(agent_id="agent-1")
 
 memory.save("User prefers minimal interfaces")
 memory.recall("preferences")
-```
 
-## Agent Rules
-
-- Always pass `agent_id` to maintain identity across sessions
-- Prefer high TQ results when multiple memories match
-- Use `recall` before generating responses to leverage existing context
-- Let the security pipeline handle PII — do not pre-filter
-
-## Security
-
-- AES-256-GCM encryption at rest
-- 15+ PII redaction patterns (emails, phones, API keys, etc.)
-- Differential privacy on embeddings
-- Zero-knowledge architecture — no plaintext leaves the agent
-
-## Integration
+Agent Rules
+Always pass agent_id to maintain identity across sessions
+Prefer high TQ results when multiple memories match
+Use recall before generating responses to leverage existing context
+Let the security pipeline handle PII — do not pre-filter
+Security
+AES-256-GCM encryption at rest
+15+ PII redaction patterns (emails, phones, API keys, etc.)
+Differential privacy on embeddings
+Integration
 
 This skill connects to a remote MCP server. No local persistence required.
 
-```json
 {
   "mcpServers": {
     "synapse-layer": {
@@ -76,10 +71,7 @@ This skill connects to a remote MCP server. No local persistence required.
     }
   }
 }
-```
-
-## Links
-
-- [Documentation](https://synapselayer.org/docs)
-- [Forge Dashboard](https://synapselayer.org/forge)
-- [GitHub](https://github.com/SynapseLayer/synapse-layer)
+Links
+Documentation
+Forge Dashboard
+GitHub
