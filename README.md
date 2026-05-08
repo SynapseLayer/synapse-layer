@@ -4,7 +4,7 @@
   <img src="https://raw.githubusercontent.com/SynapseLayer/synapse-layer/main/docs/assets/synapse-layer-logo-dark.png" width="450" alt="Synapse Layer Logo">
 </p>
 
-<h3 align="center">Zero-Knowledge Memory Layer for AI Agents</h3>
+<h3 align="center">Persistent Memory Layer with AES-256-GCM encryption at rest</h3>
 
 <p align="center">Persistent. Encrypted. 1-line integration. 🧠</p>
 
