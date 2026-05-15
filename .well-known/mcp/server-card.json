@@ -1,0 +1,20 @@
+{
+  "name": "Synapse Layer",
+  "description": "Persistent memory infrastructure for AI agents — encrypted, governed, and cross-agent. The OAuth for AI Memory.",
+  "version": "2.4.0",
+  "tools": [
+    {"name": "recall", "description": "Deterministically retrieves past context and decisions. Supports routing modes (auto/temporal/semantic/priority/hybrid)."},
+    {"name": "save_to_synapse", "description": "Persists content with AES-256-GCM encryption at rest, PII redaction, and Trust Quotient scoring."},
+    {"name": "process_text", "description": "Self-extracting memory engine. Scans free-form text for milestones, decisions, alerts."},
+    {"name": "search", "description": "Cross-agent memory search with full-text and semantic matching."},
+    {"name": "health_check", "description": "Verify system availability. Public method — no auth required at the tool level."},
+    {"name": "initialize_context", "description": "Loads persistent memory context and user profile at conversation start."},
+    {"name": "save_memory", "description": "Save a memory with AES-256-GCM encryption. Alias for save_to_synapse with tag support."},
+    {"name": "store_memory", "description": "Store context, preferences, or facts with AES-256-GCM encryption."},
+    {"name": "recall_memory", "description": "Retrieves long-term memory. Alias for recall with routing modes and scope filtering."},
+    {"name": "list_memories", "description": "List memory metadata without exposing plaintext content."},
+    {"name": "memory_feedback", "description": "Record feedback on a recalled memory to improve future recall quality."},
+    {"name": "neural_handover", "description": "Secure Agent Handover V2 — Consume a one-time encrypted handover token from another agent context."},
+    {"name": "slo_report", "description": "Admin-only SLO observability report with percentile latencies and per-tool breakdown."}
+  ]
+}
