@@ -1,0 +1,39 @@
+{
+  "mission": "P0 Smithery Distribution Hard Close",
+  "date": "2026-05-15",
+  "before": {
+    "source": "https://registry.smithery.ai/servers/@synapselayer/synapse-protocol",
+    "tools_count": 5,
+    "tools": ["recall", "save_to_synapse", "process_text", "search", "health_check"],
+    "description_has_banned_claim": true,
+    "banned_claim": "Security Score: 10/10 (MCP)",
+    "score": 69,
+    "uptime": "100%"
+  },
+  "live_server": {
+    "url": "https://forge.synapselayer.org/api/mcp",
+    "tools_count": 13,
+    "tools": [
+      "recall", "save_to_synapse", "process_text", "search", "health_check",
+      "initialize_context", "save_memory", "store_memory", "recall_memory",
+      "list_memories", "memory_feedback", "neural_handover", "slo_report"
+    ],
+    "delete_memory_feature_flagged": true,
+    "protocol_version": "2024-11-05",
+    "server_version": "2.4.0"
+  },
+  "smithery_yaml": {
+    "location": "synapse-layer/smithery.yaml",
+    "tools_count": 13,
+    "version": "2.4.0",
+    "description_clean": true,
+    "configSchema_valid": true
+  },
+  "root_cause": "Registry was populated at a PREVIOUS publish time when server had only 5 tools. Server now exposes 13 tools. Re-publishing via Smithery CLI will refresh the registry to show all 13.",
+  "blocker": "Smithery auth requires browser-based login. smithery.ai is hosted on Vercel which blocks VM headless browser (Vercel Security Checkpoint Code 11). Re-publish MUST be done from a machine with a real browser (user's local machine).",
+  "artifacts_prepared": {
+    "publish_script": "scripts/smithery-publish.sh",
+    "config_schema": "scripts/smithery-config-schema.json",
+    "github_action": ".github/workflows/smithery-publish.yml"
+  }
+}

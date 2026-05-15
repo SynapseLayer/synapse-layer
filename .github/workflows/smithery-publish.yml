@@ -1,0 +1,72 @@
+name: Publish to Smithery Registry
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (validate only, do not publish)'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  publish:
+    name: Publish MCP Server to Smithery
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Pre-flight validation
+        run: |
+          echo "=== Pre-flight Validation ==="
+          
+          # 1. Config schema exists and is valid JSON
+          python3 -c "import json; json.load(open('scripts/smithery-config-schema.json'))"
+          echo "✅ Config schema valid"
+          
+          # 2. Server is reachable and returns tools
+          TOOL_COUNT=$(curl -sf -X POST "https://forge.synapselayer.org/api/mcp" \
+            -H "Content-Type: application/json" \
+            -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | \
+            python3 -c "import sys,json; print(len(json.loads(sys.stdin.read()).get('result',{}).get('tools',[])))")
+          echo "✅ Server returns $TOOL_COUNT tools"
+          
+          if [ "$TOOL_COUNT" -lt 13 ]; then
+            echo "⚠️  Expected 13 tools, got $TOOL_COUNT"
+            exit 1
+          fi
+
+      - name: Publish to Smithery
+        if: ${{ inputs.dry_run != 'true' }}
+        env:
+          SMITHERY_API_KEY: ${{ secrets.SMITHERY_API_KEY }}
+        run: |
+          npx @smithery/cli mcp publish \
+            https://forge.synapselayer.org/api/mcp \
+            -n synapselayer/synapse-protocol \
+            --config-schema scripts/smithery-config-schema.json
+
+      - name: Verify publication
+        if: ${{ inputs.dry_run != 'true' }}
+        run: |
+          sleep 5
+          curl -sf "https://registry.smithery.ai/servers/@synapselayer/synapse-protocol" | \
+            python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+tools = data.get('tools', [])
+print(f'Registry tools: {len(tools)}')
+for t in tools:
+    print(f'  ✓ {t[\"name\"]}')
+if len(tools) >= 13:
+    print('✅ All tools published!')
+else:
+    print(f'⚠️  Only {len(tools)}/13 tools — may need cache refresh')
+"
