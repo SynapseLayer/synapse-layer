@@ -1,0 +1,17 @@
+{
+  "type": "object",
+  "required": ["connect_token"],
+  "properties": {
+    "connect_token": {
+      "type": "string",
+      "title": "Synapse Connect Token",
+      "description": "Your Synapse Connect Token. Get it at forge.synapselayer.org → Dashboard → Connect."
+    },
+    "agent_id": {
+      "type": "string",
+      "title": "Agent ID",
+      "description": "Identifier for the agent using the memory layer. Defaults to 'default'.",
+      "default": "default"
+    }
+  }
+}

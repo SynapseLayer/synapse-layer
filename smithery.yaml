@@ -3,7 +3,7 @@ displayName: "Synapse Layer"
 description: >
   Persistent memory infrastructure for AI agents — encrypted,
   governed, and cross-agent. The OAuth for AI Memory.
-version: "2.3.6"
+version: "2.4.0"
 icon: "🧠"
 sourceUrl: "https://github.com/SynapseLayer/synapse-layer"
 homepage: "https://synapselayer.org"
@@ -241,7 +241,7 @@ tools:
           description: "Optional session identifier for tracking."
 
   - name: neural_handover
-    description: "Neural Handover V2 — Consume a one-time encrypted handover token from another agent context."
+    description: "Secure Agent Handover V2 — Consume a one-time encrypted handover token from another agent context."
     inputSchema:
       type: object
       required: [token, reason]
