@@ -3,7 +3,7 @@ displayName: "Synapse Layer"
 description: >
   Persistent memory infrastructure for AI agents — encrypted,
   governed, and cross-agent. The OAuth for AI Memory.
-version: "2.4.0"
+version: "2.4.1"
 icon: "🧠"
 sourceUrl: "https://github.com/SynapseLayer/synapse-layer"
 homepage: "https://synapselayer.org"
@@ -37,6 +37,11 @@ configSchema:
 tools:
   - name: recall
     description: "Retrieve relevant persisted memory using semantic, temporal, priority, or hybrid routing."
+    annotations:
+      readOnlyHint: true
+      destructiveHint: false
+      idempotentHint: true
+      openWorldHint: false
     inputSchema:
       type: object
       required: [query, reason]
@@ -81,6 +86,11 @@ tools:
 
   - name: save_to_synapse
     description: "Persist memory with encryption at rest, sanitization, and deduplication controls."
+    annotations:
+      readOnlyHint: false
+      destructiveHint: false
+      idempotentHint: false
+      openWorldHint: false
     inputSchema:
       type: object
       required: [content]
@@ -125,6 +135,11 @@ tools:
 
   - name: process_text
     description: "Extract candidate memories from free-form text with governance filters and sanitization."
+    annotations:
+      readOnlyHint: false
+      destructiveHint: false
+      idempotentHint: false
+      openWorldHint: false
     inputSchema:
       type: object
       required: [text]
@@ -161,6 +176,11 @@ tools:
 
   - name: search
     description: "Search persisted memory across agent scopes using full-text matching."
+    annotations:
+      readOnlyHint: true
+      destructiveHint: false
+      idempotentHint: true
+      openWorldHint: false
     inputSchema:
       type: object
       required: [query]
@@ -198,6 +218,11 @@ tools:
 
   - name: health_check
     description: "Check service availability, engine version, and storage health. Public method."
+    annotations:
+      readOnlyHint: true
+      destructiveHint: false
+      idempotentHint: true
+      openWorldHint: false
     inputSchema:
       type: object
       properties: {}
@@ -221,6 +246,11 @@ tools:
 
   - name: initialize_context
     description: "Initialize a persistent memory context for a conversation or agent session."
+    annotations:
+      readOnlyHint: true
+      destructiveHint: false
+      idempotentHint: true
+      openWorldHint: false
     inputSchema:
       type: object
       properties: {}
@@ -244,6 +274,11 @@ tools:
 
   - name: save_memory
     description: "Save a memory entry to the persistent store. Alias of save_to_synapse."
+    annotations:
+      readOnlyHint: false
+      destructiveHint: false
+      idempotentHint: false
+      openWorldHint: false
     inputSchema:
       type: object
       required: [content]
@@ -279,6 +314,11 @@ tools:
 
   - name: store_memory
     description: "Store structured memory with metadata and trust scoring."
+    annotations:
+      readOnlyHint: false
+      destructiveHint: false
+      idempotentHint: false
+      openWorldHint: false
     inputSchema:
       type: object
       required: [content]
@@ -314,6 +354,11 @@ tools:
 
   - name: recall_memory
     description: "Recall persisted memory by query. Alias of recall."
+    annotations:
+      readOnlyHint: true
+      destructiveHint: false
+      idempotentHint: true
+      openWorldHint: false
     inputSchema:
       type: object
       required: [query, reason]
@@ -358,6 +403,11 @@ tools:
 
   - name: list_memories
     description: "List memory metadata with pagination and governance limits."
+    annotations:
+      readOnlyHint: true
+      destructiveHint: false
+      idempotentHint: true
+      openWorldHint: false
     inputSchema:
       type: object
       properties:
@@ -391,6 +441,11 @@ tools:
 
   - name: memory_feedback
     description: "Submit feedback to adjust trust scoring for stored memories."
+    annotations:
+      readOnlyHint: false
+      destructiveHint: false
+      idempotentHint: false
+      openWorldHint: true
     inputSchema:
       type: object
       required: [memoryId, signal]
@@ -425,6 +480,11 @@ tools:
 
   - name: neural_handover
     description: "Transfer contextual state between agents with continuity controls."
+    annotations:
+      readOnlyHint: false
+      destructiveHint: false
+      idempotentHint: false
+      openWorldHint: true
     inputSchema:
       type: object
       required: [token, reason]
@@ -458,6 +518,11 @@ tools:
 
   - name: slo_report
     description: "Return uptime and SLO metrics for the MCP service."
+    annotations:
+      readOnlyHint: true
+      destructiveHint: false
+      idempotentHint: true
+      openWorldHint: false
     inputSchema:
       type: object
       required: [admin_token]
