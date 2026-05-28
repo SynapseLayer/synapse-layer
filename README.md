@@ -71,6 +71,15 @@ Your AI agents forget everything between sessions. Synapse Layer fixes that.
 
 ---
 
+## Use Cases
+
+- **Long-term assistant memory** — persist user preferences, facts, and prior decisions across sessions.
+- **Cross-agent continuity** — save context in one agent and recall it in another.
+- **Secure memory for MCP clients** — connect Claude Desktop, Cursor, and other MCP-compatible tools to a governed memory layer.
+- **Operational memory for teams** — maintain structured context, trust scoring, and searchable recall for production agents.
+
+---
+
 ## Install
 
 ```bash
@@ -112,6 +121,49 @@ for r in results:
 ```
 
 Get your token at [forge.synapselayer.org](https://forge.synapselayer.org) → Dashboard → Connect
+
+---
+
+## 13 MCP Tools at a Glance
+
+Synapse Layer currently exposes 13 MCP tools for persistent memory workflows:
+
+- `recall`
+- `save_to_synapse`
+- `process_text`
+- `search`
+- `health_check`
+- `initialize_context`
+- `save_memory`
+- `store_memory`
+- `recall_memory`
+- `list_memories`
+- `memory_feedback`
+- `neural_handover`
+- `slo_report`
+
+These tools cover memory capture, semantic recall, structured storage, feedback loops, agent handoff, and operational observability.
+
+---
+
+## Deployment Modes
+
+### Local SDK
+Use the local SDK when you want in-process memory access inside your Python application.
+
+Best for:
+- local prototypes
+- Python-native workflows
+- fast integration into existing apps
+
+### Cloud / Forge API
+Use Forge when you need persistent, cross-session, and cross-agent memory with managed access tokens.
+
+Best for:
+- production assistants
+- multi-agent systems
+- MCP-based integrations
+- shared memory across tools and sessions
 
 ---
 
