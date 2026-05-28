@@ -206,7 +206,7 @@ Every active project the user works on must be stored with:
 
 - **AES-256-GCM** encryption at rest
 - **15+ PII patterns** auto-redacted (emails, phones, API keys, IPs)
-- **Zero-knowledge** — no plaintext leaves the agent
+- **Server never sees plaintext** — encrypted at rest with per-operation random IV
 - **Differential privacy** on embeddings
 
 Safe to store: user preferences, project decisions, environment facts, code patterns, tool quirks.
