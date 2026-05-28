@@ -27,15 +27,11 @@ configSchema:
     connect_token:
       type: "string"
       title: "Synapse Connect Token"
-      description: "Your Synapse Connect Token. Get it at synapselayer.org → Dashboard → Connect."
-      x-from:
-        header: "x-connect-token"
-      x-to:
-        header: "x-connect-token"
+      description: "Your Synapse Connect Token from forge.synapselayer.org"
     agent_id:
       type: "string"
       title: "Agent ID"
-      description: "Identifier for the agent using the memory layer. Defaults to 'default'."
+      description: "Optional agent identifier"
       default: "default"
 
 tools:
@@ -65,6 +61,23 @@ tools:
           type: string
           description: "Recall routing mode."
           enum: [auto, temporal, semantic, priority, hybrid]
+    outputSchema:
+      type: object
+      properties:
+        content:
+          type: string
+          description: "Primary textual output of the operation"
+        results:
+          type: array
+          items:
+            type: object
+          description: "List of returned items when applicable"
+        success:
+          type: boolean
+          description: "Indicates if operation succeeded"
+        error:
+          type: string
+          description: "Error message if operation fails"
 
   - name: save_to_synapse
     description: "Persist memory with encryption at rest, sanitization, and deduplication controls."
@@ -92,6 +105,23 @@ tools:
           description: "Tags for categorization."
           items:
             type: string
+    outputSchema:
+      type: object
+      properties:
+        content:
+          type: string
+          description: "Primary textual output of the operation"
+        results:
+          type: array
+          items:
+            type: object
+          description: "List of returned items when applicable"
+        success:
+          type: boolean
+          description: "Indicates if operation succeeded"
+        error:
+          type: string
+          description: "Error message if operation fails"
 
   - name: process_text
     description: "Extract candidate memories from free-form text with governance filters and sanitization."
@@ -111,6 +141,23 @@ tools:
         source:
           type: string
           description: "Source identifier (default: mcp)."
+    outputSchema:
+      type: object
+      properties:
+        content:
+          type: string
+          description: "Primary textual output of the operation"
+        results:
+          type: array
+          items:
+            type: object
+          description: "List of returned items when applicable"
+        success:
+          type: boolean
+          description: "Indicates if operation succeeded"
+        error:
+          type: string
+          description: "Error message if operation fails"
 
   - name: search
     description: "Search persisted memory across agent scopes using full-text matching."
@@ -131,18 +178,69 @@ tools:
         limit:
           type: number
           description: "Maximum results to return (1–50, default: 20)."
+    outputSchema:
+      type: object
+      properties:
+        content:
+          type: string
+          description: "Primary textual output of the operation"
+        results:
+          type: array
+          items:
+            type: object
+          description: "List of returned items when applicable"
+        success:
+          type: boolean
+          description: "Indicates if operation succeeded"
+        error:
+          type: string
+          description: "Error message if operation fails"
 
   - name: health_check
     description: "Check service availability, engine version, and storage health. Public method."
     inputSchema:
       type: object
       properties: {}
+    outputSchema:
+      type: object
+      properties:
+        content:
+          type: string
+          description: "Primary textual output of the operation"
+        results:
+          type: array
+          items:
+            type: object
+          description: "List of returned items when applicable"
+        success:
+          type: boolean
+          description: "Indicates if operation succeeded"
+        error:
+          type: string
+          description: "Error message if operation fails"
 
   - name: initialize_context
     description: "Initialize a persistent memory context for a conversation or agent session."
     inputSchema:
       type: object
       properties: {}
+    outputSchema:
+      type: object
+      properties:
+        content:
+          type: string
+          description: "Primary textual output of the operation"
+        results:
+          type: array
+          items:
+            type: object
+          description: "List of returned items when applicable"
+        success:
+          type: boolean
+          description: "Indicates if operation succeeded"
+        error:
+          type: string
+          description: "Error message if operation fails"
 
   - name: save_memory
     description: "Save a memory entry to the persistent store. Alias of save_to_synapse."
@@ -161,6 +259,23 @@ tools:
           description: "Tags for categorization."
           items:
             type: string
+    outputSchema:
+      type: object
+      properties:
+        content:
+          type: string
+          description: "Primary textual output of the operation"
+        results:
+          type: array
+          items:
+            type: object
+          description: "List of returned items when applicable"
+        success:
+          type: boolean
+          description: "Indicates if operation succeeded"
+        error:
+          type: string
+          description: "Error message if operation fails"
 
   - name: store_memory
     description: "Store structured memory with metadata and trust scoring."
@@ -179,6 +294,23 @@ tools:
           description: "Tags for categorization."
           items:
             type: string
+    outputSchema:
+      type: object
+      properties:
+        content:
+          type: string
+          description: "Primary textual output of the operation"
+        results:
+          type: array
+          items:
+            type: object
+          description: "List of returned items when applicable"
+        success:
+          type: boolean
+          description: "Indicates if operation succeeded"
+        error:
+          type: string
+          description: "Error message if operation fails"
 
   - name: recall_memory
     description: "Recall persisted memory by query. Alias of recall."
@@ -206,6 +338,23 @@ tools:
           type: string
           description: "Recall routing mode."
           enum: [auto, temporal, semantic, priority, hybrid]
+    outputSchema:
+      type: object
+      properties:
+        content:
+          type: string
+          description: "Primary textual output of the operation"
+        results:
+          type: array
+          items:
+            type: object
+          description: "List of returned items when applicable"
+        success:
+          type: boolean
+          description: "Indicates if operation succeeded"
+        error:
+          type: string
+          description: "Error message if operation fails"
 
   - name: list_memories
     description: "List memory metadata with pagination and governance limits."
@@ -222,6 +371,23 @@ tools:
         limit:
           type: number
           description: "Maximum rows to return (default: 5, max: 10)."
+    outputSchema:
+      type: object
+      properties:
+        content:
+          type: string
+          description: "Primary textual output of the operation"
+        results:
+          type: array
+          items:
+            type: object
+          description: "List of returned items when applicable"
+        success:
+          type: boolean
+          description: "Indicates if operation succeeded"
+        error:
+          type: string
+          description: "Error message if operation fails"
 
   - name: memory_feedback
     description: "Submit feedback to adjust trust scoring for stored memories."
@@ -239,6 +405,23 @@ tools:
         sessionId:
           type: string
           description: "Optional session identifier for tracking."
+    outputSchema:
+      type: object
+      properties:
+        content:
+          type: string
+          description: "Primary textual output of the operation"
+        results:
+          type: array
+          items:
+            type: object
+          description: "List of returned items when applicable"
+        success:
+          type: boolean
+          description: "Indicates if operation succeeded"
+        error:
+          type: string
+          description: "Error message if operation fails"
 
   - name: neural_handover
     description: "Transfer contextual state between agents with continuity controls."
@@ -255,6 +438,23 @@ tools:
         consuming_agent:
           type: string
           description: "Agent identifier consuming the handover."
+    outputSchema:
+      type: object
+      properties:
+        content:
+          type: string
+          description: "Primary textual output of the operation"
+        results:
+          type: array
+          items:
+            type: object
+          description: "List of returned items when applicable"
+        success:
+          type: boolean
+          description: "Indicates if operation succeeded"
+        error:
+          type: string
+          description: "Error message if operation fails"
 
   - name: slo_report
     description: "Return uptime and SLO metrics for the MCP service."
@@ -270,6 +470,23 @@ tools:
           description: "Time windows in hours (default: [24, 168])."
           items:
             type: number
+    outputSchema:
+      type: object
+      properties:
+        content:
+          type: string
+          description: "Primary textual output of the operation"
+        results:
+          type: array
+          items:
+            type: object
+          description: "List of returned items when applicable"
+        success:
+          type: boolean
+          description: "Indicates if operation succeeded"
+        error:
+          type: string
+          description: "Error message if operation fails"
 
 tags:
   - agent-memory
