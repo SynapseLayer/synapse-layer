@@ -1,3 +1,7 @@
+[![npm version](https://badge.fury.io/js/synapse-layer.svg)](https://www.npmjs.com/package/synapse-layer)
+[![npm downloads](https://img.shields.io/npm/dm/synapse-layer.svg)](https://www.npmjs.com/package/synapse-layer)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 <div align="center">
 
 # 🧠 Synapse Layer
