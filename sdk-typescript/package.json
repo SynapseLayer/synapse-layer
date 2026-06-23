@@ -1,0 +1,41 @@
+{
+  "name": "synapse-layer",
+  "version": "1.2.0",
+  "description": "MCP-Native Trusted Memory Infrastructure for AI Agents",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "ai-agents", "memory", "mcp", "trust-infrastructure",
+    "persistent-memory", "langchain", "claude", "cursor",
+    "cross-agent-memory", "trust-quotient", "aes-256-gcm",
+    "agent-handover", "vercel-ai-sdk"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SynapseLayer/synapse-layer"
+  },
+  "homepage": "https://synapselayer.org",
+  "bugs": {
+    "url": "https://github.com/SynapseLayer/synapse-layer/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Synapse Layer <hello@synapselayer.org>"
+}
