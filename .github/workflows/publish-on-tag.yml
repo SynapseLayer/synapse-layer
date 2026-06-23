@@ -1,8 +1,11 @@
 name: NPM Publish on Tag
+
 on:
   push:
     tags:
       - 'v*.*.*'
+  workflow_dispatch: {}
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -12,11 +15,22 @@ jobs:
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
-      - name: Build and Publish
+      - name: Node info
+        run: node -v && npm -v
+      - name: Check published version and publish if missing
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           cd sdk-typescript
+          VERSION=$(node -p "require('./package.json').version")
+          echo "Local package version: $VERSION"
+          # try get published version; if command fails we assume not published
+          PUBLISHED=$(npm view synapse-layer version 2>/dev/null || echo "")
+          if [ "$PUBLISHED" = "$VERSION" ]; then
+            echo "Version $VERSION already published to npm — skipping publish."
+            exit 0
+          fi
+          echo "Publishing $VERSION to npm..."
           npm ci
           npm run build || true
           npm publish --access public
