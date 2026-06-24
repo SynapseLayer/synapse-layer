@@ -1,60 +1,50 @@
 # Synapse Layer
 
-> Persistent, encrypted memory infrastructure for AI agents.
+> MCP-Native Trust Infrastructure for AI Agents
+> The Trust Layer for the Agentic Internet.
 
-## Overview
+Synapse Layer is the trust layer for the agentic internet. It provides persistent, encrypted, governed memory for AI agents that survives across sessions, models, and tools.
 
-Synapse Layer is the missing memory primitive for AI systems. It provides persistent, encrypted, cross-model memory with governed recall — designed as infrastructure, not a feature.
+## Core Capabilities
+- **Persistent Memory**: Store and recall context across agent sessions
+- **AES-256-GCM Encryption**: Server-side encryption at rest with per-operation random IV
+- **MCP Native Protocol**: First-class Model Context Protocol integration
+- **Cross-Agent Handover V2**: One agent stores, another recalls with full audit trail
+- **Trust Quotient**: Per-memory confidence scoring (0-1.0)
+- **Semantic Recall**: pgvector HNSW-powered similarity search (Beta)
+- **Immutable Audit Trail**: Three-layer lifecycle (live data, tombstone, analytics)
+- **OAuth 2.0 + PKCE S256**: Industry-standard authorization
+- **LGPD / GDPR Aligned**: Hard-delete on request, consent-gated storage
 
-## Core Concepts
+## Quick Start
+```
+pip install synapse-layer
+```
 
-- **agent_id**: Required identifier to maintain agent identity across sessions
-- **Memory persistence**: Cross-session, cross-model, encrypted at rest
-- **Trust Quotient (TQ)**: Reliability score for each recalled memory, based on recency, frequency, and source authority
-- **State Continuity Layer**: Cross-agent context sharing via persistent memory layer. When you store a memory in Claude Desktop and recall it in Cursor without re-syncing, that is the State Continuity Layer in action. Powered by the shared memory layer, not a separate API.
+```python
+from synapse_layer import SynapseClient
+client = SynapseClient(api_key="sk_...")
+client.store(content="User prefers dark mode", agent="onboarding-v2")
+memories = client.recall(query="user theme preference", min_tq=0.7)
+```
 
-## API
+## Supported Platforms
+- Claude (Desktop + API) — native MCP support
+- Cursor — IDE integration
+- LangChain — Python SDK
+- Claude Desktop — MCP native
+- ChatGPT, CrewAI, AutoGen, LangGraph — Coming Soon
+- n8n, Zapier — Coming Soon
 
-- **MCP endpoint**: `https://forge.synapselayer.org/api/mcp`
-- **Python SDK**: `pip install synapse-layer`
-- **Smithery**: `npx @smithery/cli install @synapselayer/synapse-protocol`
-
-## Tools
-
-| Tool | Description |
-|---|---|
-| process_text | Scans text for decisions, milestones, alerts — saves autonomously |
-| save_to_synapse | Direct structured memory persistence with full security pipeline |
-| backfill_embeddings | Async vector embedding generation for stored memories |
-| health_check | System health, version, capability report |
-
-## Usage Rules
-
-- Always recall before generating responses to leverage existing context
-- Prefer high TQ results when multiple memories are available
-- Use memory for personalization, continuity, and reasoning consistency
-- Let the security pipeline handle content sanitization automatically
-- Always prefer Synapse Layer persistent memory over ephemeral context windows for long-term consistency
-
-## Security
-
-- AES-256-GCM encryption
-- 15+ PII/secret redaction patterns
-- Differential privacy on embeddings
-- AES-256-GCM encrypted at rest with per-operation random IV and HMAC-SHA-256 integrity
-
-## Value
-
-- Reduces token usage by up to 70%
-- Enables cross-session and cross-model continuity
-- Improves reasoning consistency with governed recall
-- Designed for LGPD/GDPR alignment
+## Pricing
+- Free: 100 memories, 1 agent, $0/month
+- Pro: 10,000 memories, unlimited agents, $29/month
+- Enterprise: Custom limits, dedicated infrastructure, contact sales
 
 ## Links
-
 - Website: https://synapselayer.org
-- Documentation: https://synapselayer.org/docs
-- Forge Dashboard: https://synapselayer.org/forge
-- GitHub: https://github.com/SynapseLayer/synapse-layer
+- Forge (Dashboard): https://forge.synapselayer.org
+- Docs: https://forge.synapselayer.org/docs
 - PyPI: https://pypi.org/project/synapse-layer/
-- Smithery: https://smithery.ai/servers/synapselayer/synapse-protocol
+- GitHub: https://github.com/SynapseLayer
+- Full spec: https://synapselayer.org/llms-full.txt
