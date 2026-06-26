@@ -1,0 +1,168 @@
+{
+  "$schema": "https://glama.ai/schemas/glama.json",
+  "name": "synapse-layer",
+  "display_name": "Synapse Layer",
+  "version": "1.2.0",
+  "description": "MCP-native persistent memory with Trust Quotient and cross-agent handover. AES-256-GCM encryption, semantic recall via pgvector HNSW, immutable audit trail.",
+  "category": "memory",
+  "tags": [
+    "memory",
+    "encryption",
+    "aes-256-gcm",
+    "mcp",
+    "ai-agents",
+    "trust-infrastructure",
+    "semantic-search",
+    "pgvector",
+    "agent-handover",
+    "audit-trail",
+    "lgpd",
+    "gdpr"
+  ],
+  "homepage": "https://synapselayer.org",
+  "repository": "https://github.com/SynapseLayer/synapse-layer",
+  "documentation": "https://synapselayer.org/docs",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Ismael Marchi",
+    "url": "https://synapselayer.org",
+    "email": "hello@synapselayer.org"
+  },
+  "transport": [
+    "stdio",
+    "streamable-http"
+  ],
+  "auth": {
+    "type": "bearer",
+    "token_prefix": "sk_live_",
+    "signup_url": "https://forge.synapselayer.org/signup"
+  },
+  "tools": [
+    {
+      "name": "health_check",
+      "description": "Check server status and connected user identity. Use this to verify the API key is valid and the server is reachable before performing memory operations. Returns server version, user ID, and connection status. Read-only, no side effects.",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true
+      },
+      "parameters": {}
+    },
+    {
+      "name": "store_memory",
+      "description": "Encrypt and persist a memory with AES-256-GCM. Use this when an agent needs to save context, preferences, decisions, or constraints for later retrieval. Each memory is tagged with the calling agent ID, scored by Trust Quotient (0.0-1.0), and indexed for semantic search. Side effects: creates a new encrypted record in the database and an audit trail entry. Not idempotent — calling twice with the same content creates two separate memories.",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false
+      },
+      "parameters": {
+        "content": {
+          "type": "string",
+          "required": true,
+          "description": "Memory content to store. Plain text, 1-10000 characters. Encrypted server-side with AES-256-GCM before persistence."
+        },
+        "intent": {
+          "type": "string",
+          "required": false,
+          "description": "Memory intent category. One of: 'preference', 'decision', 'constraint', 'context'. Defaults to 'context'. Used for filtering during recall."
+        },
+        "importance": {
+          "type": "number",
+          "required": false,
+          "description": "Importance score from 0.0 (trivial) to 1.0 (critical). Defaults to 0.5. Affects Trust Quotient calculation and recall ranking."
+        }
+      }
+    },
+    {
+      "name": "recall_memory",
+      "description": "Semantically recall memories by natural language query using pgvector HNSW similarity search. Use this when an agent needs to retrieve previously stored context, preferences, or decisions. Results are ranked by semantic similarity and filtered by optional Trust Quotient threshold. Read-only — does not modify stored memories.",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true
+      },
+      "parameters": {
+        "query": {
+          "type": "string",
+          "required": true,
+          "description": "Natural language search query. Converted to embedding vector for HNSW similarity search against stored memories."
+        },
+        "limit": {
+          "type": "number",
+          "required": false,
+          "description": "Maximum number of results to return. Range: 1-50. Defaults to 5."
+        },
+        "min_tq": {
+          "type": "number",
+          "required": false,
+          "description": "Minimum Trust Quotient threshold for results. Range: 0.0-1.0. Memories below this score are excluded. Use 0.7 for high-confidence recall."
+        }
+      }
+    },
+    {
+      "name": "search_memory",
+      "description": "Full-text and vector hybrid search across the memory store with metadata filters. Use this instead of recall_memory when you need to filter by agent ID, intent category, or date range in addition to semantic similarity. Read-only — does not modify stored memories.",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true
+      },
+      "parameters": {
+        "query": {
+          "type": "string",
+          "required": true,
+          "description": "Search query for semantic and full-text matching."
+        },
+        "filters": {
+          "type": "object",
+          "required": false,
+          "description": "Optional filters object. Supported keys: 'agent' (string — filter by agent ID), 'intent' (string — one of preference/decision/constraint/context), 'from' (ISO date), 'to' (ISO date)."
+        }
+      }
+    },
+    {
+      "name": "delete_memory",
+      "description": "Hard-delete a specific memory by ID. LGPD/GDPR compliant — removes all PII. Irreversible. A tombstone record without PII is preserved for audit trail integrity. Use this when a user requests data deletion or when removing outdated/incorrect memories. Destructive — cannot be undone.",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true
+      },
+      "parameters": {
+        "memory_id": {
+          "type": "string",
+          "required": true,
+          "description": "UUID of the memory to delete. Obtain from recall_memory or search_memory results."
+        }
+      }
+    }
+  ],
+  "install": {
+    "claude_desktop": {
+      "command": "uvx",
+      "args": ["synapse-layer"],
+      "env": {
+        "SYNAPSE_API_KEY": "sk_live_your_key_here",
+        "SYNAPSE_AGENT_ID": "my-agent"
+      }
+    },
+    "remote": {
+      "url": "https://forge.synapselayer.org/api/mcp",
+      "transport": "streamable-http",
+      "headers": {
+        "Authorization": "Bearer sk_live_your_key_here"
+      }
+    }
+  },
+  "links": {
+    "openapi": "https://synapselayer.org/api/openapi.json",
+    "pypi": "https://pypi.org/project/synapse-layer/",
+    "npm": "https://www.npmjs.com/package/synapse-layer",
+    "mcp_manifest": "https://synapselayer.org/.well-known/mcp.json",
+    "server_card": "https://synapselayer.org/.well-known/mcp/server-card.json",
+    "trust_manifest": "https://synapselayer.org/.well-known/trust.json",
+    "pricing": "https://synapselayer.org/.well-known/pricing.json",
+    "llms_txt": "https://synapselayer.org/llms.txt"
+  }
+}
