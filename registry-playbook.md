@@ -1,6 +1,6 @@
 # Synapse Layer — MCP Registry Distribution Playbook
 
-**Version:** 1.2.1 | **Status:** Official Registry updated (June 26, 2026)
+**Version:** 2.4.1 | **Status:** Official Registry updated (June 26, 2026)
 
 ## Canonical Description (use everywhere)
 MCP-native Trust Infrastructure for AI Agents. Persistent encrypted memory with Trust Quotient scoring, cross-agent handover, and immutable audit trail.

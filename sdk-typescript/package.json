@@ -1,6 +1,6 @@
 {
   "name": "synapse-layer",
-  "version": "1.2.0",
+  "version": "2.4.1",
   "description": "MCP-Native Trusted Memory Infrastructure for AI Agents",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -19,10 +19,19 @@
     "node": ">=18"
   },
   "keywords": [
-    "ai-agents", "memory", "mcp", "trust-infrastructure",
-    "persistent-memory", "langchain", "claude", "cursor",
-    "cross-agent-memory", "trust-quotient", "aes-256-gcm",
-    "agent-handover", "vercel-ai-sdk"
+    "ai-agents",
+    "memory",
+    "mcp",
+    "trust-infrastructure",
+    "persistent-memory",
+    "langchain",
+    "claude",
+    "cursor",
+    "cross-agent-memory",
+    "trust-quotient",
+    "aes-256-gcm",
+    "agent-handover",
+    "vercel-ai-sdk"
   ],
   "scripts": {
     "build": "tsc",

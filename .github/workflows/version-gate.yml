@@ -1,0 +1,99 @@
+name: Version Gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  version-consistency:
+    name: Version Consistency Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Check all manifests have the same version
+        run: |
+          set -euo pipefail
+
+          # Extract canonical version from pyproject.toml
+          VERSION=$(python3 -c "
+import re
+with open('pyproject.toml') as f:
+    for line in f:
+        m = re.match(r'^version\s*=\s*\"([^\"]+)\"', line)
+        if m:
+            print(m.group(1))
+            break
+")
+          echo "Canonical version (pyproject.toml): $VERSION"
+          DRIFT=0
+
+          # Check synapse_memory/__init__.py
+          INIT_VER=$(python3 -c "import re; content=open('synapse_memory/__init__.py').read(); m=re.search(r'__version__\s*=\s*\"([^\"]+)\"', content); print(m.group(1) if m else 'NOT_FOUND')")
+          if [ "$INIT_VER" != "$VERSION" ]; then
+            echo "DRIFT: synapse_memory/__init__.py has $INIT_VER (expected $VERSION)"
+            DRIFT=1
+          else
+            echo "OK: synapse_memory/__init__.py = $VERSION"
+          fi
+
+          # Check server.json
+          if [ -f server.json ]; then
+            SJ_VER=$(python3 -c "import json; print(json.load(open('server.json'))['version'])")
+            if [ "$SJ_VER" != "$VERSION" ]; then
+              echo "DRIFT: server.json has $SJ_VER (expected $VERSION)"
+              DRIFT=1
+            else
+              echo "OK: server.json = $VERSION"
+            fi
+          fi
+
+          # Check glama.json
+          if [ -f glama.json ]; then
+            GL_VER=$(python3 -c "import json; print(json.load(open('glama.json'))['version'])")
+            if [ "$GL_VER" != "$VERSION" ]; then
+              echo "DRIFT: glama.json has $GL_VER (expected $VERSION)"
+              DRIFT=1
+            else
+              echo "OK: glama.json = $VERSION"
+            fi
+          fi
+
+          # Check smithery.yaml
+          if [ -f smithery.yaml ]; then
+            SM_VER=$(python3 -c "import re; content=open('smithery.yaml').read(); m=re.search(r'^version:\s*\"([^\"]+)\"', content, re.MULTILINE); print(m.group(1) if m else 'NOT_FOUND')")
+            if [ "$SM_VER" != "$VERSION" ]; then
+              echo "DRIFT: smithery.yaml has $SM_VER (expected $VERSION)"
+              DRIFT=1
+            else
+              echo "OK: smithery.yaml = $VERSION"
+            fi
+          fi
+
+          # Check sdk-typescript/package.json
+          if [ -f sdk-typescript/package.json ]; then
+            TS_VER=$(python3 -c "import json; print(json.load(open('sdk-typescript/package.json'))['version'])")
+            if [ "$TS_VER" != "$VERSION" ]; then
+              echo "DRIFT: sdk-typescript/package.json has $TS_VER (expected $VERSION)"
+              DRIFT=1
+            else
+              echo "OK: sdk-typescript/package.json = $VERSION"
+            fi
+          fi
+
+          if [ "$DRIFT" -eq 1 ]; then
+            echo ""
+            echo "VERSION DRIFT DETECTED"
+            echo "Run sync-to-public.py from the essencial vault to fix."
+            exit 1
+          fi
+
+          echo ""
+          echo "All manifests aligned to v$VERSION"

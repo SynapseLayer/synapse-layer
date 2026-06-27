@@ -4,9 +4,10 @@
 
 | Version | Supported |
 |---------|-----------|
-| 1.2.x | ✅ Active |
-| 1.1.x | ⚠️ Security fixes only |
-| < 1.1.0 | ❌ End of life |
+| 2.4.x | ✅ Active |
+| 2.3.x | ⚠️ Security fixes only |
+| 1.2.x | ⚠️ Security fixes only |
+| < 1.2.0 | ❌ End of life |
 
 ## Reporting
 
