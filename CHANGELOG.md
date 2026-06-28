@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.2] - 2026-06-28
+
+### Fixed
+- **Governance**: Removed prohibited compliance claims and sensitive terminology from public manifests.
+- **Forge**: Rectified `llms.txt` with canonical Markdown links and validated URL health (100/100 PageSpeed).
+- **Metadata**: Synchronized canonical versioning across all package authorities.
+
 ## [2.4.1] - 2026-06-28
 
 ### Added
