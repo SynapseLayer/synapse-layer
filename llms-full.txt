@@ -2,7 +2,7 @@
 
 > MCP-Native Trust Infrastructure for AI Agents
 > The Trust Layer for the Agentic Internet.
-> Version: 1.2.0
+> Version: 2.4.1
 > Author: Ismael Marchi
 
 ## Overview
@@ -150,5 +150,10 @@ Native Model Context Protocol support. Configure in claude_desktop_config.json:
 - Website: https://synapselayer.org
 - Forge Dashboard: https://forge.synapselayer.org
 - Documentation: https://forge.synapselayer.org/docs
-- PyPI: https://pypi.org/project/synapse-layer/
-- GitHub: https://github.com/SynapseLayer
+- Python SDK (PyPI): https://pypi.org/project/synapse-layer/
+- TypeScript SDK (npm): https://www.npmjs.com/package/synapse-layer
+- Source (core): https://github.com/SynapseLayer/synapse-layer
+- Python SDK repo: https://github.com/SynapseLayer/synapse-sdk-python
+- LangGraph integration: https://github.com/SynapseLayer/synapse-layer-langgraph
+- Agent skill: https://github.com/SynapseLayer/synapse-layer-skill
+- GitHub org: https://github.com/SynapseLayer
