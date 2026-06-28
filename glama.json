@@ -123,7 +123,7 @@
     },
     {
       "name": "delete_memory",
-      "description": "Hard-delete a specific memory by ID. LGPD/GDPR compliant — removes all PII. Irreversible. A tombstone record without PII is preserved for audit trail integrity. Use this when a user requests data deletion or when removing outdated/incorrect memories. Destructive — cannot be undone.",
+      "description": "Hard-delete a specific memory by ID. Designed for LGPD/GDPR alignment — removes all PII. Irreversible. A tombstone record without PII is preserved for audit trail integrity. Use this when a user requests data deletion or when removing outdated/incorrect memories. Destructive — cannot be undone.",
       "annotations": {
         "readOnlyHint": false,
         "destructiveHint": true,

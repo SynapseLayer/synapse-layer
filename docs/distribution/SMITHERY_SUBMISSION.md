@@ -82,7 +82,7 @@ Apache-2.0
 Ismael Marchi — [@synapselayer](https://x.com/synapselayer)
 
 ### Tags
-`agent-memory` `persistent-context` `long-term-memory` `mcp-memory` `deterministic-recall` `encrypted-at-rest` `trust-quotient` `aes-256-gcm` `encrypted-at-rest` `continuous-consciousness` `sqlite-backend` `langchain` `crewai` `autogen` `llamaindex` `semantic-kernel`
+`agent-memory` `persistent-context` `long-term-memory` `mcp-memory` `deterministic-recall` `encrypted-at-rest` `trust-quotient` `aes-256-gcm` `encrypted-at-rest` `sqlite-backend` `langchain` `crewai` `autogen` `llamaindex` `semantic-kernel`
 
 ### Numbers
 - 481 tests | 90% coverage
