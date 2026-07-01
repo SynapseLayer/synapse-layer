@@ -3,7 +3,7 @@
   "name": "io.github.SynapseLayer/synapse-layer",
   "title": "Synapse Layer — Trust Infrastructure for AI Agents",
   "description": "MCP-native Trust Infrastructure for AI Agents. Persistent encrypted memory with Trust Quotient.",
-  "version": "2.4.2",
+  "version": "2.4.3",
   "websiteUrl": "https://synapselayer.org",
   "repository": {
     "url": "https://github.com/SynapseLayer/synapse-layer",
@@ -13,7 +13,7 @@
     {
       "registryType": "pypi",
       "identifier": "synapse-layer",
-      "version": "2.4.2",
+      "version": "2.4.3",
       "runtimeHint": "uvx",
       "transport": {
         "type": "stdio"

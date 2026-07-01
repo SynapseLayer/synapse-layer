@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.4.3] - 2026-07-01
+
+### Security
+- Pinned `cryptography>=48.0.1` to resolve GHSA-537c-gmf6-5ccf, which affects cryptography wheels bundling vulnerable OpenSSL versions. The previous floor `cryptography>=46.0.7` allowed the vulnerable range `[46.0.7, 48.0.1)`.
+
+### Changed
+- Dependency floor update only. No functional, API, MCP tool, or runtime behavior changes.
+
 ## [2.4.2] - 2026-06-28
 
 ### Fixed

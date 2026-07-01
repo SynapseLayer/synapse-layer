@@ -3,7 +3,7 @@ displayName: "Synapse Layer"
 description: >
   Persistent memory infrastructure for AI agents — encrypted,
   governed, and cross-agent. The OAuth for AI Memory.
-version: "2.4.2"
+version: "2.4.3"
 icon: "🧠"
 sourceUrl: "https://github.com/SynapseLayer/synapse-layer"
 homepage: "https://synapselayer.org"
