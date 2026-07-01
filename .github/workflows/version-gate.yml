@@ -23,15 +23,7 @@ jobs:
           set -euo pipefail
 
           # Extract canonical version from pyproject.toml
-          VERSION=$(python3 -c "
-import re
-with open('pyproject.toml') as f:
-    for line in f:
-        m = re.match(r'^version\s*=\s*\"([^\"]+)\"', line)
-        if m:
-            print(m.group(1))
-            break
-")
+          VERSION=$(python3 -c "import re; t=open('pyproject.toml').read(); m=re.search(r'(?m)^version\s*=\s*\"([^\"]+)\"', t); print(m.group(1) if m else 'NOT_FOUND')")
           echo "Canonical version (pyproject.toml): $VERSION"
           DRIFT=0
 

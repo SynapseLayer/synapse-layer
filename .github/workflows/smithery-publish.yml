@@ -58,15 +58,4 @@ jobs:
         run: |
           sleep 5
           curl -sf "https://registry.smithery.ai/servers/@synapselayer/synapse-protocol" | \
-            python3 -c "
-import json, sys
-data = json.load(sys.stdin)
-tools = data.get('tools', [])
-print(f'Registry tools: {len(tools)}')
-for t in tools:
-    print(f'  ✓ {t[\"name\"]}')
-if len(tools) >= 13:
-    print('✅ All tools published!')
-else:
-    print(f'⚠️  Only {len(tools)}/13 tools — may need cache refresh')
-"
+            python3 -c "import json,sys; data=json.load(sys.stdin); tools=data.get('tools',[]); print('Registry tools: ' + str(len(tools))); [print('  tool: ' + t['name']) for t in tools]; print('All tools published' if len(tools) >= 13 else 'Only ' + str(len(tools)) + '/13 tools - may need cache refresh')"

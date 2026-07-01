@@ -20,17 +20,30 @@ jobs:
       - name: Check published version and publish if missing
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # Governance gate: the TypeScript SDK is intentionally frozen at 1.2.0.
+          # Canonical version 2.4.x belongs to the Core Python package only.
+          # A real SDK release must be opted-in explicitly by setting RELEASE_SDK=true.
+          RELEASE_SDK: ${{ vars.RELEASE_SDK }}
         run: |
           cd sdk-typescript
           VERSION=$(node -p "require('./package.json').version")
-          echo "Local package version: $VERSION"
+          echo "Local SDK package.json version: $VERSION"
           # try get published version; if command fails we assume not published
           PUBLISHED=$(npm view synapse-layer version 2>/dev/null || echo "")
-          if [ "$PUBLISHED" = "$VERSION" ]; then
-            echo "Version $VERSION already published to npm — skipping publish."
+          echo "Published npm version: ${PUBLISHED:-<none>}"
+
+          # Governance-aligned no-op: skip unless a genuine SDK release is intended
+          # AND the local version is not already published.
+          if [ "$PUBLISHED" = "$VERSION" ] || [ "${RELEASE_SDK:-false}" != "true" ]; then
+            echo "Skipping npm SDK publish: canonical SDK release not authorized for this cycle."
             exit 0
           fi
+
           echo "Publishing $VERSION to npm..."
-          npm ci
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install --no-audit --no-fund
+          fi
           npm run build || true
           npm publish --access public
