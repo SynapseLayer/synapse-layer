@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.4.4] - 2026-07-01
+
+### Fixed
+- Restore mandatory `mcp-name` ownership marker in README for Official MCP Registry validation.
+- No functional or security changes; retains all v2.4.3 remediations.
+
 ## [2.4.3] - 2026-07-01
 
 ### Security

@@ -2,7 +2,7 @@
   "$schema": "https://glama.ai/schemas/glama.json",
   "name": "synapse-layer",
   "display_name": "Synapse Layer",
-  "version": "2.4.3",
+  "version": "2.4.4",
   "description": "MCP-native persistent memory with Trust Quotient and cross-agent handover. AES-256-GCM encryption, semantic recall via pgvector HNSW, immutable audit trail.",
   "category": "memory",
   "tags": [

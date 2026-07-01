@@ -1,3 +1,4 @@
+<!-- mcp-name: io.github.SynapseLayer/synapse-layer -->
 <div align="center">
 
 # 🧠 Synapse Layer
