@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+title: Synapse Layer
+message: "If you use Synapse Layer, please cite it as below."
+type: software
+authors:
+  - family-names: Marchi
+    given-names: Ismael
+    email: founder.synapselayer@proton.me
+repository-code: https://github.com/SynapseLayer/synapse-layer
+url: https://synapselayer.org
+license: Apache-2.0
+version: 2.4.4
+date-released: 2026-07-01
+keywords:
+  - mcp
+  - model-context-protocol
+  - ai-agents
+  - persistent-memory
+  - semantic-search
+  - pgvector
+  - aes-256-gcm
+  - python
+abstract: >-
+  Persistent memory infrastructure for AI agents.
+  AES-256-GCM encrypted at rest, semantic search via pgvector HNSW,
+  and MCP-native integration. Apache 2.0 licensed.

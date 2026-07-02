@@ -13,6 +13,8 @@ Synapse Layer is open-source persistent memory infrastructure for AI agents and 
 [![Python](https://img.shields.io/pypi/pyversions/synapse-layer)](https://pypi.org/project/synapse-layer/)
 [![Downloads](https://img.shields.io/pypi/dm/synapse-layer)](https://pypi.org/project/synapse-layer/)
 [![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-6B4FBB)](https://modelcontextprotocol.io)
+[![Official MCP Registry](https://img.shields.io/badge/MCP_Registry-Published-00C853)](https://registry.modelcontextprotocol.io)
+[![CI](https://github.com/SynapseLayer/synapse-layer/actions/workflows/ci.yml/badge.svg)](https://github.com/SynapseLayer/synapse-layer/actions/workflows/ci.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 [![Smithery](https://smithery.ai/badge/synapselayer/synapse-protocol)](https://smithery.ai/servers/synapselayer/synapse-protocol)
 
