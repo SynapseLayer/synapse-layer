@@ -34,7 +34,7 @@
   ],
   "auth": {
     "type": "bearer",
-    "token_prefix": "sk_live_",
+    "token_prefix": "sk_connect_",
     "signup_url": "https://forge.synapselayer.org/signup"
   },
   "tools": [
@@ -145,7 +145,7 @@
         "synapse-layer"
       ],
       "env": {
-        "SYNAPSE_API_KEY": "sk_live_your_key_here",
+        "SYNAPSE_API_KEY": "sk_connect_your_key_here",
         "SYNAPSE_AGENT_ID": "my-agent"
       }
     },
@@ -153,7 +153,7 @@
       "url": "https://forge.synapselayer.org/api/mcp",
       "transport": "streamable-http",
       "headers": {
-        "Authorization": "Bearer sk_live_your_key_here"
+        "x-connect-token": "sk_connect_your_key_here"
       }
     }
   },
