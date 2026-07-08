@@ -26,7 +26,7 @@
         },
         {
           "name": "SYNAPSE_API_KEY",
-          "description": "Bearer token for API authentication (sk_live_*).",
+          "description": "Connect token for API authentication (sk_connect_*).",
           "isSecret": true
         },
         {
