@@ -35,7 +35,7 @@ from synapse_layer import Synapse
 
 s = Synapse(token="sk_connect_YOUR_TOKEN")
 
-s.save("user likes coffee")
+s.store("user likes coffee")
 print(s.recall("what does user like?"))
 ```
 
@@ -91,36 +91,32 @@ pip install synapse-layer
 
 ## Quick Start
 
-### Local SDK — in-process memory
+### Python Script
 
 ```python
-import asyncio
-from synapse_layer import SynapseClient
-
-async def main():
-    memory = SynapseClient(agent_id="my-agent")
-
-    # Save
-    await memory.store("User prefers dark mode and concise answers")
-
-    # Recall
-    results = await memory.recall("user preferences")
-    for r in results:
-        print(f"[TQ={r.trust_quotient:.2f}] {r.content}")
-
-asyncio.run(main())
-```
-
-### Cloud — Forge API (persistent, cross-agent)
-
-```python
-from synapse_memory.client import Synapse
+from synapse_layer import Synapse
 
 client = Synapse(token="sk_connect_YOUR_TOKEN")
-client.remember("User prefers dark mode and concise answers")
+
+# Store
+client.store("User prefers dark mode and concise answers")
+
+# Recall
 results = client.recall("user preferences")
 for r in results:
-    print(r["content"])
+    print(r["content"], r["trust_quotient"])
+```
+
+### With Context Manager
+
+```python
+from synapse_layer import Synapse
+
+with Synapse(token="sk_connect_YOUR_TOKEN") as client:
+    client.store("User prefers dark mode and concise answers")
+    results = client.recall("user preferences")
+    for r in results:
+        print(r["content"])
 ```
 
 Get your token at [forge.synapselayer.org](https://forge.synapselayer.org) → Dashboard → Connect
@@ -151,11 +147,11 @@ These tools cover memory capture, semantic recall, structured storage, feedback 
 
 ## Deployment Modes
 
-### Local SDK
-Use the local SDK when you want in-process memory access inside your Python application.
+### Python Script Mode
+Use the SDK when you want direct Python access to Forge memory from your application.
 
 Best for:
-- local prototypes
+- prototypes and scripts
 - Python-native workflows
 - fast integration into existing apps
 
@@ -181,7 +177,7 @@ Add to `claude_desktop_config.json`:
       "command": "npx",
       "args": [
         "mcp-remote",
-        "https://forge.synapselayer.org/mcp",
+        "https://forge.synapselayer.org/api/mcp",
         "--header",
         "x-connect-token: sk_connect_YOUR_TOKEN"
       ]
