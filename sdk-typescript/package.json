@@ -1,6 +1,6 @@
 {
   "name": "synapse-layer",
-  "version": "2.4.4",
+  "version": "2.4.6",
   "description": "MCP-Native Trusted Memory Infrastructure for AI Agents",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

@@ -3,7 +3,7 @@ displayName: "Synapse Layer"
 description: >
   Persistent memory infrastructure for AI agents — encrypted,
   governed, and cross-agent. The OAuth for AI Memory.
-version: "2.4.4"
+version: "2.4.6"
 icon: "🧠"
 sourceUrl: "https://github.com/SynapseLayer/synapse-layer"
 homepage: "https://synapselayer.org"
@@ -69,20 +69,56 @@ tools:
     outputSchema:
       type: object
       properties:
-        content:
-          type: string
-          description: "Primary textual output of the operation"
-        results:
+        memories:
           type: array
           items:
             type: object
-          description: "List of returned items when applicable"
-        success:
-          type: boolean
-          description: "Indicates if operation succeeded"
-        error:
+            properties:
+              id:
+                type: string
+              content:
+                type: string
+              trust_quotient:
+                type: number
+              intent:
+                type: string
+              is_critical:
+                type: boolean
+              agent:
+                type: string
+              timestamp:
+                type: string
+                format: date-time
+              memory_type:
+                type: string
+              hybridScore:
+                type: number
+              confidence:
+                type: string
+                enum: [high, medium_fts, low]
+        count:
+          type: integer
+        query:
           type: string
-          description: "Error message if operation fails"
+        scope:
+          type: string
+        agent_id:
+          type: string
+        scope_source:
+          type: string
+        recall_mode:
+          type: string
+        fallback:
+          type: boolean
+        redacted:
+          type: boolean
+        recallLatencyMs:
+          type: number
+        sessionCacheHit:
+          type: boolean
+        queryCacheHit:
+          type: boolean
+      required: [memories, count, query]
 
   - name: save_to_synapse
     description: "Persist memory with encryption at rest, sanitization, and deduplication controls."
@@ -118,20 +154,44 @@ tools:
     outputSchema:
       type: object
       properties:
-        content:
+        status:
           type: string
-          description: "Primary textual output of the operation"
-        results:
-          type: array
-          items:
-            type: object
-          description: "List of returned items when applicable"
-        success:
+          enum: [saved, error]
+        memory_id:
+          type: string
+          format: uuid
+        trust_quotient:
+          type: number
+          minimum: 0
+          maximum: 1
+        intent:
+          type: string
+        sanitized:
           type: boolean
-          description: "Indicates if operation succeeded"
-        error:
+        privacy_applied:
+          type: boolean
+        pipeline:
+          type: object
+          properties:
+            pii_redaction:
+              type: boolean
+            intent_validation:
+              type: boolean
+            differential_privacy:
+              type: boolean
+            encryption:
+              type: boolean
+        quota:
+          type: object
+          properties:
+            used:
+              type: integer
+            limit:
+              type: integer
+        timestamp:
           type: string
-          description: "Error message if operation fails"
+          format: date-time
+      required: [status, memory_id, timestamp]
 
   - name: process_text
     description: "Extract candidate memories from free-form text with governance filters and sanitization."
@@ -159,20 +219,35 @@ tools:
     outputSchema:
       type: object
       properties:
-        content:
+        status:
           type: string
-          description: "Primary textual output of the operation"
+          enum: [processed, error]
+        events_detected:
+          type: integer
         results:
           type: array
           items:
             type: object
-          description: "List of returned items when applicable"
-        success:
-          type: boolean
-          description: "Indicates if operation succeeded"
-        error:
+            properties:
+              memory_id:
+                type: string
+              trust_quotient:
+                type: number
+        pipeline:
+          type: object
+          properties:
+            trigger_detection:
+              type: boolean
+            policy_evaluation:
+              type: boolean
+            pii_redaction:
+              type: boolean
+            deduplication:
+              type: boolean
+        timestamp:
           type: string
-          description: "Error message if operation fails"
+          format: date-time
+      required: [status, events_detected, results]
 
   - name: search
     description: "Search persisted memory across agent scopes using full-text matching."
@@ -201,20 +276,37 @@ tools:
     outputSchema:
       type: object
       properties:
-        content:
-          type: string
-          description: "Primary textual output of the operation"
         results:
           type: array
           items:
             type: object
-          description: "List of returned items when applicable"
-        success:
-          type: boolean
-          description: "Indicates if operation succeeded"
-        error:
+            properties:
+              content:
+                type: string
+              trust_quotient:
+                type: number
+              intent:
+                type: string
+              is_critical:
+                type: boolean
+              agent:
+                type: string
+              timestamp:
+                type: string
+                format: date-time
+              memory_type:
+                type: string
+        count:
+          type: integer
+        query:
           type: string
-          description: "Error message if operation fails"
+        scope:
+          type: string
+        agent_id:
+          type: string
+        scope_source:
+          type: string
+      required: [results, count, query]
 
   - name: health_check
     description: "Check service availability, engine version, and storage health. Public method."
@@ -229,20 +321,27 @@ tools:
     outputSchema:
       type: object
       properties:
-        content:
+        status:
           type: string
-          description: "Primary textual output of the operation"
-        results:
-          type: array
-          items:
-            type: object
-          description: "List of returned items when applicable"
-        success:
+          enum: [healthy, degraded, unhealthy]
+        version:
+          type: string
+        engine:
+          type: string
+        database:
+          type: string
+        latencyMs:
+          type: number
+        dbRealLatencyMs:
+          type: number
+        cacheHit:
           type: boolean
-          description: "Indicates if operation succeeded"
-        error:
+        capabilities:
+          type: object
+        timestamp:
           type: string
-          description: "Error message if operation fails"
+          format: date-time
+      required: [status, version, timestamp]
 
   - name: initialize_context
     description: "Initialize a persistent memory context for a conversation or agent session."
@@ -257,20 +356,21 @@ tools:
     outputSchema:
       type: object
       properties:
-        content:
-          type: string
-          description: "Primary textual output of the operation"
-        results:
+        initialized:
+          type: boolean
+        count:
+          type: integer
+        memories:
           type: array
           items:
             type: object
-          description: "List of returned items when applicable"
-        success:
-          type: boolean
-          description: "Indicates if operation succeeded"
+        scope:
+          type: string
+        query:
+          type: string
         error:
           type: string
-          description: "Error message if operation fails"
+      required: [initialized, count, memories]
 
   - name: save_memory
     description: "Save a memory entry to the persistent store. Alias of save_to_synapse."
@@ -297,20 +397,35 @@ tools:
     outputSchema:
       type: object
       properties:
-        content:
+        status:
           type: string
-          description: "Primary textual output of the operation"
-        results:
-          type: array
-          items:
-            type: object
-          description: "List of returned items when applicable"
-        success:
+          enum: [saved, error]
+        memory_id:
+          type: string
+          format: uuid
+        trust_quotient:
+          type: number
+          minimum: 0
+          maximum: 1
+        intent:
+          type: string
+        sanitized:
           type: boolean
-          description: "Indicates if operation succeeded"
-        error:
+        privacy_applied:
+          type: boolean
+        pipeline:
+          type: object
+        quota:
+          type: object
+          properties:
+            used:
+              type: integer
+            limit:
+              type: integer
+        timestamp:
           type: string
-          description: "Error message if operation fails"
+          format: date-time
+      required: [status, memory_id, timestamp]
 
   - name: store_memory
     description: "Store structured memory with metadata and trust scoring."
@@ -337,20 +452,35 @@ tools:
     outputSchema:
       type: object
       properties:
-        content:
+        status:
           type: string
-          description: "Primary textual output of the operation"
-        results:
-          type: array
-          items:
-            type: object
-          description: "List of returned items when applicable"
-        success:
+          enum: [saved, error]
+        memory_id:
+          type: string
+          format: uuid
+        trust_quotient:
+          type: number
+          minimum: 0
+          maximum: 1
+        intent:
+          type: string
+        sanitized:
           type: boolean
-          description: "Indicates if operation succeeded"
-        error:
+        privacy_applied:
+          type: boolean
+        pipeline:
+          type: object
+        quota:
+          type: object
+          properties:
+            used:
+              type: integer
+            limit:
+              type: integer
+        timestamp:
           type: string
-          description: "Error message if operation fails"
+          format: date-time
+      required: [status, memory_id, timestamp]
 
   - name: recall_memory
     description: "Recall persisted memory by query. Alias of recall."
@@ -386,20 +516,56 @@ tools:
     outputSchema:
       type: object
       properties:
-        content:
-          type: string
-          description: "Primary textual output of the operation"
-        results:
+        memories:
           type: array
           items:
             type: object
-          description: "List of returned items when applicable"
-        success:
-          type: boolean
-          description: "Indicates if operation succeeded"
-        error:
+            properties:
+              id:
+                type: string
+              content:
+                type: string
+              trust_quotient:
+                type: number
+              intent:
+                type: string
+              is_critical:
+                type: boolean
+              agent:
+                type: string
+              timestamp:
+                type: string
+                format: date-time
+              memory_type:
+                type: string
+              hybridScore:
+                type: number
+              confidence:
+                type: string
+                enum: [high, medium_fts, low]
+        count:
+          type: integer
+        query:
           type: string
-          description: "Error message if operation fails"
+        scope:
+          type: string
+        agent_id:
+          type: string
+        scope_source:
+          type: string
+        recall_mode:
+          type: string
+        fallback:
+          type: boolean
+        redacted:
+          type: boolean
+        recallLatencyMs:
+          type: number
+        sessionCacheHit:
+          type: boolean
+        queryCacheHit:
+          type: boolean
+      required: [memories, count, query]
 
   - name: list_memories
     description: "List memory metadata with pagination and governance limits."
@@ -424,20 +590,39 @@ tools:
     outputSchema:
       type: object
       properties:
-        content:
-          type: string
-          description: "Primary textual output of the operation"
-        results:
+        memories:
           type: array
           items:
             type: object
-          description: "List of returned items when applicable"
-        success:
-          type: boolean
-          description: "Indicates if operation succeeded"
-        error:
+            properties:
+              id:
+                type: string
+              createdAt:
+                type: string
+                format: date-time
+              tags:
+                type: array
+                items:
+                  type: string
+              summary:
+                type: string
+              tqScore:
+                type: number
+              confidence:
+                type: number
+        count:
+          type: integer
+        scope:
           type: string
-          description: "Error message if operation fails"
+        agent_id:
+          type: string
+        scope_source:
+          type: string
+        limit_applied:
+          type: integer
+        redacted:
+          type: boolean
+      required: [memories, count]
 
   - name: memory_feedback
     description: "Submit feedback to adjust trust scoring for stored memories."
@@ -445,7 +630,7 @@ tools:
       readOnlyHint: false
       destructiveHint: false
       idempotentHint: false
-      openWorldHint: true
+      openWorldHint: false
     inputSchema:
       type: object
       required: [memoryId, signal]
@@ -463,20 +648,13 @@ tools:
     outputSchema:
       type: object
       properties:
-        content:
-          type: string
-          description: "Primary textual output of the operation"
-        results:
-          type: array
-          items:
-            type: object
-          description: "List of returned items when applicable"
         success:
           type: boolean
-          description: "Indicates if operation succeeded"
-        error:
+        memoryId:
           type: string
-          description: "Error message if operation fails"
+        signal:
+          type: string
+      required: [success, memoryId, signal]
 
   - name: neural_handover
     description: "Transfer contextual state between agents with continuity controls."
@@ -484,7 +662,7 @@ tools:
       readOnlyHint: false
       destructiveHint: false
       idempotentHint: false
-      openWorldHint: true
+      openWorldHint: false
     inputSchema:
       type: object
       required: [token, reason]
@@ -501,20 +679,28 @@ tools:
     outputSchema:
       type: object
       properties:
-        content:
+        success:
+          type: boolean
+        handoverId:
           type: string
-          description: "Primary textual output of the operation"
-        results:
+        fromAgent:
+          type: string
+        memoryCount:
+          type: integer
+        memories:
           type: array
           items:
             type: object
-          description: "List of returned items when applicable"
-        success:
-          type: boolean
-          description: "Indicates if operation succeeded"
-        error:
-          type: string
-          description: "Error message if operation fails"
+            properties:
+              content:
+                type: string
+              agent:
+                type: string
+              trust_quotient:
+                type: number
+              category:
+                type: string
+      required: [success, handoverId, memoryCount]
 
   - name: slo_report
     description: "Return uptime and SLO metrics for the MCP service."
@@ -538,20 +724,15 @@ tools:
     outputSchema:
       type: object
       properties:
-        content:
+        version:
           type: string
-          description: "Primary textual output of the operation"
-        results:
+        windows:
           type: array
           items:
             type: object
-          description: "List of returned items when applicable"
-        success:
-          type: boolean
-          description: "Indicates if operation succeeded"
-        error:
+        timestamp:
           type: string
-          description: "Error message if operation fails"
+          format: date-time
 
 tags:
   - agent-memory

@@ -2,7 +2,7 @@
   "$schema": "https://glama.ai/schemas/glama.json",
   "name": "synapse-layer",
   "display_name": "Synapse Layer",
-  "version": "2.4.4",
+  "version": "2.4.6",
   "description": "MCP-native persistent memory with Trust Quotient and cross-agent handover. AES-256-GCM encryption, semantic recall via pgvector HNSW, immutable audit trail.",
   "category": "memory",
   "tags": [
@@ -39,101 +39,669 @@
   },
   "tools": [
     {
-      "name": "health_check",
-      "description": "Check server status and connected user identity. Use this to verify the API key is valid and the server is reachable before performing memory operations. Returns server version, user ID, and connection status. Read-only, no side effects.",
+      "name": "recall",
+      "description": "Retrieve relevant persisted memory using semantic, temporal, priority, or hybrid routing. Governance: requires reason (10–200 chars). Rate limit: 20/min.",
       "annotations": {
         "readOnlyHint": true,
         "destructiveHint": false,
-        "idempotentHint": true
+        "idempotentHint": true,
+        "openWorldHint": false
       },
-      "parameters": {}
+      "parameters": {
+        "query": {
+          "type": "string",
+          "required": true,
+          "description": "What to recall — natural language query for memory retrieval."
+        },
+        "reason": {
+          "type": "string",
+          "required": true,
+          "description": "REQUIRED (10–200 chars). Audit policy: MEMORY_EXPORT_GOVERNANCE_V1. Human-readable justification for retrieving PLAINTEXT memory."
+        },
+        "scope": {
+          "type": "string",
+          "required": false,
+          "description": "Memory scope. 'agent' (default, fail-closed) or 'tenant' for cross-agent recall.",
+          "enum": ["agent", "tenant"]
+        },
+        "agent_id": {
+          "type": "string",
+          "required": false,
+          "description": "Agent identifier (canonical or alias). Used only when scope='agent'."
+        },
+        "limit": {
+          "type": "number",
+          "required": false,
+          "description": "Maximum memories to return (1–50, default: 10)."
+        },
+        "mode": {
+          "type": "string",
+          "required": false,
+          "description": "Recall routing mode.",
+          "enum": ["auto", "temporal", "semantic", "priority", "hybrid"]
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "memories": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "string" },
+                "content": { "type": "string" },
+                "trust_quotient": { "type": "number" },
+                "intent": { "type": "string" },
+                "is_critical": { "type": "boolean" },
+                "agent": { "type": "string" },
+                "timestamp": { "type": "string", "format": "date-time" },
+                "memory_type": { "type": "string" },
+                "hybridScore": { "type": "number" },
+                "confidence": { "type": "string", "enum": ["high", "medium_fts", "low"] }
+              }
+            }
+          },
+          "count": { "type": "integer" },
+          "query": { "type": "string" },
+          "scope": { "type": "string" },
+          "agent_id": { "type": "string" },
+          "scope_source": { "type": "string" },
+          "recall_mode": { "type": "string" },
+          "fallback": { "type": "boolean" },
+          "redacted": { "type": "boolean" },
+          "recallLatencyMs": { "type": "number" },
+          "sessionCacheHit": { "type": "boolean" },
+          "queryCacheHit": { "type": "boolean" }
+        },
+        "required": ["memories", "count", "query"]
+      }
     },
     {
-      "name": "store_memory",
-      "description": "Encrypt and persist a memory with AES-256-GCM. Use this when an agent needs to save context, preferences, decisions, or constraints for later retrieval. Each memory is tagged with the calling agent ID, scored by Trust Quotient (0.0-1.0), and indexed for semantic search. Side effects: creates a new encrypted record in the database and an audit trail entry. Not idempotent — calling twice with the same content creates two separate memories.",
+      "name": "save_to_synapse",
+      "description": "Persist memory with encryption at rest, sanitization, and deduplication controls.",
       "annotations": {
         "readOnlyHint": false,
         "destructiveHint": false,
-        "idempotentHint": false
+        "idempotentHint": false,
+        "openWorldHint": false
       },
       "parameters": {
         "content": {
           "type": "string",
           "required": true,
-          "description": "Memory content to store. Plain text, 1-10000 characters. Encrypted server-side with AES-256-GCM before persistence."
+          "description": "The memory content to store securely."
         },
-        "intent": {
+        "agent_id": {
           "type": "string",
           "required": false,
-          "description": "Memory intent category. One of: 'preference', 'decision', 'constraint', 'context'. Defaults to 'context'. Used for filtering during recall."
+          "description": "Agent identifier for memory isolation. Defaults to 'default'."
+        },
+        "project": {
+          "type": "string",
+          "required": false,
+          "description": "Project identifier (e.g., SYNAPSE_LAYER)."
+        },
+        "type": {
+          "type": "string",
+          "required": false,
+          "description": "Event type: MILESTONE, DECISION, ALERT, AUTO-STRAT, AUTO-OP, AUTO-INSIGHT, AUTO-DECISION, AUTO-CONTEXT, MANUAL."
         },
         "importance": {
           "type": "number",
           "required": false,
-          "description": "Importance score from 0.0 (trivial) to 1.0 (critical). Defaults to 0.5. Affects Trust Quotient calculation and recall ranking."
+          "description": "Importance level 1–5 (default: 3)."
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "required": false,
+          "description": "Tags for categorization."
         }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["saved", "error"] },
+          "memory_id": { "type": "string", "format": "uuid" },
+          "trust_quotient": { "type": "number", "minimum": 0, "maximum": 1 },
+          "intent": { "type": "string" },
+          "sanitized": { "type": "boolean" },
+          "privacy_applied": { "type": "boolean" },
+          "pipeline": {
+            "type": "object",
+            "properties": {
+              "pii_redaction": { "type": "boolean" },
+              "intent_validation": { "type": "boolean" },
+              "differential_privacy": { "type": "boolean" },
+              "encryption": { "type": "boolean" }
+            }
+          },
+          "quota": {
+            "type": "object",
+            "properties": {
+              "used": { "type": "integer" },
+              "limit": { "type": "integer" }
+            }
+          },
+          "timestamp": { "type": "string", "format": "date-time" }
+        },
+        "required": ["status", "memory_id", "timestamp"]
       }
     },
     {
-      "name": "recall_memory",
-      "description": "Semantically recall memories by natural language query using pgvector HNSW similarity search. Use this when an agent needs to retrieve previously stored context, preferences, or decisions. Results are ranked by semantic similarity and filtered by optional Trust Quotient threshold. Read-only — does not modify stored memories.",
+      "name": "process_text",
+      "description": "Extract candidate memories from free-form text with governance filters and sanitization.",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "parameters": {
+        "text": {
+          "type": "string",
+          "required": true,
+          "description": "Free-form text to scan for auto-save triggers."
+        },
+        "agent_id": {
+          "type": "string",
+          "required": false,
+          "description": "Agent identifier. Defaults to 'default'."
+        },
+        "project": {
+          "type": "string",
+          "required": false,
+          "description": "Project identifier. Auto-detected if omitted."
+        },
+        "source": {
+          "type": "string",
+          "required": false,
+          "description": "Source identifier (default: mcp)."
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["processed", "error"] },
+          "events_detected": { "type": "integer" },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "memory_id": { "type": "string" },
+                "trust_quotient": { "type": "number" }
+              }
+            }
+          },
+          "pipeline": {
+            "type": "object",
+            "properties": {
+              "trigger_detection": { "type": "boolean" },
+              "policy_evaluation": { "type": "boolean" },
+              "pii_redaction": { "type": "boolean" },
+              "deduplication": { "type": "boolean" }
+            }
+          },
+          "timestamp": { "type": "string", "format": "date-time" }
+        },
+        "required": ["status", "events_detected", "results"]
+      }
+    },
+    {
+      "name": "search",
+      "description": "Search persisted memory across agent scopes using full-text matching.",
       "annotations": {
         "readOnlyHint": true,
         "destructiveHint": false,
-        "idempotentHint": true
+        "idempotentHint": true,
+        "openWorldHint": false
       },
       "parameters": {
         "query": {
           "type": "string",
           "required": true,
-          "description": "Natural language search query. Converted to embedding vector for HNSW similarity search against stored memories."
+          "description": "Search query — natural language or keywords."
+        },
+        "scope": {
+          "type": "string",
+          "required": false,
+          "description": "Search scope. 'agent' (default) or 'tenant' for cross-agent search.",
+          "enum": ["agent", "tenant"]
+        },
+        "agent_id": {
+          "type": "string",
+          "required": false,
+          "description": "Agent identifier for scoped search."
         },
         "limit": {
           "type": "number",
           "required": false,
-          "description": "Maximum number of results to return. Range: 1-50. Defaults to 5."
-        },
-        "min_tq": {
-          "type": "number",
-          "required": false,
-          "description": "Minimum Trust Quotient threshold for results. Range: 0.0-1.0. Memories below this score are excluded. Use 0.7 for high-confidence recall."
+          "description": "Maximum results to return (1–50, default: 20)."
         }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "content": { "type": "string" },
+                "trust_quotient": { "type": "number" },
+                "intent": { "type": "string" },
+                "is_critical": { "type": "boolean" },
+                "agent": { "type": "string" },
+                "timestamp": { "type": "string", "format": "date-time" },
+                "memory_type": { "type": "string" }
+              }
+            }
+          },
+          "count": { "type": "integer" },
+          "query": { "type": "string" },
+          "scope": { "type": "string" },
+          "agent_id": { "type": "string" },
+          "scope_source": { "type": "string" }
+        },
+        "required": ["results", "count", "query"]
       }
     },
     {
-      "name": "search_memory",
-      "description": "Full-text and vector hybrid search across the memory store with metadata filters. Use this instead of recall_memory when you need to filter by agent ID, intent category, or date range in addition to semantic similarity. Read-only — does not modify stored memories.",
+      "name": "health_check",
+      "description": "Check service availability, engine version, and storage health. Public method.",
       "annotations": {
         "readOnlyHint": true,
         "destructiveHint": false,
-        "idempotentHint": true
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "parameters": {},
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["healthy", "degraded", "unhealthy"] },
+          "version": { "type": "string" },
+          "engine": { "type": "string" },
+          "database": { "type": "string" },
+          "latencyMs": { "type": "number" },
+          "dbRealLatencyMs": { "type": "number" },
+          "cacheHit": { "type": "boolean" },
+          "capabilities": { "type": "object" },
+          "timestamp": { "type": "string", "format": "date-time" }
+        },
+        "required": ["status", "version", "timestamp"]
+      }
+    },
+    {
+      "name": "initialize_context",
+      "description": "Initialize a persistent memory context for a conversation or agent session.",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "parameters": {},
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "initialized": { "type": "boolean" },
+          "count": { "type": "integer" },
+          "memories": { "type": "array", "items": { "type": "object" } },
+          "scope": { "type": "string" },
+          "query": { "type": "string" },
+          "error": { "type": "string" }
+        },
+        "required": ["initialized", "count", "memories"]
+      }
+    },
+    {
+      "name": "save_memory",
+      "description": "Save a memory entry to the persistent store. Alias of save_to_synapse.",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "parameters": {
+        "content": {
+          "type": "string",
+          "required": true,
+          "description": "The memory content to store securely."
+        },
+        "agent_id": {
+          "type": "string",
+          "required": false,
+          "description": "Agent identifier for memory isolation."
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "required": false,
+          "description": "Tags for categorization."
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["saved", "error"] },
+          "memory_id": { "type": "string", "format": "uuid" },
+          "trust_quotient": { "type": "number", "minimum": 0, "maximum": 1 },
+          "intent": { "type": "string" },
+          "sanitized": { "type": "boolean" },
+          "privacy_applied": { "type": "boolean" },
+          "pipeline": { "type": "object" },
+          "quota": {
+            "type": "object",
+            "properties": {
+              "used": { "type": "integer" },
+              "limit": { "type": "integer" }
+            }
+          },
+          "timestamp": { "type": "string", "format": "date-time" }
+        },
+        "required": ["status", "memory_id", "timestamp"]
+      }
+    },
+    {
+      "name": "store_memory",
+      "description": "Store structured memory with metadata and trust scoring.",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "parameters": {
+        "content": {
+          "type": "string",
+          "required": true,
+          "description": "The memory content to store securely."
+        },
+        "agent_id": {
+          "type": "string",
+          "required": false,
+          "description": "Agent identifier for memory isolation. Defaults to 'default'."
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "required": false,
+          "description": "Tags for categorization."
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string", "enum": ["saved", "error"] },
+          "memory_id": { "type": "string", "format": "uuid" },
+          "trust_quotient": { "type": "number", "minimum": 0, "maximum": 1 },
+          "intent": { "type": "string" },
+          "sanitized": { "type": "boolean" },
+          "privacy_applied": { "type": "boolean" },
+          "pipeline": { "type": "object" },
+          "quota": {
+            "type": "object",
+            "properties": {
+              "used": { "type": "integer" },
+              "limit": { "type": "integer" }
+            }
+          },
+          "timestamp": { "type": "string", "format": "date-time" }
+        },
+        "required": ["status", "memory_id", "timestamp"]
+      }
+    },
+    {
+      "name": "recall_memory",
+      "description": "Recall persisted memory by query. Alias of recall.",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
       },
       "parameters": {
         "query": {
           "type": "string",
           "required": true,
-          "description": "Search query for semantic and full-text matching."
+          "description": "What to recall — natural language query for memory retrieval."
         },
-        "filters": {
-          "type": "object",
+        "reason": {
+          "type": "string",
+          "required": true,
+          "description": "REQUIRED (10–200 chars). Audit policy: MEMORY_EXPORT_GOVERNANCE_V1."
+        },
+        "scope": {
+          "type": "string",
           "required": false,
-          "description": "Optional filters object. Supported keys: 'agent' (string — filter by agent ID), 'intent' (string — one of preference/decision/constraint/context), 'from' (ISO date), 'to' (ISO date)."
+          "description": "Memory scope: 'agent' (default) or 'tenant'.",
+          "enum": ["agent", "tenant"]
+        },
+        "agent_id": {
+          "type": "string",
+          "required": false,
+          "description": "Agent identifier for scoped recall."
+        },
+        "limit": {
+          "type": "number",
+          "required": false,
+          "description": "Maximum memories to return (1–50, default: 10)."
+        },
+        "mode": {
+          "type": "string",
+          "required": false,
+          "description": "Recall routing mode.",
+          "enum": ["auto", "temporal", "semantic", "priority", "hybrid"]
         }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "memories": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "string" },
+                "content": { "type": "string" },
+                "trust_quotient": { "type": "number" },
+                "intent": { "type": "string" },
+                "is_critical": { "type": "boolean" },
+                "agent": { "type": "string" },
+                "timestamp": { "type": "string", "format": "date-time" },
+                "memory_type": { "type": "string" },
+                "hybridScore": { "type": "number" },
+                "confidence": { "type": "string", "enum": ["high", "medium_fts", "low"] }
+              }
+            }
+          },
+          "count": { "type": "integer" },
+          "query": { "type": "string" },
+          "scope": { "type": "string" },
+          "agent_id": { "type": "string" },
+          "scope_source": { "type": "string" },
+          "recall_mode": { "type": "string" },
+          "fallback": { "type": "boolean" },
+          "redacted": { "type": "boolean" },
+          "recallLatencyMs": { "type": "number" },
+          "sessionCacheHit": { "type": "boolean" },
+          "queryCacheHit": { "type": "boolean" }
+        },
+        "required": ["memories", "count", "query"]
       }
     },
     {
-      "name": "delete_memory",
-      "description": "Hard-delete a specific memory by ID. Designed for LGPD/GDPR alignment — removes all PII. Irreversible. A tombstone record without PII is preserved for audit trail integrity. Use this when a user requests data deletion or when removing outdated/incorrect memories. Destructive — cannot be undone.",
+      "name": "list_memories",
+      "description": "List memory metadata with pagination and governance limits.",
       "annotations": {
-        "readOnlyHint": false,
-        "destructiveHint": true,
-        "idempotentHint": true
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
       },
       "parameters": {
-        "memory_id": {
+        "scope": {
+          "type": "string",
+          "required": false,
+          "description": "Memory scope: 'agent' (default) or 'tenant'.",
+          "enum": ["agent", "tenant"]
+        },
+        "agent_id": {
+          "type": "string",
+          "required": false,
+          "description": "Agent identifier for scoped listing."
+        },
+        "limit": {
+          "type": "number",
+          "required": false,
+          "description": "Maximum rows to return (default: 5, max: 10)."
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "memories": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "string" },
+                "createdAt": { "type": "string", "format": "date-time" },
+                "tags": { "type": "array", "items": { "type": "string" } },
+                "summary": { "type": "string" },
+                "tqScore": { "type": "number" },
+                "confidence": { "type": "number" }
+              }
+            }
+          },
+          "count": { "type": "integer" },
+          "scope": { "type": "string" },
+          "agent_id": { "type": "string" },
+          "scope_source": { "type": "string" },
+          "limit_applied": { "type": "integer" },
+          "redacted": { "type": "boolean" }
+        },
+        "required": ["memories", "count"]
+      }
+    },
+    {
+      "name": "memory_feedback",
+      "description": "Submit feedback to adjust trust scoring for stored memories.",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "parameters": {
+        "memoryId": {
           "type": "string",
           "required": true,
-          "description": "UUID of the memory to delete. Obtain from recall_memory or search_memory results."
+          "description": "ID of the memory to provide feedback on."
+        },
+        "signal": {
+          "type": "string",
+          "required": true,
+          "description": "Feedback signal.",
+          "enum": ["used", "ignored", "helpful", "irrelevant"]
+        },
+        "sessionId": {
+          "type": "string",
+          "required": false,
+          "description": "Optional session identifier for tracking."
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "memoryId": { "type": "string" },
+          "signal": { "type": "string" }
+        },
+        "required": ["success", "memoryId", "signal"]
+      }
+    },
+    {
+      "name": "neural_handover",
+      "description": "Transfer contextual state between agents with continuity controls.",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "parameters": {
+        "token": {
+          "type": "string",
+          "required": true,
+          "description": "Handover token (64 hex chars). Generated in Forge UI or API."
+        },
+        "reason": {
+          "type": "string",
+          "required": true,
+          "description": "REQUIRED (10–200 chars). Justification for consuming this handover."
+        },
+        "consuming_agent": {
+          "type": "string",
+          "required": false,
+          "description": "Agent identifier consuming the handover."
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "handoverId": { "type": "string" },
+          "fromAgent": { "type": "string" },
+          "memoryCount": { "type": "integer" },
+          "memories": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "content": { "type": "string" },
+                "agent": { "type": "string" },
+                "trust_quotient": { "type": "number" },
+                "category": { "type": "string" }
+              }
+            }
+          }
+        },
+        "required": ["success", "handoverId", "memoryCount"]
+      }
+    },
+    {
+      "name": "slo_report",
+      "description": "Return uptime and SLO metrics for the MCP service.",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "parameters": {
+        "admin_token": {
+          "type": "string",
+          "required": true,
+          "description": "Admin authentication token."
+        },
+        "window_hours": {
+          "type": "array",
+          "items": { "type": "number" },
+          "required": false,
+          "description": "Time windows in hours (default: [24, 168])."
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "version": { "type": "string" },
+          "windows": { "type": "array", "items": { "type": "object" } },
+          "timestamp": { "type": "string", "format": "date-time" }
         }
       }
     }
