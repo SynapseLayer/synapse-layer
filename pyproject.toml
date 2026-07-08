@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "synapse-layer"
-version = "2.4.4"
+version = "2.4.6"
 description = "Persistent memory infrastructure for AI agents — AES-256-GCM encrypted at rest, semantic search, MCP-native."
 readme = "README.md"
 license = {text = "Apache 2.0"}
