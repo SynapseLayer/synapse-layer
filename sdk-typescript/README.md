@@ -44,7 +44,7 @@ const results = await synapse.recall({
 
 | Option    | Type     | Default                        | Description           |
 | --------- | -------- | ------------------------------ | --------------------- |
-| `apiKey`  | `string` | —                              | Required. `sk_live_…` |
+| `apiKey`  | `string` | —                              | Required. `sk_connect_…` |
 | `baseUrl` | `string` | `https://synapselayer.org`     | API base URL          |
 | `timeout` | `number` | `10000`                        | Request timeout (ms)  |
 
@@ -161,7 +161,7 @@ Synapse Layer is MCP-native. For Claude Desktop, add to your MCP config:
     "synapse-layer": {
       "command": "python",
       "args": ["-m", "synapse_layer.mcp"],
-      "env": { "SYNAPSE_API_KEY": "sk_live_your-key-here" }
+      "env": { "SYNAPSE_API_KEY": "sk_connect_your-key-here" }
     }
   }
 }
