@@ -27,14 +27,9 @@ jobs:
           echo "Canonical version (pyproject.toml): $VERSION"
           DRIFT=0
 
-          # Check synapse_memory/__init__.py
-          INIT_VER=$(python3 -c "import re; content=open('synapse_memory/__init__.py').read(); m=re.search(r'__version__\s*=\s*\"([^\"]+)\"', content); print(m.group(1) if m else 'NOT_FOUND')")
-          if [ "$INIT_VER" != "$VERSION" ]; then
-            echo "DRIFT: synapse_memory/__init__.py has $INIT_VER (expected $VERSION)"
-            DRIFT=1
-          else
-            echo "OK: synapse_memory/__init__.py = $VERSION"
-          fi
+          # NOTE: synapse_memory/__init__.py excluded from server-version gate
+          # per Decision B (dual canonical). SDK version is gated by publish.yml
+          # at PyPI publish time (PyPI rejects duplicate versions natively).
 
           # Check server.json
           if [ -f server.json ]; then
