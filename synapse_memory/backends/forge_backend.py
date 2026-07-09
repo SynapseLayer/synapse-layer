@@ -3,7 +3,7 @@ Synapse Layer — Forge Backend (AES-256-GCM Encrypted)
 
 Production-grade backend for Synapse Layer Forge API.
 
-Architecture (ZK Real):
+Architecture (Client-Side Encrypted):
   - **Store**: SDK encrypts content client-side (AES-256-GCM) BEFORE
     the HTTP POST.  The server NEVER sees plaintext.  The payload
     contains ``encryptedContent``, ``iv``, ``authTag``, ``searchIndex``
@@ -375,9 +375,9 @@ class ForgeBackend:
         if metadata:
             payload["metadata"] = metadata
 
-        # ZK INVARIANT: "content" must NEVER appear in the payload
+        # ENCRYPTION INVARIANT: "content" must NEVER appear in the payload
         assert "content" not in payload, (
-            "ZK VIOLATION: plaintext 'content' found in HTTP payload"
+            "ENCRYPTION VIOLATION: plaintext 'content' found in HTTP payload"
         )
 
         resp = await self._request("POST", "/api/v1/capture", json_body=payload)
@@ -385,7 +385,7 @@ class ForgeBackend:
         memory_id: str = data.get("id", data.get("memoryId", data.get("memory_id", "")))
 
         logger.info(
-            "[Synapse] Memory stored via Forge ZK (id=%s)",
+            "[Synapse] Memory stored via Forge encrypted (id=%s)",
             memory_id[:12] if memory_id else "unknown",
         )
         return memory_id

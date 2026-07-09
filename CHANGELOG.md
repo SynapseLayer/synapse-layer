@@ -1,5 +1,35 @@
 # Changelog
 
+## [2.4.7] - 2026-07-09
+
+### Changed
+- Brand sweep: replaced all "ZK" / "zero-knowledge" references in forge_backend.py
+  and test_forge_backend.py with accurate "encrypted" / "ENCRYPTION" terminology.
+- Scope: 13 patches in synapse-layer (comments, assert messages, log strings).
+- Wire protocol field `zkMode` preserved for backward compatibility.
+
+### Security
+- No functional changes. No cryptographic changes. No API contract changes.
+- MAINTENANCE bump only.
+
+
+## [2.4.6] - 2026-07-08
+
+### Changed
+- Sprint 1 closure completed: S2.3a-d Stripe key rotation + pk_live swap + sync + webhook validated
+- S2.1 ADR-007 Three-Way Discipline COMPLIANT (Forge $19 JSON-LD)
+- CVA drift audit: 9-source version audit, essencial/VERSION backfilled 2.4.1→2.4.6
+- SDK Python __version__ aligned to PyPI 1.0.7 across essencial + public
+- git tag v2.4.6 created belated (reconciliation)
+
+## [2.4.5] - 2026-07-08
+
+### Security
+- Rotated compromised `sk_live_` key (exposed prefix `.iEOT` → new `.qWWL`)
+- Upgraded `STRIPE_PUBLISHABLE_KEY` from `pk_test_mock` → `pk_live_`
+- Fixed `sk_live_` → `sk_connect_` in SDK README + Forge docs (S2.1 REDIRECT-B)
+- Archived 2 orphan Stripe prices: R$59.90 BRL + US$20.00 (S2.2 billing hygiene)
+
 ## [2.4.4] - 2026-07-01
 
 ### Fixed
