@@ -2,7 +2,7 @@
 Synapse Layer — ForgeBackend Unit Tests
 
 Verifies encryption guarantees (server never sees plaintext):
-  - TEST-ZK-1: store() encrypts client-side — NO plaintext in HTTP payload
+  - TEST-ENC-1: store() encrypts client-side — NO plaintext in HTTP payload
   - TEST-2: recall() decrypts encrypted envelope before returning
   - TEST-3, TEST-4: Auth failures raised correctly
   - TEST-5: Key validation rejects wrong sizes
@@ -10,7 +10,7 @@ Verifies encryption guarantees (server never sees plaintext):
   - TEST-7: count() returns correct integer
   - TEST-8: _build_search_index() sanitizes PII
 
-Architecture (True ZK):
+Architecture (AES-256-GCM client-side):
   SDK encrypt (AES-256-GCM) → HTTP POST (ciphertext only) → Server stores
   SDK recall → Server returns encrypted envelope → SDK decrypt locally
   Plaintext NEVER traverses the network in EITHER direction.
@@ -70,11 +70,11 @@ def _make_encrypted_payload(key: bytes, plaintext: str) -> dict:
     }
 
 
-# ── TEST-ZK-1: store() encrypts BEFORE sending (TRUE ZK GUARANTEE) ────
+# ── TEST-ENC-1: store() encrypts BEFORE sending (AES-256-GCM client-side) ────
 
 @respx.mock
 @pytest.mark.asyncio
-async def test_zk_store_no_plaintext_in_payload(backend: ForgeBackend) -> None:
+async def test_store_no_plaintext_in_payload(backend: ForgeBackend) -> None:
     """⚡ CRITICAL: Plaintext must NEVER appear in the HTTP payload.
     SDK encrypts client-side BEFORE POST.  Server NEVER sees plaintext.
     This is THE definitive encryption test — server never sees plaintext.
@@ -87,7 +87,7 @@ async def test_zk_store_no_plaintext_in_payload(backend: ForgeBackend) -> None:
         captured_body = json.loads(request.content)
         return httpx.Response(
             201,
-            json={"id": "mem_zk_001", "status": "stored", "zkMode": True},
+            json={"id": "mem_zk_001", "status": "stored", "encryptedMode": True},
         )
 
     respx.post(f"{BASE_URL}/api/v1/capture").mock(side_effect=capture_request)
@@ -97,25 +97,25 @@ async def test_zk_store_no_plaintext_in_payload(backend: ForgeBackend) -> None:
     # ✔ Memory ID returned
     assert memory_id == "mem_zk_001"
 
-    # ✔ "content" ABSENT from payload — ZK guarantee
+    # ✔ "content" ABSENT from payload — client-side encryption guarantee
     assert "content" not in captured_body, (
-        "CRITICAL ZK VIOLATION: plaintext 'content' found in HTTP payload!"
+        "CRITICAL ENCRYPTION VIOLATION: plaintext 'content' found in HTTP payload!"
     )
 
     # ✔ Full plaintext NEVER in serialized payload (excluding searchIndex)
     payload_str = json.dumps(captured_body)
     assert secret_content not in payload_str, (
-        "ZK VIOLATION: full plaintext found in serialized HTTP payload"
+        "ENCRYPTION VIOLATION: full plaintext found in serialized HTTP payload"
     )
 
     # ✔ PII sanitized FROM searchIndex (SSN is redacted by _build_search_index)
     assert "123-45-6789" not in captured_body.get("searchIndex", ""), (
-        "ZK VIOLATION: SSN found in searchIndex"
+        "ENCRYPTION VIOLATION: SSN found in searchIndex"
     )
 
     # ✔ encryptedContent is NOT the plaintext
     assert captured_body["encryptedContent"] != secret_content, (
-        "ZK VIOLATION: encryptedContent is plaintext!"
+        "ENCRYPTION VIOLATION: encryptedContent is plaintext!"
     )
 
     # ✔ Encrypted fields PRESENT
@@ -123,8 +123,8 @@ async def test_zk_store_no_plaintext_in_payload(backend: ForgeBackend) -> None:
     assert "iv" in captured_body
     assert "authTag" in captured_body
 
-    # ✔ zkMode flag set
-    assert captured_body["zkMode"] is True
+    # ✔ encryptedMode flag set
+    assert captured_body["encryptedMode"] is True
 
     # ✔ encrypted flag set
     assert captured_body["encrypted"] is True
@@ -378,7 +378,7 @@ async def test_store_includes_embedding_in_payload(backend: ForgeBackend) -> Non
         captured_body = json.loads(request.content)
         return httpx.Response(
             201,
-            json={"id": "mem_emb_001", "status": "stored", "zkMode": True},
+            json={"id": "mem_emb_001", "status": "stored", "encryptedMode": True},
         )
 
     respx.post(f"{BASE_URL}/api/v1/capture").mock(side_effect=capture_request)
@@ -392,7 +392,7 @@ async def test_store_includes_embedding_in_payload(backend: ForgeBackend) -> Non
     assert len(emb) == 1536, f"embedding must be 1536-dim, got {len(emb)}"
     assert all(isinstance(v, float) for v in emb), "all embedding values must be float"
 
-    # ✔ ZK invariant maintained — "content" still absent
+    # ✔ encryption invariant maintained — "content" still absent
     assert "content" not in captured_body
 
 
