@@ -3,13 +3,13 @@ Synapse Layer — Forge Backend (AES-256-GCM Encrypted)
 
 Production-grade backend for Synapse Layer Forge API.
 
-Architecture (ZK Real):
+Architecture (AES-256-GCM client-side Real):
   - **Store**: SDK encrypts content client-side (AES-256-GCM) BEFORE
-    the HTTP POST.  The server NEVER sees plaintext.  The payload
+    the HTTP POST.  The server never sees plaintext.  The payload
     contains ``encryptedContent``, ``iv``, ``authTag``, ``searchIndex``
-    (sanitized keywords), and ``zkMode: true``.
+    (sanitized keywords), and ``encryptedMode: true``.
   - **Recall**: Server returns the encrypted envelope (ciphertext, iv,
-    authTag).  SDK decrypts locally.  Plaintext NEVER traverses the
+    authTag).  SDK decrypts locally.  Plaintext never traverses the
     network in either direction.
 
 The encryption_key is the hex-decoded SYNAPSE_ENCRYPTION_KEY, shared
@@ -66,9 +66,9 @@ class ForgeBackend:
     """AES-256-GCM encrypted backend for Synapse Layer Forge API.
 
     Store encrypts content CLIENT-SIDE (AES-256-GCM) BEFORE the HTTP
-    POST — the server NEVER receives or sees plaintext.
+    POST — the server never receives or sees plaintext.
     Recall receives encrypted envelopes and decrypts locally.
-    Plaintext NEVER traverses the network in EITHER direction.
+    Plaintext never traverses the network in EITHER direction.
 
     This class implements the ``StorageBackend`` protocol with
     async-first methods.  For synchronous use, wrap calls with
@@ -326,10 +326,10 @@ class ForgeBackend:
             1. Encrypt content CLIENT-SIDE (AES-256-GCM)
             2. Build sanitized search index (keywords, no PII)
             3. Generate embedding from plaintext (before sending)
-            4. POST encrypted envelope + searchIndex + zkMode=True
+            4. POST encrypted envelope + searchIndex + encryptedMode=True
             5. Server stores ciphertext WITHOUT re-encrypting
 
-        The server NEVER sees plaintext.  The ``content`` field is
+        The server never sees plaintext.  The ``content`` field is
         intentionally absent from the payload — replaced by
         ``encryptedContent``, ``iv``, ``authTag``.
 
@@ -370,14 +370,14 @@ class ForgeBackend:
             "source": source,
             "embedding": embedding,
             "encrypted": True,
-            "zkMode": True,
+            "encryptedMode": True,
         }
         if metadata:
             payload["metadata"] = metadata
 
-        # ZK INVARIANT: "content" must NEVER appear in the payload
+        # AES-256-GCM client-side INVARIANT: "content" must NEVER appear in the payload
         assert "content" not in payload, (
-            "ZK VIOLATION: plaintext 'content' found in HTTP payload"
+            "AES-256-GCM client-side VIOLATION: plaintext 'content' found in HTTP payload"
         )
 
         resp = await self._request("POST", "/api/v1/capture", json_body=payload)
@@ -385,7 +385,7 @@ class ForgeBackend:
         memory_id: str = data.get("id", data.get("memoryId", data.get("memory_id", "")))
 
         logger.info(
-            "[Synapse] Memory stored via Forge ZK (id=%s)",
+            "[Synapse] Memory stored via Forge AES-256-GCM client-side (id=%s)",
             memory_id[:12] if memory_id else "unknown",
         )
         return memory_id
