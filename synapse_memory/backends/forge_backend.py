@@ -39,6 +39,7 @@ import base64
 import hashlib
 import logging
 import os
+import random
 import re
 import struct
 from typing import Any, Callable, Dict, List, Optional
@@ -56,8 +57,10 @@ logger = logging.getLogger(__name__)
 
 _DEFAULT_BASE_URL = "https://forge.synapselayer.org"
 _DEFAULT_TIMEOUT = 30.0
-_MAX_RETRIES = 3
-_BACKOFF_FACTORS = (0.5, 1.0, 2.0)
+_MAX_RETRIES = 5
+_INITIAL_BACKOFF_SECONDS = 1.0
+_MAX_BACKOFF_SECONDS = 30.0
+_MAX_JITTER_SECONDS = 0.5
 _RETRYABLE_STATUS = {429, 503}
 _EMBEDDING_DIM = 1536  # Forge API expects 1536-dim vectors
 
@@ -201,6 +204,17 @@ class ForgeBackend:
             )
         return self._client
 
+    @staticmethod
+    def _compute_retry_delay(attempt: int, retry_after: Optional[float] = None) -> float:
+        """Compute capped exponential backoff with jitter (0-500ms)."""
+        base_delay = min(
+            _INITIAL_BACKOFF_SECONDS * (2 ** attempt),
+            _MAX_BACKOFF_SECONDS,
+        )
+        delay = max(base_delay, retry_after if retry_after is not None else 0.0)
+        jitter = random.uniform(0.0, _MAX_JITTER_SECONDS)
+        return min(delay + jitter, _MAX_BACKOFF_SECONDS)
+
     async def _request(
         self,
         method: str,
@@ -223,7 +237,7 @@ class ForgeBackend:
             except httpx.TimeoutException as exc:
                 last_exc = exc
                 if attempt < _MAX_RETRIES - 1:
-                    await asyncio.sleep(_BACKOFF_FACTORS[attempt])
+                    await asyncio.sleep(self._compute_retry_delay(attempt))
                     continue
                 raise ForgeBackendError(
                     f"Request timed out after {_MAX_RETRIES} attempts",
@@ -238,20 +252,24 @@ class ForgeBackend:
             if resp.status_code == 401:
                 raise ForgeAuthError("Invalid or expired api_key")
 
-            if resp.status_code == 429:
-                retry_after = float(
-                    resp.headers.get("Retry-After", _BACKOFF_FACTORS[attempt])
-                )
-                if attempt < _MAX_RETRIES - 1:
-                    await asyncio.sleep(retry_after)
-                    continue
-                raise ForgeRateLimitError(
-                    "Rate limit exceeded after retries", retry_after=retry_after
-                )
+            if resp.status_code in _RETRYABLE_STATUS:
+                retry_after_value: Optional[float] = None
+                retry_after_header = resp.headers.get("Retry-After")
+                if retry_after_header is not None:
+                    try:
+                        retry_after_value = float(retry_after_header)
+                    except (TypeError, ValueError):
+                        retry_after_value = None
 
-            if resp.status_code == 503 and attempt < _MAX_RETRIES - 1:
-                await asyncio.sleep(_BACKOFF_FACTORS[attempt])
-                continue
+                backoff = self._compute_retry_delay(attempt, retry_after=retry_after_value)
+                if attempt < _MAX_RETRIES - 1:
+                    await asyncio.sleep(backoff)
+                    continue
+
+                if resp.status_code == 429:
+                    raise ForgeRateLimitError(
+                        "Rate limit exceeded after retries", retry_after=backoff
+                    )
 
             if resp.status_code >= 400:
                 body = resp.text[:200]  # Truncate — never log full response
