@@ -57,6 +57,10 @@ logger = logging.getLogger(__name__)
 
 _DEFAULT_BASE_URL = "https://forge.synapselayer.org"
 _DEFAULT_TIMEOUT = 30.0
+# Explicit connection (TCP/TLS) establishment budget. Kept small so an
+# unreachable Forge API / DB upstream fails fast at startup instead of
+# hanging on the full request timeout (which caused 504s on initialize).
+_CONNECT_TIMEOUT_SECONDS = 3.0
 _MAX_RETRIES = 5
 _INITIAL_BACKOFF_SECONDS = 1.0
 _MAX_BACKOFF_SECONDS = 30.0
@@ -193,6 +197,13 @@ class ForgeBackend:
     def _get_client(self) -> httpx.AsyncClient:
         """Lazy-init httpx.AsyncClient with auth headers."""
         if self._client is None or self._client.is_closed:
+            # Explicit per-phase timeouts. connect is capped at
+            # _CONNECT_TIMEOUT_SECONDS (<=3s) so an unreachable upstream
+            # fails fast; read/write/pool use the configured request timeout.
+            timeout = httpx.Timeout(
+                self._timeout,
+                connect=min(_CONNECT_TIMEOUT_SECONDS, self._timeout),
+            )
             self._client = httpx.AsyncClient(
                 base_url=self._base_url,
                 headers={
@@ -200,7 +211,7 @@ class ForgeBackend:
                     "Content-Type": "application/json",
                     "User-Agent": "synapse-memory-sdk/python",
                 },
-                timeout=self._timeout,
+                timeout=timeout,
             )
         return self._client
 
@@ -234,6 +245,14 @@ class ForgeBackend:
         for attempt in range(_MAX_RETRIES):
             try:
                 resp = await client.request(method, path, json=json_body)
+            except (httpx.ConnectError, httpx.ConnectTimeout) as exc:
+                # Fail fast on connection establishment failure — do NOT burn
+                # the full retry budget when the upstream/DB is unreachable.
+                raise ForgeBackendError(
+                    f"Forge API unreachable at {self._base_url} "
+                    f"(connect failed within {_CONNECT_TIMEOUT_SECONDS:.0f}s): {type(exc).__name__}",
+                    status_code=None,
+                ) from exc
             except httpx.TimeoutException as exc:
                 last_exc = exc
                 if attempt < _MAX_RETRIES - 1:

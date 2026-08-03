@@ -520,3 +520,48 @@ def test_pseudo_embedding_dimensions() -> None:
     # Deterministic: same input → same output
     vec2 = _pseudo_embedding("test text")
     assert vec == vec2
+
+# ── TEST-INIT: connection timeout & fail-fast (initialize P1) ───────────
+
+def test_connect_timeout_is_capped_at_3s(backend: ForgeBackend) -> None:
+    """The httpx client must use an explicit connect timeout <= 3s so an
+    unreachable upstream fails fast instead of hanging the full request
+    timeout (root cause of 504 on initialize)."""
+    client = backend._get_client()
+    assert client.timeout.connect is not None
+    assert client.timeout.connect <= 3.0
+    # Read/write budget still uses the configured request timeout.
+    assert client.timeout.read == backend._timeout
+
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_request_fail_fast_on_connect_error(backend: ForgeBackend) -> None:
+    """A connection error must fail fast with a clear 'unreachable' error and
+    MUST NOT consume the retry budget."""
+    route = respx.get(f"{BASE_URL}/api/v1/memories/count").mock(
+        side_effect=httpx.ConnectError("connection refused")
+    )
+
+    with pytest.raises(ForgeBackendError) as exc_info:
+        await backend.count()
+
+    assert "unreachable" in str(exc_info.value).lower()
+    # Fail-fast: exactly ONE attempt, no exponential-backoff retries.
+    assert route.call_count == 1
+
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_request_fail_fast_on_connect_timeout(backend: ForgeBackend) -> None:
+    """A connect-timeout must also fail fast (not retried 5x like a read
+    timeout)."""
+    route = respx.get(f"{BASE_URL}/api/v1/memories/count").mock(
+        side_effect=httpx.ConnectTimeout("connect timed out")
+    )
+
+    with pytest.raises(ForgeBackendError) as exc_info:
+        await backend.count()
+
+    assert "unreachable" in str(exc_info.value).lower()
+    assert route.call_count == 1
