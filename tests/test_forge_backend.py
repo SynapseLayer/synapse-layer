@@ -220,6 +220,70 @@ async def test_recall_with_invalid_token_raises_auth_error(
         await backend.recall("anything")
 
 
+# ── TEST-4B: explicit no-auth/invalid-token/corrupted-data coverage ───
+
+@respx.mock
+@pytest.mark.asyncio
+async def test_no_auth_returns_401() -> None:
+    """No Authorization header must return 401 and raise ForgeAuthError."""
+    backend = ForgeBackend(api_key=TEST_API_KEY, encryption_key=TEST_KEY)
+
+    def handle_request(request: httpx.Request) -> httpx.Response:
+        assert "Authorization" not in request.headers
+        return httpx.Response(401, json={"error": "__test_unauthorized_no_auth"})
+
+    respx.post(f"{BASE_URL}/api/v1/recall").mock(side_effect=handle_request)
+
+    backend._client = httpx.AsyncClient(
+        base_url=BASE_URL,
+        headers={"Content-Type": "application/json", "User-Agent": "synapse-memory-sdk/python"},
+        timeout=30.0,
+    )
+
+    with pytest.raises(ForgeAuthError):
+        await backend.recall("__test_no_auth_request")
+
+
+@respx.mock
+@pytest.mark.asyncio
+async def test_invalid_token_returns_401() -> None:
+    """Invalid Authorization token must return 401 and raise ForgeAuthError."""
+    backend = ForgeBackend(api_key=TEST_API_KEY, encryption_key=TEST_KEY)
+
+    def handle_request(request: httpx.Request) -> httpx.Response:
+        assert request.headers.get("Authorization") == "Bearer invalid_token_value"
+        return httpx.Response(401, json={"error": "__test_unauthorized_invalid_token"})
+
+    respx.post(f"{BASE_URL}/api/v1/recall").mock(side_effect=handle_request)
+
+    backend._client = httpx.AsyncClient(
+        base_url=BASE_URL,
+        headers={
+            "Authorization": "Bearer invalid_token_value",
+            "Content-Type": "application/json",
+            "User-Agent": "synapse-memory-sdk/python",
+        },
+        timeout=30.0,
+    )
+
+    with pytest.raises(ForgeAuthError):
+        await backend.recall("__test_invalid_token_request")
+
+
+@respx.mock
+@pytest.mark.asyncio
+async def test_corrupted_memory_data_returns_error() -> None:
+    """Corrupted memory payload must surface an error response (non-200)."""
+    backend = ForgeBackend(api_key=TEST_API_KEY, encryption_key=TEST_KEY)
+
+    respx.post(f"{BASE_URL}/api/v1/recall").mock(
+        return_value=httpx.Response(500, json={"error": "__test_corrupted_memory_blob"})
+    )
+
+    with pytest.raises(ForgeBackendError):
+        await backend.recall("__test_corrupted_memory_data")
+
+
 # ── TEST-5: wrong encryption_key size → ValueError ───────────────────
 
 def test_wrong_encryption_key_size_raises_value_error() -> None:
