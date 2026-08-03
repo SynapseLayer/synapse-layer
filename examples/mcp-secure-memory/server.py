@@ -16,9 +16,11 @@ from __future__ import annotations
 import os
 import json
 import logging
+from datetime import datetime, timezone
 from typing import Optional
 
 from mcp.server.fastmcp import FastMCP
+from synapse_memory import __version__ as SYNAPSE_VERSION
 from synapse_memory.core import SynapseMemory
 
 # ---------------------------------------------------------------------------
@@ -111,6 +113,48 @@ def recall_memory(query: str, top_k: int = 5) -> list[dict]:
         }
         for r in results
     ]
+
+
+@mcp.tool()
+def health_check() -> dict:
+    """Liveness/readiness probe for the secure-memory service.
+
+    This is a PUBLIC, low-privilege status check. It is intentionally a
+    pure status probe: it verifies that the memory engine is constructed
+    and its storage backend is wired, equivalent to a ``SELECT 1`` liveness
+    check. It performs NO data access.
+
+    Security contract (enforced by tests):
+      * MUST NOT call ``recall``, ``search``, ``store`` or any operation
+        requiring the ``read:fulltext`` or ``admin:export`` token scopes.
+      * MUST NOT read, decrypt or return any stored memory content.
+      * Plaintext memory data is NEVER included in the response — only
+        non-sensitive service metadata (status, version, engine, backend
+        type name, timestamp).
+
+    Returns
+    -------
+    dict
+        A status envelope: ``status`` (healthy|unhealthy), ``version``,
+        ``engine``, ``backend`` (backend class name only — never contents),
+        ``timestamp`` (UTC ISO-8601), and static ``capabilities`` flags.
+    """
+    # Pure liveness check — inspect object wiring only, never query data.
+    backend_ok = getattr(memory, "_backend", None) is not None
+    status = "healthy" if backend_ok else "unhealthy"
+
+    return {
+        "status": status,
+        "version": SYNAPSE_VERSION,
+        "engine": "synapse-layer",
+        # Class name only — reveals no stored memory content.
+        "backend": type(memory._backend).__name__ if backend_ok else None,
+        "capabilities": {
+            "sanitize": bool(getattr(memory, "sanitize_enabled", False)),
+            "privacy": bool(getattr(memory, "privacy_enabled", False)),
+        },
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
 
 
 # ---------------------------------------------------------------------------
