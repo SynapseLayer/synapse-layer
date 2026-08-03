@@ -33,7 +33,7 @@ pip install synapse-layer
 ```python
 from synapse_layer import Synapse
 
-s = Synapse(token="sk_connect_YOUR_TOKEN")
+s = Synapse(token="<SYNAPSE_CONNECT_TOKEN>")
 
 s.store("user likes coffee")
 print(s.recall("what does user like?"))
@@ -96,7 +96,7 @@ pip install synapse-layer
 ```python
 from synapse_layer import Synapse
 
-client = Synapse(token="sk_connect_YOUR_TOKEN")
+client = Synapse(token="<SYNAPSE_CONNECT_TOKEN>")
 
 # Store
 client.store("User prefers dark mode and concise answers")
@@ -112,7 +112,7 @@ for r in results:
 ```python
 from synapse_layer import Synapse
 
-with Synapse(token="sk_connect_YOUR_TOKEN") as client:
+with Synapse(token="<SYNAPSE_CONNECT_TOKEN>") as client:
     client.store("User prefers dark mode and concise answers")
     results = client.recall("user preferences")
     for r in results:
@@ -179,7 +179,7 @@ Add to `claude_desktop_config.json`:
         "mcp-remote",
         "https://forge.synapselayer.org/api/mcp",
         "--header",
-        "x-connect-token: sk_connect_YOUR_TOKEN"
+        "x-connect-token: <SYNAPSE_CONNECT_TOKEN>"
       ]
     }
   }
@@ -197,12 +197,12 @@ Config file location:
 
 ```bash
 # Health check
-curl -H "x-connect-token: sk_connect_YOUR_TOKEN" \
+curl -H "x-connect-token: <SYNAPSE_CONNECT_TOKEN>" \
   https://forge.synapselayer.org/api/connect/health
 
 # Save memory
 curl -X POST \
-  -H "x-connect-token: sk_connect_YOUR_TOKEN" \
+  -H "x-connect-token: <SYNAPSE_CONNECT_TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{"content": "User is a Python developer"}' \
   https://forge.synapselayer.org/api/v1/capture

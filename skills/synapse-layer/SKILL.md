@@ -37,7 +37,7 @@ mcp_servers:
 Add your Synapse Layer token to `~/.hermes/.env`:
 
 ```
-SYNAPSE_TOKEN=sk_connect_your_token_here
+SYNAPSE_TOKEN=<SYNAPSE_CONNECT_TOKEN>
 ```
 
 Get your token at: https://synapselayer.org/forge
@@ -157,7 +157,7 @@ Every active project the user works on must be stored with:
 
 ### 4. API CREDENTIALS & TOKENS
 - Nous Portal token (expires ~15min, renew with `hermes auth list`)
-- Synapse Layer token (sk-conxxxxxxxxxxxxxx)
+- Synapse Layer token (<SYNAPSE_CONNECT_TOKEN>)
 - Naga.ac TTS API key
 - Telegram bot token
 - Aster MCP endpoint

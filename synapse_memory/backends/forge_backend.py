@@ -20,7 +20,7 @@ Usage::
     from synapse_memory.backends import ForgeBackend
 
     backend = ForgeBackend(
-        api_key="sk_connect_abc123",
+        api_key="<SYNAPSE_CONNECT_TOKEN>",
         encryption_key=bytes.fromhex("832d919b..."),  # SYNAPSE_ENCRYPTION_KEY
     )
     memory_id = await backend.store("User prefers dark mode")
@@ -107,7 +107,7 @@ class ForgeBackend:
     Example without provider (baseline — always works)::
 
         backend = ForgeBackend(
-            api_key="sk_connect_abc123",
+            api_key="<SYNAPSE_CONNECT_TOKEN>",
             encryption_key=bytes.fromhex("832d...cba"),
         )
         # Uses pseudo-embedding — functional but not semantically meaningful
