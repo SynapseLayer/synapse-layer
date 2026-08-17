@@ -1,8 +1,11 @@
 qualifiedName: "@synapselayer/synapse-protocol"
 displayName: "Synapse Layer"
 description: >
-  Persistent memory infrastructure for AI agents — encrypted,
-  governed, and cross-agent. The OAuth for AI Memory.
+  Persistent memory infrastructure for autonomous AI agents — MCP-native,
+  cross-agent, and audit-ready. Memories are encrypted with AES-256-GCM at
+  rest, governed by PII sanitization and consent controls, and scored with
+  Trust Quotient™ for reliability. The OAuth for AI Memory: connect once,
+  remember everywhere.
 version: "2.4.6"
 icon: "🧠"
 sourceUrl: "https://github.com/SynapseLayer/synapse-layer"
@@ -21,22 +24,24 @@ startCommand:
 
 configSchema:
   type: "object"
-  required:
-    - connect_token
   properties:
     connect_token:
       type: "string"
-      title: "Synapse Connect Token"
-      description: "Your Synapse Connect Token from forge.synapselayer.org"
+      title: "Connect Token"
+      description: "sk_connect_... token from forge.synapselayer.org/connect (optional at config time; required to call authenticated tools)"
     agent_id:
       type: "string"
       title: "Agent ID"
       description: "Optional agent identifier"
       default: "default"
 
+exampleConfig:
+  connect_token: "sk_connect_your_token_here"
+  agent_id: "default"
+
 tools:
   - name: recall
-    description: "Retrieve relevant persisted memory using semantic, temporal, priority, or hybrid routing."
+    description: "Retrieve relevant persisted memories using semantic, temporal, priority, or hybrid routing. Use this when you need prior context, decisions, or facts from earlier sessions before answering. Returns memories ranked by relevance with Trust Quotient scoring. Alias: recall_memory."
     annotations:
       readOnlyHint: true
       destructiveHint: false
@@ -121,7 +126,7 @@ tools:
       required: [memories, count, query]
 
   - name: save_to_synapse
-    description: "Persist memory with encryption at rest, sanitization, and deduplication controls."
+    description: "Persist a memory with AES-256-GCM encryption at rest, PII sanitization, and deduplication. Use this when the user shares a durable fact, decision, or preference worth remembering across sessions. Returns the stored memory ID and Trust Quotient score. Aliases: save_memory, store_memory."
     annotations:
       readOnlyHint: false
       destructiveHint: false
@@ -194,7 +199,7 @@ tools:
       required: [status, memory_id, timestamp]
 
   - name: process_text
-    description: "Extract candidate memories from free-form text with governance filters and sanitization."
+    description: "Scan free-form text and automatically extract candidate memories using governance filters and sanitization. Use this when you want to capture salient facts from a block of conversation without deciding what to save yourself. Returns the list of detected and stored events. Related: save_to_synapse."
     annotations:
       readOnlyHint: false
       destructiveHint: false
@@ -250,7 +255,7 @@ tools:
       required: [status, events_detected, results]
 
   - name: search
-    description: "Search persisted memory across agent scopes using full-text matching."
+    description: "Search persisted memories across agent scopes using full-text keyword matching. Use this when you need a fast lexical lookup rather than semantic recall. Returns matching memories with Trust Quotient metadata. Related: recall (semantic routing)."
     annotations:
       readOnlyHint: true
       destructiveHint: false
@@ -309,7 +314,7 @@ tools:
       required: [results, count, query]
 
   - name: health_check
-    description: "Check service availability, engine version, and storage health. Public method."
+    description: "Check service availability, engine version, and storage health. Use this to verify the Synapse Layer MCP endpoint is reachable before issuing memory operations. Returns status, version, and database latency. Public method — no token required."
     annotations:
       readOnlyHint: true
       destructiveHint: false
@@ -344,7 +349,7 @@ tools:
       required: [status, version, timestamp]
 
   - name: initialize_context
-    description: "Initialize a persistent memory context for a conversation or agent session."
+    description: "Initialize a persistent memory context for a new conversation or agent session and preload recent, high-priority memories. Use this at the start of a session so the agent has prior context before its first response. Returns the preloaded memory set and the active scope."
     annotations:
       readOnlyHint: true
       destructiveHint: false
@@ -373,7 +378,7 @@ tools:
       required: [initialized, count, memories]
 
   - name: save_memory
-    description: "Save a memory entry to the persistent store. Alias of save_to_synapse."
+    description: "Save a memory entry to the persistent store with AES-256-GCM encryption at rest. Use this as the primary save call when you have discrete content to remember. Returns the stored memory ID and Trust Quotient score. Alias of save_to_synapse."
     annotations:
       readOnlyHint: false
       destructiveHint: false
@@ -428,7 +433,7 @@ tools:
       required: [status, memory_id, timestamp]
 
   - name: store_memory
-    description: "Store structured memory with metadata and trust scoring."
+    description: "Store structured memory with metadata, tags, and Trust Quotient scoring. Use this when saving content that benefits from explicit categorization and isolation by agent. Returns the stored memory ID. Alias of save_to_synapse."
     annotations:
       readOnlyHint: false
       destructiveHint: false
@@ -483,7 +488,7 @@ tools:
       required: [status, memory_id, timestamp]
 
   - name: recall_memory
-    description: "Recall persisted memory by query. Alias of recall."
+    description: "Recall persisted memories by natural-language query with semantic, temporal, priority, or hybrid routing. Use this when you need prior context or facts before answering. Returns memories ranked by relevance with Trust Quotient scoring. Alias of recall."
     annotations:
       readOnlyHint: true
       destructiveHint: false
@@ -568,7 +573,7 @@ tools:
       required: [memories, count, query]
 
   - name: list_memories
-    description: "List memory metadata with pagination and governance limits."
+    description: "List memory metadata (IDs, tags, summaries, Trust Quotient) with pagination and governance limits. Use this to browse or audit what is stored without retrieving full content. Returns a paginated metadata set. Related: recall, search."
     annotations:
       readOnlyHint: true
       destructiveHint: false
@@ -625,7 +630,7 @@ tools:
       required: [memories, count]
 
   - name: memory_feedback
-    description: "Submit feedback to adjust trust scoring for stored memories."
+    description: "Submit feedback (used, ignored, helpful, irrelevant) to adjust Trust Quotient scoring for a stored memory. Use this after acting on a recalled memory so future recall quality improves over time. Returns the feedback acknowledgment."
     annotations:
       readOnlyHint: false
       destructiveHint: false
@@ -657,7 +662,7 @@ tools:
       required: [success, memoryId, signal]
 
   - name: neural_handover
-    description: "Transfer contextual state between agents with continuity controls."
+    description: "Transfer contextual state between agents by consuming a one-time handover token with continuity controls. Use this when migrating a session from one agent to another without losing memory context. Returns the handed-over memory set and the source agent."
     annotations:
       readOnlyHint: false
       destructiveHint: false
@@ -703,7 +708,7 @@ tools:
       required: [success, handoverId, memoryCount]
 
   - name: slo_report
-    description: "Return uptime and SLO metrics for the MCP service."
+    description: "Return uptime and SLO metrics for the MCP service over configurable time windows. Use this for operational monitoring and reliability audits of the memory backend. Requires an admin token."
     annotations:
       readOnlyHint: true
       destructiveHint: false
