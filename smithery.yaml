@@ -28,16 +28,32 @@ configSchema:
     connect_token:
       type: "string"
       title: "Connect Token"
-      description: "sk_connect_... token from forge.synapselayer.org/connect (optional at config time; required to call authenticated tools)"
+      description: "sk_connect_... token from forge.synapselayer.org/connect. Optional at config time; required only to call authenticated tools. Leave empty to browse and call public tools (e.g. health_check)."
+      default: ""
     agent_id:
       type: "string"
       title: "Agent ID"
-      description: "Optional agent identifier"
+      description: "Agent identifier for memory scoping (e.g. cursor, claude, codex). Optional — defaults to 'default'."
       default: "default"
+    memory_scope:
+      type: "string"
+      title: "Memory Scope"
+      description: "Default scope for recall and search. 'agent' isolates to the current agent; 'tenant' searches across all agents. Optional."
+      enum: ["agent", "tenant"]
+      default: "agent"
+    max_recall_results:
+      type: "number"
+      title: "Max Recall Results"
+      description: "Default maximum number of memories returned per recall query (1–50). Optional."
+      default: 10
+      minimum: 1
+      maximum: 50
 
 exampleConfig:
   connect_token: "sk_connect_your_token_here"
   agent_id: "default"
+  memory_scope: "agent"
+  max_recall_results: 10
 
 tools:
   - name: recall
