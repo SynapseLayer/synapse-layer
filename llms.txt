@@ -1,50 +1,86 @@
 # Synapse Layer
 
-> MCP-Native Trust Infrastructure for AI Agents
-> The Trust Layer for the Agentic Internet.
+> AI Agent Memory Infrastructure — Trust Layer for the Agentic Internet
+> Version: 2.4.6
+> Full spec: https://synapselayer.org/llms-full.txt
 
-Synapse Layer is the trust layer for the agentic internet. It provides persistent, encrypted, governed memory for AI agents that survives across sessions, models, and tools.
+Synapse Layer is persistent, encrypted memory for AI agents. Anything an agent
+learns — decisions, preferences, project rules — is stored, protected, and
+shared between agents across apps, models, and sessions. It is a trust layer
+for agents, not a database for humans.
+
+## When to use
+
+- Give agents memory that survives across sessions, models, and tools
+- Hand off context between agents (store → recall) with full audit trail
+- Enforce security by default: encryption at rest, PII sanitization, intent validation
+- Comply with LGPD/GDPR while sharing memory across your own agents
 
 ## Core Capabilities
+
 - **Persistent Memory**: Store and recall context across agent sessions
 - **AES-256-GCM Encryption**: Server-side encryption at rest with per-operation random IV
 - **MCP Native Protocol**: First-class Model Context Protocol integration
-- **Cross-Agent Handover V2**: One agent stores, another recalls with full audit trail
-- **Trust Quotient**: Per-memory confidence scoring (0-1.0)
-- **Semantic Recall**: pgvector HNSW-powered similarity search (Beta)
+- **Neural Handover**: One agent stores, another recalls — with full audit trail
+- **Trust Quotient**: Per-memory confidence scoring (0.0–1.0)
+- **Semantic Recall**: pgvector HNSW-powered similarity search
 - **Immutable Audit Trail**: Three-layer lifecycle (live data, tombstone, analytics)
 - **OAuth 2.0 + PKCE S256**: Industry-standard authorization
 - **LGPD / GDPR Aligned**: Hard-delete on request, consent-gated storage
 
 ## Quick Start
+
 ```
 pip install synapse-layer
 ```
 
 ```python
-from synapse_layer import SynapseClient
-client = SynapseClient(api_key="sk_...")
-client.store(content="User prefers dark mode", agent="onboarding-v2")
-memories = client.recall(query="user theme preference", min_tq=0.7)
+from synapse_layer import Synapse
+client = Synapse(token="sk_connect_...")
+client.store(content="User prefers dark mode", memory_type="long_term")
+memories = client.recall(query="user theme preference", top_k=5)
+recent = client.list_memories(limit=10)   # metadata + governance pagination
 ```
 
+Full SDK API reference (Python `Synapse`/`SynapseClient` + TypeScript
+`SynapseClient`): https://synapselayer.org/llms-full.txt#sdk-api-reference · https://synapselayer.org/docs#sdk-api
+
 ## Supported Platforms
-- Claude (Desktop + API) — native MCP support
-- Cursor — IDE integration
-- LangChain — Python SDK
+
 - Claude Desktop — MCP native
-- ChatGPT, CrewAI, AutoGen, LangGraph — Coming Soon
+- Claude API — MCP / REST
+- Cursor — MCP integration
+- LangChain — Python SDK
+- Vercel AI SDK — TypeScript SDK
+- CrewAI, AutoGen, LangGraph — Coming Soon
 - n8n, Zapier — Coming Soon
 
+## Interop & Registries
+
+- [MCP Marketplace](https://mcp-marketplace.io/server/io-github-synapselayer-synapse-layer): Official MCP server listing
+- [Smithery](https://smithery.ai/server/synapselayer/synapselayer): MCP server registry listing
+- [PyPI](https://pypi.org/project/synapse-layer/): Python SDK package (v2.4.6)
+- [npm](https://www.npmjs.com/package/synapse-layer): TypeScript SDK package
+- [GitHub](https://github.com/SynapseLayer/synapse-layer): Source code, issues, and contributions
+
 ## Pricing
-- Free: 100 memories, 1 agent, $0/month
-- Pro: 10,000 memories, unlimited agents, $29/month
-- Enterprise: Custom limits, dedicated infrastructure, contact sales
+
+- Free: $0/month — AES-256-GCM, REST API, MCP protocol
+- Pro: $19/month — Neural Handover, OAuth + PKCE, SDK access, email support
+- Enterprise: Contact sales — custom deployment, dedicated support
 
 ## Links
-- Website: https://synapselayer.org
-- Forge (Dashboard): https://forge.synapselayer.org
-- Docs: https://forge.synapselayer.org/docs
-- PyPI: https://pypi.org/project/synapse-layer/
-- GitHub: https://github.com/SynapseLayer
-- Full spec: https://synapselayer.org/llms-full.txt
+
+- [Full Specification](https://synapselayer.org/llms-full.txt): Complete technical spec with all capabilities, security details, and API reference.
+- [Documentation](https://synapselayer.org/docs): Installation guides, API reference, and MCP configuration.
+- [Connect Guide](https://synapselayer.org/connect): Self-service setup in under 5 minutes — Claude Desktop, Cursor, Codex, Hermes, DeepAgent, LangChain, n8n, SDKs.
+- [OpenAPI Spec](https://synapselayer.org/api/openapi.json): Machine-readable API specification (OpenAPI 3.1).
+- [Interactive API Reference](https://synapselayer.org/api-docs): Try every endpoint in the browser (Swagger UI).
+- [MCP Manifest](https://synapselayer.org/.well-known/mcp.json): MCP server discovery manifest with auth, endpoint, and capabilities.
+- [MCP Server Card](https://synapselayer.org/.well-known/mcp/server-card.json): Detailed MCP server capabilities, tools, and parameters.
+- [Trust Manifest](https://synapselayer.org/.well-known/trust.json): Security, compliance, encryption, and discovery metadata.
+- [Pricing Manifest](https://synapselayer.org/.well-known/pricing.json): Machine-readable pricing for agent commerce.
+- [Agent Skill](https://synapselayer.org/skill.md): When and how to use Synapse Layer — agent-readable skill file.
+- [Forge Dashboard](https://forge.synapselayer.org): Operational dashboard for memory management.
+- [MCP Marketplace](https://mcp-marketplace.io/server/io-github-synapselayer-synapse-layer): MCP server listing.
+- [Smithery](https://smithery.ai/server/synapselayer/synapselayer): MCP server registry listing.

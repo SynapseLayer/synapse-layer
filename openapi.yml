@@ -30,8 +30,7 @@ paths:
       tags:
         - MCP
       security:
-        - bearerAuth:
-[]
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -75,8 +74,7 @@ paths:
                   jsonrpc: 2.0
                   id: 2
                   method: tools/list
-                  params:
-{}
+                  params: {}
               store_memory:
                 summary: Store a memory
                 value:
@@ -101,7 +99,7 @@ paths:
                       query: user interface preferences
                       limit: 5
       responses:
-        200:
+        "200":
           description: Successful JSON-RPC response
           content:
             "application/json":
@@ -125,13 +123,13 @@ paths:
                         type: number
                       message:
                         type: string
-        400:
+        "400":
           description: Invalid JSON or unknown method
-        401:
+        "401":
           description: Missing or invalid Bearer token
-        402:
+        "402":
           description: Memory quota exceeded — upgrade plan or purchase credits
-        500:
+        "500":
           description: Internal server error
     get:
       operationId: mcp_discover
@@ -141,14 +139,14 @@ paths:
       tags:
         - MCP
       responses:
-        200:
+        "200":
           description: Server discovery metadata
           content:
             "application/json":
               example:
                 name: Synapse Layer MCP Server
                 version: 1.2.0
-                protocolVersion: 2024-11-05
+                protocolVersion: "2024-11-05"
                 tools:
                   - health_check
                   - store
@@ -164,8 +162,7 @@ paths:
       tags:
         - Memory
       security:
-        - bearerAuth:
-[]
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -203,7 +200,7 @@ paths:
                   importance: 0.9
                   agent_id: onboarding-v2
       responses:
-        201:
+        "201":
           description: Memory stored successfully
           content:
             "application/json":
@@ -218,28 +215,27 @@ paths:
                   used: 42
                   total: 10000
                   remaining: 9958
-        400:
+        "400":
           description: Invalid JSON body or missing content field
-        401:
+        "401":
           description: Missing, invalid, or revoked Bearer token
-        402:
+        "402":
           description: Memory quota exceeded
-        500:
+        "500":
           description: Internal server error
-  "/api/validate-key":
-    post:
-      operationId: validate_api_key
-      summary: Validate an API key and return user info.
-      description: "Validates a Bearer API key (sk_live_ prefix) and returns the associated user's identity, plan, and memory count. Useful for agents to verify credentials before making memory operations."
+  "/api/connect/health":
+    get:
+      operationId: connect_health
+      summary: Authenticated health check.
+      description: "Authenticated health check — returns identity, plan, and memory count."
       "x-agent-readable": true
       tags:
         - Auth
       security:
-        - bearerAuth:
-[]
+        - bearerAuth: []
       responses:
-        200:
-          description: Key is valid
+        "200":
+          description: Authenticated — identity, plan, and memory count returned
           content:
             "application/json":
               example:
@@ -248,9 +244,9 @@ paths:
                 email: dev@example.com
                 plan: pro
                 memory_count: 42
-        401:
+        "401":
           description: Invalid or inactive API key
-        500:
+        "500":
           description: Internal server error
   "/.well-known/mcp/server-card.json":
     get:
@@ -261,11 +257,10 @@ paths:
       tags:
         - Discovery
       responses:
-        200:
+        "200":
           description: MCP server card
           content:
-            "application/json":
-{}
+            "application/json": {}
   "/.well-known/trust.json":
     get:
       operationId: get_trust_manifest
@@ -275,11 +270,10 @@ paths:
       tags:
         - Discovery
       responses:
-        200:
+        "200":
           description: Trust manifest JSON
           content:
-            "application/json":
-{}
+            "application/json": {}
   "/.well-known/pricing.json":
     get:
       operationId: get_pricing
@@ -289,11 +283,10 @@ paths:
       tags:
         - Discovery
       responses:
-        200:
+        "200":
           description: Pricing JSON
           content:
-            "application/json":
-{}
+            "application/json": {}
   "/.well-known/mcp.json":
     get:
       operationId: get_mcp_manifest
@@ -303,11 +296,10 @@ paths:
       tags:
         - Discovery
       responses:
-        200:
+        "200":
           description: MCP manifest JSON
           content:
-            "application/json":
-{}
+            "application/json": {}
 components:
   securitySchemes:
     bearerAuth:

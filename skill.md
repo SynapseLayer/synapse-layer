@@ -94,7 +94,7 @@ client.delete(memory_id="mem_abc123")
 
 - **Docs**: https://synapselayer.org/docs
 - **OpenAPI**: https://synapselayer.org/api/openapi.json
-- **Smithery**: https://smithery.ai/server/synapselayer/synapse-protocol
+- **Smithery**: https://smithery.ai/servers/synapselayer/synapselayer
 - **PyPI**: https://pypi.org/project/synapse-layer/
 - **GitHub**: https://github.com/SynapseLayer/synapse-layer
 - **Forge Dashboard**: https://forge.synapselayer.org
