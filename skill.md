@@ -28,7 +28,7 @@ pip install synapse-layer
     "synapse": {
       "url": "https://forge.synapselayer.org/api/mcp",
       "headers": {
-        "Authorization": "Bearer sk_connect_YOUR_TOKEN"
+        "x-connect-token": "sk_connect_YOUR_TOKEN"
       }
     }
   }
@@ -41,7 +41,7 @@ pip install synapse-layer
 from synapse_layer import SynapseClient
 
 # Initialize with your API key
-client = SynapseClient(api_key="sk_connect_...")
+client = SynapseClient(token="sk_connect_...")
 
 # Store a memory (encrypted server-side with AES-256-GCM)
 client.store(
