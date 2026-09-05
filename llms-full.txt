@@ -115,7 +115,7 @@ Pipeline stages:
 
 - **Agent tokens**: `sk_connect_...` (current), legacy `sk_live_...` (deprecated).
 - **Human flows**: Magic Link (`ml_...`) and OAuth 2.0 + PKCE (S256).
-- Send as `Authorization: Bearer <token>`.
+- Send as `x-connect-token: <token>`.
 - Verify before heavy work: `GET /api/connect/health` returns identity, plan,
   and memory count.
 - Get your key at https://forge.synapselayer.org/dashboard/connect
