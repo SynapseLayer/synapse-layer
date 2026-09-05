@@ -1,0 +1,480 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Synapse Layer API",
+    "version": "1.2.0",
+    "description": "MCP-Native Trust Infrastructure for AI Agents. Persistent, encrypted memory with AES-256-GCM encryption, cross-agent handover, Trust Quotient scoring, and built-in governance. The Trust Layer for the Agentic Internet.",
+    "contact": {
+      "name": "Synapse Layer",
+      "url": "https://synapselayer.org",
+      "email": "hello@synapselayer.org"
+    },
+    "license": {
+      "name": "Apache-2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0"
+    },
+    "x-category": "Trust Infrastructure for AI Agents",
+    "x-mcp-compatible": true,
+    "x-agent-discovery": true,
+    "x-trust-quotient": true,
+    "x-llm-optimized": true
+  },
+  "servers": [
+    {
+      "url": "https://forge.synapselayer.org",
+      "description": "Production \u2014 Forge"
+    },
+    {
+      "url": "https://synapselayer.org",
+      "description": "Marketing site (MCP + discovery endpoints)"
+    }
+  ],
+  "paths": {
+    "/api/mcp": {
+      "post": {
+        "operationId": "mcp_invoke",
+        "summary": "MCP JSON-RPC endpoint for agent memory operations.",
+        "description": "Primary MCP protocol endpoint. Accepts JSON-RPC 2.0 requests for tool invocation. Supports initialize handshake, tools/list discovery, and tools/call for store, recall, search, and health_check. Auth required for all operations except initialize.",
+        "x-agent-readable": true,
+        "tags": [
+          "MCP"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "jsonrpc": {
+                    "type": "string",
+                    "const": 2.0
+                  },
+                  "id": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "number"
+                      }
+                    ]
+                  },
+                  "method": {
+                    "type": "string",
+                    "enum": [
+                      "initialize",
+                      "notifications/initialized",
+                      "tools/list",
+                      "tools/call"
+                    ]
+                  },
+                  "params": {
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "jsonrpc",
+                  "method"
+                ]
+              },
+              "examples": {
+                "initialize": {
+                  "summary": "Initialize MCP handshake",
+                  "value": {
+                    "jsonrpc": 2.0,
+                    "id": 1,
+                    "method": "initialize",
+                    "params": {
+                      "clientInfo": {
+                        "name": "my-agent",
+                        "version": "1.0.0"
+                      }
+                    }
+                  }
+                },
+                "tools_list": {
+                  "summary": "Discover available tools",
+                  "value": {
+                    "jsonrpc": 2.0,
+                    "id": 2,
+                    "method": "tools/list",
+                    "params": {}
+                  }
+                },
+                "store_memory": {
+                  "summary": "Store a memory",
+                  "value": {
+                    "jsonrpc": 2.0,
+                    "id": 3,
+                    "method": "tools/call",
+                    "params": {
+                      "name": "store",
+                      "arguments": {
+                        "content": "User prefers dark mode and fast responses",
+                        "intent": "preference",
+                        "importance": 0.8
+                      }
+                    }
+                  }
+                },
+                "recall_memory": {
+                  "summary": "Recall memories by semantic query",
+                  "value": {
+                    "jsonrpc": 2.0,
+                    "id": 4,
+                    "method": "tools/call",
+                    "params": {
+                      "name": "recall",
+                      "arguments": {
+                        "query": "user interface preferences",
+                        "limit": 5
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful JSON-RPC response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "jsonrpc": {
+                      "type": "string",
+                      "const": 2.0
+                    },
+                    "id": {
+                      "oneOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": null
+                        }
+                      ]
+                    },
+                    "result": {
+                      "type": "object"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "number"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON or unknown method"
+          },
+          "401": {
+            "description": "Missing or invalid Bearer token"
+          },
+          "402": {
+            "description": "Memory quota exceeded \u2014 upgrade plan or purchase credits"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "get": {
+        "operationId": "mcp_discover",
+        "summary": "MCP server discovery and SSE endpoint.",
+        "description": "Returns server metadata and available tools as JSON. If Accept: text/event-stream is set, opens an SSE stream for server-to-client push notifications.",
+        "x-agent-readable": true,
+        "tags": [
+          "MCP"
+        ],
+        "responses": {
+          "200": {
+            "description": "Server discovery metadata",
+            "content": {
+              "application/json": {
+                "example": {
+                  "name": "Synapse Layer MCP Server",
+                  "version": "1.2.0",
+                  "protocolVersion": "2024-11-05",
+                  "tools": [
+                    "health_check",
+                    "store",
+                    "recall",
+                    "search"
+                  ],
+                  "docs": "https://synapselayer.org/docs"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/capture": {
+      "post": {
+        "operationId": "capture_memory",
+        "summary": "Store an encrypted memory via REST API.",
+        "description": "Stores a memory in the user's Forge Vault. Content is encrypted server-side with AES-256-GCM. Requires a Bearer sk_connect_ token. Quota is checked and enforced per plan.",
+        "x-agent-readable": true,
+        "tags": [
+          "Memory"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": {
+                    "type": "string",
+                    "description": "Memory content to store (required)"
+                  },
+                  "intent": {
+                    "type": "string",
+                    "default": "general",
+                    "description": "Memory intent category"
+                  },
+                  "importance": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "default": 0.5,
+                    "description": "Importance score"
+                  },
+                  "agent_id": {
+                    "type": "string",
+                    "description": "Agent identifier for cross-agent traceability"
+                  },
+                  "metadata": {
+                    "type": "object",
+                    "description": "Arbitrary metadata object"
+                  }
+                },
+                "required": [
+                  "content"
+                ]
+              },
+              "examples": {
+                "store_preference": {
+                  "summary": "Store a user preference",
+                  "value": {
+                    "content": "User prefers dark mode and minimal notifications",
+                    "intent": "preference",
+                    "importance": 0.9,
+                    "agent_id": "onboarding-v2"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Memory stored successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "stored",
+                  "memory_id": "clxyz123...",
+                  "intent": "preference",
+                  "importance": 0.9,
+                  "fact_hash": "sha256...",
+                  "encryption": "AES-256-GCM",
+                  "quota": {
+                    "used": 42,
+                    "total": 10000,
+                    "remaining": 9958
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid JSON body or missing content field"
+          },
+          "401": {
+            "description": "Missing, invalid, or revoked Bearer token"
+          },
+          "402": {
+            "description": "Memory quota exceeded"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/connect/health": {
+      "get": {
+        "operationId": "connect_health",
+        "summary": "Authenticated health check.",
+        "description": "Authenticated health check \u2014 returns identity, plan, and memory count.",
+        "x-agent-readable": true,
+        "tags": [
+          "Auth"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authenticated \u2014 identity, plan, and memory count returned",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "ok",
+                  "user_id": "user_abc123",
+                  "email": "dev@example.com",
+                  "plan": "pro",
+                  "memory_count": 42
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or inactive API key"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/.well-known/mcp/server-card.json": {
+      "get": {
+        "operationId": "get_mcp_server_card",
+        "summary": "MCP server card for agent discovery.",
+        "description": "Returns the MCP server card with tool definitions, auth requirements, and transport configuration. Used by MCP-compatible clients to discover and configure the Synapse Layer server.",
+        "x-agent-readable": true,
+        "tags": [
+          "Discovery"
+        ],
+        "responses": {
+          "200": {
+            "description": "MCP server card",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/.well-known/trust.json": {
+      "get": {
+        "operationId": "get_trust_manifest",
+        "summary": "Trust manifest for agent discovery.",
+        "description": "Machine-readable trust manifest. Returns security, compliance, and capability metadata.",
+        "x-agent-readable": true,
+        "tags": [
+          "Discovery"
+        ],
+        "responses": {
+          "200": {
+            "description": "Trust manifest JSON",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/.well-known/pricing.json": {
+      "get": {
+        "operationId": "get_pricing",
+        "summary": "Machine-readable pricing for agent checkout.",
+        "description": "Returns current plan pricing, features, and future billing capabilities.",
+        "x-agent-readable": true,
+        "tags": [
+          "Discovery"
+        ],
+        "responses": {
+          "200": {
+            "description": "Pricing JSON",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/.well-known/mcp.json": {
+      "get": {
+        "operationId": "get_mcp_manifest",
+        "summary": "MCP capability manifest.",
+        "description": "Returns MCP server metadata including tools count, transport options, and integration links.",
+        "x-agent-readable": true,
+        "tags": [
+          "Discovery"
+        ],
+        "responses": {
+          "200": {
+            "description": "MCP manifest JSON",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "API key (sk_live_xxx), Connect token (sk_connect_xxx), or Magic Link token (ml_xxx). Get your key at https://forge.synapselayer.org/dashboard/connect"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "MCP",
+      "description": "Model Context Protocol endpoints"
+    },
+    {
+      "name": "Memory",
+      "description": "Memory storage and retrieval"
+    },
+    {
+      "name": "Auth",
+      "description": "Authentication and key validation"
+    },
+    {
+      "name": "Discovery",
+      "description": "Agent discovery and metadata endpoints"
+    }
+  ],
+  "externalDocs": {
+    "description": "Synapse Layer Documentation",
+    "url": "https://synapselayer.org/docs"
+  }
+}

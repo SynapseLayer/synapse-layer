@@ -1,159 +1,385 @@
-# Synapse Layer — Full Technical Specification
+# Synapse Layer — Full Specification
 
-> MCP-Native Trust Infrastructure for AI Agents
-> The Trust Layer for the Agentic Internet.
-> Version: 2.4.1
-> Author: Ismael Marchi
+> Version: 2.4.6
+> Category: AI Agent Memory Infrastructure
+> Tagline: Trust Layer for the Agentic Internet
+> OpenAPI: https://synapselayer.org/api/openapi.json
 
-## Overview
+---
 
-Synapse Layer is a persistent memory infrastructure for AI agents. It solves the stateless-agent problem: agents forget decisions, preferences, and context across sessions. With Synapse, any MCP-compatible agent can store and recall memories — AES-256-GCM encrypted at rest, scored by Trust Quotient for reliability, and scoped per-user with tenant isolation.
+## 1. What is Synapse Layer?
 
-Category: MCP-Native Trust Infrastructure for AI Agents — the "OAuth for AI Memory". The Trust Layer for the Agentic Internet.
+Synapse Layer is persistent, encrypted memory infrastructure for AI agents. It gives
+every agent in your stack a shared, governed memory that survives across sessions,
+models, and tools.
 
-## Architecture
+- Anything an agent learns — decisions, preferences, project rules, tradeoffs — is stored once.
+- It is encrypted at rest (AES-256-GCM), sanitized for PII, and classified by intent.
+- Other agents you authorize can recall it with a semantic query and a trust score.
+- Every operation is written to an immutable audit trail.
 
-### Store
-Persist memories with encryption. Every memory is AES-256-GCM encrypted at rest with per-operation random IV and 128-bit GCM authentication tag validated on every read. Memories are tagged by agent, type (preference, decision, constraint, context), and tenant.
+It is a trust layer for agents, not a database for humans. Agents are the primary
+consumers; humans manage policies and review audit logs through the Forge dashboard.
 
-### Govern
-Trust Quotient auto-scores each memory (0.0 to 1.0) based on content density, semantic alignment, and noise level. Three-layer lifecycle separates live data (ForgeMemory), audit metadata (ForgeMemoryLifecycle tombstones with zero PII), and admin analytics (vw_user_memory_stats SQL view).
+---
 
-### Recall
-pgvector HNSW-powered semantic search. Recall memories by meaning with filters for Trust Quotient threshold, agent, memory type, and time range. Target: sub-50ms P95 latency.
+## 2. When to use Synapse Layer
 
-## Security Architecture
+### Use it when
 
-### Encryption
-- AES-256-GCM server-side at rest
-- Per-operation random IV
-- 128-bit GCM authentication tag validated on every read
+- An agent needs memory that survives restarts, model swaps, and other sessions.
+- Two or more agents must share context with an audit trail (store → recall → verify).
+- You need encryption, PII protection, or LGPD/GDPR alignment by default.
+- You want recall quality ranked by confidence (Trust Quotient), not raw keyword match.
+- You are building on the Model Context Protocol (MCP) and want memory as a tool.
 
-### Authentication
-- OAuth 2.0 + PKCE S256
-- Dual-mode: NextAuth session (web) or sk_connect_* Bearer token (MCP/SDK)
-- userId ALWAYS from auth context, NEVER from request body
-- SHA-256 token hashing — raw tokens never persisted in database
+### Do NOT use it for
 
-### Tenant Isolation
-- 1 user = 1 tenant = 1 private mind
-- Zero cross-user memory access
-- Fail-closed: auth failure = 401, never 200 with empty data
+- A general-purpose vector database for documents you already index elsewhere.
+- Human-facing social feeds, chat history for end users, or analytics warehouses.
+- Storing secrets or credentials — memory content is intended for contextual facts,
+  preferences, and decisions, not long-lived secrets.
 
-### Logging
-- Auto-redaction engine with 11 regex patterns
-- Zero PII in logs
-- userId/tenantId hashed via FNV-1a before logging
+### Decision rule
 
-### LGPD / GDPR Alignment
-- Hard-delete on user request (no soft-delete, no recycle bin)
-- 30-day retention on account deletion
-- Tombstones contain zero PII (zero content, zero embedding)
-- Consent-gated storage
-- Designed for LGPD/GDPR alignment (implementation under legal review)
+> If success depends on "does the agent remember what was decided last session,
+> correctly and safely" — Synapse Layer is the right fit.
 
-## Trust Quotient (TQ)
+---
 
-Per-memory confidence score: 0.0 to 1.0.
-- TQ >= 0.7: high-confidence decisions
-- TQ >= 0.5: general context
-- TQ < 0.3: may contain noise or low-relevance content
-- Scoring: TQ = f(density, alignment, noise)
+## 3. Architecture
 
-Note: Trust Quotient is a concept-level scoring mechanism. It does not produce absolute trust scores and should not be interpreted as a certification or guarantee.
-
-## Lifecycle Architecture
-
-### Three Layers
-1. **ForgeMemory** — live data, deletable. Contains content, embedding, PII. Hard-deleted on user request.
-2. **ForgeMemoryLifecycle** — tombstone, permanent. Contains memoryId, agent, memoryType, tenantId, action (CREATED|DELETED), timestamps. ZERO content, ZERO embedding, ZERO PII.
-3. **vw_user_memory_stats** — SQL view. Aggregates total_created, total_deleted, total_active, first_memory, last_activity per user.
-
-### Tier Caps
-- Free: 100 active memories
-- Pro: 10,000 active memories
-- Enterprise: unlimited active memories
-- Deleting a memory frees space for new ones (active_count based)
-
-## Cross-Agent Handover V2
-
-Secure Agent Handover enables one agent to store context that another agent can recall. Memory survives across sessions, models, and tools with full audit trail. Each store() call includes an agent identifier for cross-agent traceability.
-
-## API & SDK
-
-### Python SDK
 ```
+        ┌────────────────────────────── AGENTS ──────────────────────────────┐
+        │  Hermes   Cursor   Codex   Claude Desktop   generic stack        │
+        └──────────────┬───────────────────────────────────┬────────────────┘
+                       │  MCP / REST (bearer sk_connect_) │
+                       ▼                                   ▼
+                 ┌─────────────── Synapse Core ───────────────┐
+                 │ 1. Capture    2. Sanitize   3. Classify    │
+                 │ 4. Encrypt    5. Govern     6. Embed       │
+                 └──────────────┬───────────────┬────────────┘
+                                ▼               ▼
+              Encrypted Memory Ledger      pgvector (semantic index)
+              (AES-256-GCM, per-op IV)     (HNSW similarity)
+                                ▼
+                 Three-layer lifecycle: live data → tombstone → analytics
+```
+
+Pipeline stages:
+
+1. **Capture** — agent submits `content` (+ `intent`, `importance`, `agent_id`, `metadata`).
+2. **Sanitize** — automatic PII detection and redaction (opt-out supported per call for access-controlled contexts).
+3. **Classify** — intent classification (preference, decision, project_rule, fact, general).
+4. **Encrypt** — AES-256-GCM at rest with a per-operation random IV.
+5. **Govern** — quota enforcement, consent gating, policy checks (fail closed).
+6. **Embed & index** — semantic embedding stored in pgvector (HNSW) for similarity recall.
+
+---
+
+## 4. Core concepts
+
+| Concept | Description |
+| --- | --- |
+| **Memory** | An encrypted unit of context: content + metadata + trust score + audit records. |
+| **Tenant** | An isolated memory space (your private "shared brain"). |
+| **Vault** | The encrypted storage for a tenant's memories (Forge). |
+| **Agent** | A named participant (e.g., `onboarding-v2`) with its own traceability. |
+| **Intent** | Category used for classification and recall filtering. |
+| **Importance** | 0.0–1.0 priority signal written at store time. |
+| **Trust Quotient (TQ)** | 0.0–1.0 confidence of each recalled memory; used for ranking and thresholds. |
+| **Neural Handover** | Secure cross-agent transfer: one agent stores, another recalls, fully audited. |
+| **Audit trail** | Immutable record of every lifecycle event (live, tombstone, analytics). |
+
+---
+
+## 5. Security & trust model
+
+- **Encryption at rest**: AES-256-GCM, unique random IV per operation. Data is
+  encrypted server-side before persistence.
+- **PII sanitization**: automatic detection and redaction before storage.
+- **Intent validation**: input is validated and classified; unverifiable requests
+  are rejected (fail closed) — never answered with silent, empty data.
+- **Authentication**: OAuth 2.0 + PKCE (S256) for human sessions; bearer API keys
+  (`sk_connect_` prefix) or Magic Link tokens (`ml_` prefix) for agents.
+- **Key management**: rotate and revoke keys in the Forge dashboard.
+- **Authorization scoping**: agents only recall memories cross-tenant/authorized
+  via handover grants.
+- **Compliance**: LGPD / GDPR aligned — hard-delete on request and
+  consent-gated storage.
+- **Fail-closed default**: a request that can't be verified is simply rejected.
+
+---
+
+## 6. Authentication
+
+- **Agent tokens**: `sk_connect_...` (current), legacy `sk_live_...` (deprecated).
+- **Human flows**: Magic Link (`ml_...`) and OAuth 2.0 + PKCE (S256).
+- Send as `Authorization: Bearer <token>`.
+- Verify before heavy work: `GET /api/connect/health` returns identity, plan,
+  and memory count.
+- Get your key at https://forge.synapselayer.org/dashboard/connect
+
+---
+
+## 7. Quick Start
+
+### Python
+
+```bash
 pip install synapse-layer
 ```
 
 ```python
-from synapse_layer import SynapseClient
+from synapse_layer import Synapse
 
-client = SynapseClient(api_key="sk_...")
+client = Synapse(token="sk_connect_...")
 
-# Store
+# Store (memory_type; metadata optional)
 client.store(
     content="User prefers dark mode and fast responses",
-    agent="onboarding-v2",
-    memory_type="preference"
+    memory_type="long_term",
+)
+# Store with metadata
+client.store(
+    content="Pricing: keep Pro at $19/mo for launch",
+    memory_type="long_term",
+    metadata={"intent": "decision", "importance": 0.9},
 )
 
-# Recall
-memories = client.recall(
-    query="user interface preferences",
-    min_tq=0.7,
-    limit=5
-)
-
-# Delete
-client.delete(memory_id="mem_abc123")
+# Recall — top_k (default 5) ranked by Trust Quotient; optional mode
+memories = client.recall(query="user theme preference", top_k=5)
+for m in memories:
+    print(m.get("content"), m.get("trust_quotient"))
 ```
 
-### REST API
-All endpoints require Bearer token authentication (sk_connect_* tokens).
+### TypeScript / npm
 
-### MCP Integration
-Native Model Context Protocol support. Configure in claude_desktop_config.json:
+```bash
+npm install synapse-layer
+```
+
+```typescript
+import { SynapseClient } from "synapse-layer";
+
+const client = new SynapseClient({ apiKey: "sk_connect_..." });
+
+await client.store({
+  content: "User prefers dark mode",
+  agent: "onboarding-v2",
+  memory_type: "long_term",
+});
+const memories = await client.recall({
+  query: "user theme preference",
+  memory_type: "long_term",
+});
+```
+
+---
+
+## 8. SDK API Reference
+
+Reference from the published packages — **PyPI `synapse-layer` 2.4.6** and **npm
+`synapse-layer` 1.2.0**. Two client surfaces exist. Do not conflate them:
+
+| Surface | Package | Class | Kind | Auth |
+| --- | --- | --- | --- | --- |
+| **Remote (recommended)** | Python | `Synapse` | HTTP client → Forge | `token="sk_connect_…"` |
+| **Remote (recommended)** | TypeScript | `SynapseClient` | HTTP client → Forge | `{ apiKey: "sk_connect_…" }` |
+| Local engine | Python | `SynapseClient` (= `SynapseMemory`) | In-memory / SQLite, **no network** | none (`agent_id` only) |
+
+> ⚠️ In the published **Python** wheel, `SynapseClient` is an alias of
+> `SynapseMemory` — a *local* memory engine (`SynapseClient(agent_id="…")`).
+> It is **not** the HTTP client and does **not** accept `api_key`/`token`.
+> Use `Synapse` for anything that talks to Forge. The **TypeScript** package is
+> the inverse: there `SynapseClient` **is** the HTTP client.
+
+### 8.1 Python — `Synapse` (remote)
+
+```python
+from synapse_layer import Synapse
+import os
+
+client = Synapse(token=os.environ["SYNAPSE_TOKEN"])
+```
+
+| Method | Signature | Returns |
+| --- | --- | --- |
+| `store` | `store(content: str, *, memory_type: str = "long_term", metadata: dict \| None = None)` | `dict` (store payload) |
+| `recall` | `recall(query: str, *, top_k: int = 5, mode: str \| None = None)` | `list[dict]` — `content`, `trust_quotient`, `intent`, `agent`, `timestamp`, `memory_type` |
+| `list_memories` | `list_memories(*, limit: int = 10)` | `list[dict]` |
+| `remember` | `remember(...)` | decorated call — recall-before + store-after |
+| `close` | `close()` | `None` |
+| context manager | `with Synapse(token=…) as c:` | auto-closes |
+
+- `mode` in `recall`: `semantic` · `temporal` · `priority` · `hybrid` · `auto`.
+- `store` accepts `content` + optional `memory_type`/`metadata` as keyword args;
+  **not** `agent`/`intent`/`importance` as direct kwargs (those go in `metadata`).
+
+### 8.2 Python — `SynapseClient` / `SynapseMemory` (local)
+
+```python
+from synapse_layer import SynapseClient
+
+mem = SynapseClient(agent_id="my-agent")          # local, no token needed
+```
+
+| Method | Signature | Notes |
+| --- | --- | --- |
+| `store` | `async store(content: str, confidence: float = 0.9, metadata: dict \| None = None)` | full sanitize → validate → embed → persist pipeline |
+| `recall` | `async recall(...)` | semantic recall with Trust Quotient ranking |
+| `create_handover` | `create_handover(...)` | Neural Handover™ grant |
+| `accept_handover` | `accept_handover(...)` | consume a handover grant |
+
+Default backend is in-memory; pass `SqliteBackend()` for local persistence.
+
+### 8.3 TypeScript — `SynapseClient` (remote)
+
+```ts
+import { SynapseClient, AuthError, RateLimitError, NotFoundError } from "synapse-layer";
+
+const client = new SynapseClient({ apiKey: process.env.SYNAPSE_API_KEY! });
+```
+
+| Method | Signature | Notes |
+| --- | --- | --- |
+| `store` | `store({ content, agent, memory_type, tags?, metadata? })` | returns `Memory` |
+| `recall` | `recall({ query, limit?, min_tq?, agent?, memory_type? })` | returns `Memory[]`, ranked by Trust Quotient |
+| `delete` | `delete(memoryId: string)` | irreversible |
+| `handover` | `handover({ from_agent, to_agent, context, metadata? })` | returns `HandoverResult` with single-use SHA-256 token |
+| `health` | `health()` | returns `{ status, version, latency_ms? }` |
+
+```ts
+await client.store({
+  content: "Pricing: keep Pro at $19/mo for launch",
+  agent: "onboarding-v2",
+  memory_type: "long_term",
+  tags: ["pricing", "decision"],
+});
+const memories = await client.recall({ query: "pricing", limit: 5, min_tq: 0.7 });
+```
+
+Memory shape (TS): `{ id, content, agent, memory_type, trust_quotient, created_at, tags?, metadata? }`.
+
+---
+
+## 9. REST API reference (summary)
+
+Full schema, payloads, and examples: https://synapselayer.org/api/openapi.json
+
+| Method | Path | Purpose |
+| --- | --- | --- |
+| POST | `/api/mcp` | MCP JSON-RPC 2.0 endpoint (`initialize`, `tools/list`, `tools/call`). |
+| GET | `/api/mcp` | Discovery metadata + optional SSE stream for server push. |
+| POST | `/api/v1/capture` | Store an encrypted memory (REST). |
+| GET | `/api/connect/health` | Authenticated health check — returns identity, plan, and memory count. |
+| GET | `/.well-known/mcp.json` | MCP capability manifest. |
+| GET | `/.well-known/mcp/server-card.json` | MCP server card (tools, auth, transport). |
+| GET | `/.well-known/trust.json` | Machine-readable trust manifest. |
+| GET | `/.well-known/pricing.json` | Machine-readable pricing. |
+
+### Errors
+
+- `400` invalid request · `401` missing/invalid token · `402` quota exceeded
+- `429` rate limited (respect `Retry-After`) · `500` transient (retry with backoff)
+
+---
+
+## 10. MCP details
+
+- **Protocol**: MCP, protocol version 2024-11-05.
+- **Transport**: streamable-http (remote).
+- **Endpoint**: https://forge.synapselayer.org/api/mcp
+- **Auth**: bearer token (`sk_connect_` / `ml_`), sent header-first via `x-connect-token`.
+- **Core tools** (13): `recall`, `save_to_synapse`, `process_text`, `search`, `health_check`, `initialize_context`, `save_memory`, `store_memory`, `recall_memory`, `list_memories`, `memory_feedback`, `neural_handover`, `slo_report`. Discover the full list via `tools/list`.
+- **Handshake**: initialize → notifications/initialized → tools/list → tools/call.
+
+MCP example (store):
+
 ```json
 {
-  "mcpServers": {
-    "synapse": {
-      "url": "https://forge.synapselayer.org/api/mcp"
+  "jsonrpc": "2.0",
+  "id": 3,
+  "method": "tools/call",
+  "params": {
+    "name": "save_to_synapse",
+    "arguments": {
+      "content": "User prefers dark mode and fast responses",
+      "importance": 3
     }
   }
 }
 ```
 
-## Supported Platforms
-- Claude (Desktop + API) — native MCP support ✓
-- Cursor — IDE integration ✓
-- LangChain — Python SDK ✓
-- Claude Desktop — MCP native ✓
-- ChatGPT — Coming Soon (via Synapse Proxy)
-- CrewAI — Coming Soon (SDK Adapter)
-- AutoGen — Coming Soon (SDK Adapter)
-- LangGraph — Coming Soon (Orchestration)
-- n8n — Coming Soon (Workflow)
-- Zapier — Coming Soon (Automation)
+---
 
-## Pricing
-- Free: $0/month — 100 memories, 1 agent, AES-256-GCM encryption, community support
-- Pro: $29/month — 10,000 memories, unlimited agents, priority support, advanced analytics
-- Enterprise: Contact sales — custom limits, dedicated infrastructure, SLA, onboarding
+## 11. Trust Quotient & recall quality
 
-## Roadmap (Coming Soon)
-- Human Approval Layer: Critical memory operations require explicit human confirmation
-- Intent Ledger: Cryptographic proof of every agent action
-- Guardian Runtime: Autonomous policy enforcement for agent memory operations
+- Every memory is scored 0.0–1.0 at recall.
+- Ranking blends semantic similarity (pgvector HNSW), intent match, importance, and recency.
+- Recommendations:
+  - Read `trust_quotient` from each recalled memory: ≥0.7 for "act on it" decisions.
+  - Lower Trust Quotient (0.4) for "consider it" context.
+  - Feed `memory_feedback` to confirm or correct recalls — feedback improves future ranking.
 
-## Links
-- Website: https://synapselayer.org
+---
+
+## 12. Data lifecycle & audit
+
+Three layers, immutable by design:
+
+1. **Live data** — active memories served by recall.
+2. **Tombstone** — soft-delete marker with metadata (who/when) retained for audit.
+3. **Analytics** — aggregated, non-sensitive signals (omitted from privacy view).
+
+Deletion: hard-delete available on request (LGPD/GDPR). Memory lifecycle events
+are append-only once recorded.
+
+---
+
+## 13. Supported platforms & SDKs
+
+- Claude Desktop — MCP native
+- Claude API — MCP / REST
+- Cursor — MCP integration
+- LangChain — Python SDK
+- Vercel AI SDK — TypeScript SDK
+- CrewAI / AutoGen / LangGraph — coming soon
+- n8n / Zapier — coming soon
+
+---
+
+## 14. Pricing
+
+| Plan | Monthly | Highlights |
+| --- | --- | --- |
+| Free | $0 | AES-256-GCM, REST API, MCP protocol |
+| Pro | $19 | Neural Handover, OAuth + PKCE, SDK access, email support |
+| Enterprise | Contact sales | Custom deployment, dedicated support |
+
+Quota is checked and enforced per plan. `402` is returned when exhausted.
+
+---
+
+## 15. Registries & links
+
+- MCP Marketplace: https://mcp-marketplace.io/server/io-github-synapselayer-synapse-layer
+- Smithery: https://smithery.ai/server/synapselayer/synapselayer
+- PyPI: https://pypi.org/project/synapse-layer/
+- npm: https://www.npmjs.com/package/synapse-layer
+- GitHub: https://github.com/SynapseLayer/synapse-layer
 - Forge Dashboard: https://forge.synapselayer.org
-- Documentation: https://forge.synapselayer.org/docs
-- Python SDK (PyPI): https://pypi.org/project/synapse-layer/
-- TypeScript SDK (npm): https://www.npmjs.com/package/synapse-layer
-- Source (core): https://github.com/SynapseLayer/synapse-layer
-- Python SDK repo: https://github.com/SynapseLayer/synapse-sdk-python
-- LangGraph integration: https://github.com/SynapseLayer/synapse-layer-langgraph
-- Agent skill: https://github.com/SynapseLayer/synapse-layer-skill
-- GitHub org: https://github.com/SynapseLayer
+- Documentation: https://synapselayer.org/docs
+- Connect Guide: https://synapselayer.org/connect
+- OpenAPI: https://synapselayer.org/api/openapi.json
+- Interactive API Reference: https://synapselayer.org/api-docs
+- Skill file: https://synapselayer.org/skill.md
+- llms.txt (summary): https://synapselayer.org/llms.txt
+
+---
+
+## 16. Appendix — service health & SLOs
+
+- `health_check` tool and SLO reporting (`slo_report`) provide latency, availability,
+  and durability metrics for governance and incident response.
+- Production API: https://forge.synapselayer.org
