@@ -73,7 +73,12 @@ class Synapse:
         timeout: float = _DEFAULT_TIMEOUT,
         verbose: bool = False,
     ) -> None:
-        resolved_key = api_key or token or os.environ.get("SYNAPSE_TOKEN", "")
+        resolved_key = (
+            api_key
+            or token
+            or os.environ.get("X_CONNECT_TOKEN")
+            or os.environ.get("SYNAPSE_TOKEN", "")
+        )
         if not resolved_key or not isinstance(resolved_key, str):
             raise ValueError("api_key/token must be a non-empty string")
         if not resolved_key.startswith("sk_connect_"):

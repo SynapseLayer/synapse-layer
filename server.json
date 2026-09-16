@@ -1,7 +1,7 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.SynapseLayer/synapse-layer",
-  "title": "Synapse Layer \u2014 Trust Infrastructure for AI Agents",
+  "title": "Synapse Layer — Trust Infrastructure for AI Agents",
   "description": "MCP-native Trust Infrastructure for AI Agents. Persistent encrypted memory with Trust Quotient.",
   "version": "2.4.6",
   "websiteUrl": "https://synapselayer.org",
@@ -9,38 +9,17 @@
     "url": "https://github.com/SynapseLayer/synapse-layer",
     "source": "github"
   },
-  "packages": [
-    {
-      "registryType": "pypi",
-      "identifier": "synapse-layer",
-      "version": "2.4.6",
-      "runtimeHint": "uvx",
-      "transport": {
-        "type": "stdio"
-      },
-      "environmentVariables": [
-        {
-          "name": "SYNAPSE_AGENT_ID",
-          "description": "Identifier for the agent using the memory layer.",
-          "default": "default-agent"
-        },
-        {
-          "name": "SYNAPSE_API_KEY",
-          "description": "Connect token for API authentication (sk_connect_*).",
-          "isSecret": true
-        },
-        {
-          "name": "LOG_LEVEL",
-          "description": "Logging verbosity: DEBUG, INFO, WARNING, ERROR.",
-          "default": "INFO"
-        }
-      ]
-    }
-  ],
   "remotes": [
     {
       "type": "streamable-http",
-      "url": "https://forge.synapselayer.org/api/mcp"
+      "url": "https://forge.synapselayer.org/api/mcp",
+      "headers": [
+        {
+          "name": "x-connect-token",
+          "description": "Connect token for API authentication (sk_connect_*). Obtain via Forge → Dashboard → Connect.",
+          "isSecret": true
+        }
+      ]
     }
   ]
 }
