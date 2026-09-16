@@ -26,9 +26,13 @@ Synapse Layer is open-source persistent memory infrastructure for AI agents and 
 
 ## ⚡ 30-Second Quickstart
 
+Get your Connect Token at [forge.synapselayer.org](https://forge.synapselayer.org) → Connect, then install into any MCP client:
+
 ```bash
-pip install synapse-layer
+curl -fsSL https://raw.githubusercontent.com/SynapseLayer/synapse-layer/main/scripts/install-smithery.sh | bash
 ```
+
+Or use the Python SDK:
 
 ```python
 from synapse_layer import Synapse
