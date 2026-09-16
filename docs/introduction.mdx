@@ -8,16 +8,16 @@ description: "Plug once. Remember forever. AES-256-GCM encrypted at rest."
 > Plug once. Remember forever. AES-256-GCM encrypted at rest. 🧠
 
 ```python
-from synapse_layer import SynapseMemory
+from synapse_layer import Synapse
 
-memory = SynapseMemory(agent_id="my-agent")
+memory = Synapse(token="sk_connect_YOUR_TOKEN", agent_id="my-agent")
 
 # 1. Agents save context automatically
-memory.save("User prefers absolute security and neural handover.")
+memory.store("User prefers absolute security and cross-model continuity.")
 
 # 2. Recall is deterministic and explainable
 info = memory.recall("user focus")
-# Result: "User prefers absolute security and neural handover."
+# Result: "User prefers absolute security and cross-model continuity."
 ```
 
 That's the entire API. **Encryption, PII redaction, differential privacy, intent validation, and trust scoring** — all happen under the hood. No configuration. No boilerplate. No amnesia.
@@ -35,7 +35,7 @@ Synapse Layer solves the fundamental problem of **agent amnesia** — AI agents 
     Zero-Leak Policy: 15+ patterns protect PII and secrets before any I/O.
   </Card>
   <Card title="MCP Server" icon="plug" href="https://docs.synapselayer.org/docs/mcp-server">
-    4 tools ready for Claude Desktop, LangChain, CrewAI, and custom agents.
+    13 tools ready for Claude Desktop, Cursor, Codex, and custom agents.
   </Card>
 </CardGroup>
 
@@ -49,8 +49,8 @@ Synapse Layer is different:
 |---|---|
 | Agents forget between sessions | Persistent encrypted vault with semantic recall |
 | PII leaks into embeddings | 15+ redaction patterns run before any storage |
-| No cross-model context | Neural Handover™ with JWT-signed transfer |
-| Black-box recall ranking | Trust Quotient™ — deterministic, explainable scoring |
+| No cross-model context | Cross-model continuity with JWT-signed transfer |
+| Black-box recall ranking | Trust Quotient — deterministic, explainable scoring |
 | Manual tagging required | Auto-Save Engine detects what matters autonomously |
 
 <Note>

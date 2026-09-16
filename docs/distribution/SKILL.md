@@ -34,19 +34,25 @@ If you are an AI agent, follow this priority flow:
 
 | Tool | Function |
 |---|---|
+| `health_check` | System health and capability report (public) |
+| `initialize_context` | Warm-up session memory context |
+| `recall` / `recall_memory` | Semantic / temporal / priority memory retrieval |
+| `search` | Full-text search across agents |
+| `save_to_synapse` / `save_memory` / `store_memory` | Structured memory persistence with full security pipeline |
 | `process_text` | Autonomous detection of decisions, milestones, and alerts |
-| `save_to_synapse` | Structured memory persistence with full security pipeline |
-| `backfill_embeddings` | Async vector embedding generation |
-| `health_check` | System health and capability report |
+| `list_memories` | List memory metadata |
+| `memory_feedback` | Adjust trust scoring on a memory |
+| `neural_handover` | Transfer state between agents |
+| `slo_report` | Uptime and SLO metrics (admin token) |
 
 ## Usage
 
 ```python
-from synapse_layer import SynapseMemory
+from synapse_layer import Synapse
 
-memory = SynapseMemory(agent_id="agent-1")
+memory = Synapse(token="sk_connect_YOUR_TOKEN", agent_id="agent-1")
 
-memory.save("User prefers minimal interfaces")
+memory.store("User prefers minimal interfaces")
 memory.recall("preferences")
 ```
 

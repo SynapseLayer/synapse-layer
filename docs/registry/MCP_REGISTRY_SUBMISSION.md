@@ -97,7 +97,7 @@ Persistent encrypted memory for AI agents. AES-256-GCM at rest, content sanitiza
 - **Website**: https://synapselayer.org
 - **Forge**: https://forge.synapselayer.org
 - **Docs**: https://synapselayer.org/docs
-- **Smithery**: https://smithery.ai/servers/synapselayer/synapse-protocol
+- **Smithery**: https://smithery.ai/servers/synapselayer/synapselayer
 
 ## server.json
 

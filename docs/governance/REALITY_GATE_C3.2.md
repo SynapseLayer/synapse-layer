@@ -54,7 +54,7 @@ health_check, initialize_context, list_memories, memory_feedback, neural_handove
 - Invalid token → HTTP 401 ✅
 
 ### Smithery
-- URL: https://smithery.ai/server/@synapselayer/synapse-protocol
+- URL: https://smithery.ai/server/synapselayer/synapselayer
 - HTTP: 200
 - Display: "Synapse Layer"
 

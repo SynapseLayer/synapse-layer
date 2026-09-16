@@ -167,7 +167,9 @@ Synapse Layer is MCP-native. For Claude Desktop, add to your MCP config:
 }
 ```
 
-See the [MCP documentation](https://synapselayer.org/docs) and the [Smithery listing](https://smithery.ai/server/synapselayer/synapse-protocol) for details.
+> Note: the canonical environment variable is `X_CONNECT_TOKEN` (with `SYNAPSE_TOKEN` as fallback). `SYNAPSE_API_KEY` shown above is accepted for backward compatibility.
+
+See the [MCP documentation](https://synapselayer.org/docs) and the [Smithery listing](https://smithery.ai/servers/synapselayer/synapselayer) for details.
 
 ## Contributing
 

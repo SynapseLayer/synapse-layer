@@ -1,11 +1,11 @@
 ---
 title: MCP Server
-description: "4 tools for autonomous memory via the Model Context Protocol."
+description: "13 tools for autonomous memory via the Model Context Protocol."
 ---
 
 # MCP Server
 
-Synapse Layer exposes a fully MCP-compatible server with 4 tools for autonomous memory management.
+Synapse Layer exposes a fully MCP-compatible server with 13 tools for autonomous memory management.
 
 ## Endpoint
 
@@ -13,13 +13,18 @@ Synapse Layer exposes a fully MCP-compatible server with 4 tools for autonomous 
 POST https://forge.synapselayer.org/api/mcp
 ```
 
-Protocol: **JSON-RPC 2.0** over HTTP, conforming to [MCP specification](https://modelcontextprotocol.io) (`protocolVersion: 2024-11-05`).
+Protocol: **JSON-RPC 2.0** over HTTP, conforming to [MCP specification](https://modelcontextprotocol.io).
+
+## Auth Model
+
+- **Public tools** (no token): `health_check`, `initialize_context`, `tools/list`
+- **Authenticated tools**: everything else — requires `x-connect-token: sk_connect_...` header
 
 ## Tools
 
-### process_text
+### Recall (`recall` / `recall_memory`)
 
-Scans free-form text for auto-save triggers. Detected events pass through the full pipeline: policy evaluation, PII/secret redaction, deduplication, and persistence.
+Retrieve relevant persisted memory using semantic, temporal, priority, or hybrid routing.
 
 ```json
 {
@@ -27,29 +32,18 @@ Scans free-form text for auto-save triggers. Detected events pass through the fu
   "id": 1,
   "method": "tools/call",
   "params": {
-    "name": "process_text",
+    "name": "recall",
     "arguments": {
-      "text": "We decided to pivot to enterprise B2B after the seed round",
-      "project": "SYNAPSE_LAYER",
-      "conversation_id": "conv-123",
-      "message_id": "msg-456"
+      "query": "user preferences",
+      "limit": 10
     }
   }
 }
 ```
 
-| Parameter | Type | Required | Description |
-|---|---|:---:|---|
-| `text` | string | ✅ | Free-form text to scan for triggers |
-| `project` | string | | Project identifier (auto-detected if omitted) |
-| `source` | string | | Source identifier (default: `auto`) |
-| `conversation_id` | string | | Conversation ID for tracing |
-| `message_id` | string | | Message ID for tracing |
-| `url` | string | | Source URL for tracing |
+### Store (`save_to_synapse` / `save_memory` / `store_memory`)
 
-### save_to_synapse
-
-Directly save a structured memory event with full security pipeline.
+Persist a memory with the full security pipeline — PII/secret redaction, deduplication, and AES-256-GCM encryption at rest.
 
 ```json
 {
@@ -62,26 +56,17 @@ Directly save a structured memory event with full security pipeline.
       "content": "Launched v2.0 to production",
       "project": "OFFLY",
       "type": "[MILESTONE]",
-      "importance": 4,
       "tags": ["launch", "production"]
     }
   }
 }
 ```
 
-| Parameter | Type | Required | Description |
-|---|---|:---:|---|
-| `content` | string | ✅ | Memory content to store |
-| `project` | string | ✅ | Project identifier |
-| `type` | string | | Event type (see below) |
-| `importance` | number | | 1–5 (default: 3) |
-| `tags` | string[] | | Tags for categorization |
-
 **Event types:** `[MILESTONE]`, `[DECISION]`, `[ALERT]`, `[AUTO-STRAT]`, `[AUTO-OP]`, `[AUTO-INSIGHT]`, `[AUTO-DECISION]`, `[AUTO-CONTEXT]`, `[MANUAL]`
 
-### backfill_embeddings
+### process_text
 
-Process pending embedding jobs for recently stored memories.
+Scan free-form text for auto-save triggers. Detected events pass through the full pipeline: policy evaluation, PII/secret redaction, deduplication, and persistence.
 
 ```json
 {
@@ -89,21 +74,30 @@ Process pending embedding jobs for recently stored memories.
   "id": 3,
   "method": "tools/call",
   "params": {
-    "name": "backfill_embeddings",
+    "name": "process_text",
     "arguments": {
-      "limit": 20
+      "text": "We decided to pivot to enterprise B2B after the seed round",
+      "project": "SYNAPSE_LAYER"
     }
   }
 }
 ```
 
-| Parameter | Type | Required | Description |
-|---|---|:---:|---|
-| `limit` | number | | Max jobs to process (1–50, default: 10) |
+### search
+
+Full-text search across agents.
+
+### list_memories
+
+List memory metadata with pagination and governance limits.
+
+### memory_feedback
+
+Submit feedback to adjust trust scoring for stored memories.
 
 ### health_check
 
-Returns system health, version, and capability report.
+Returns system health, version, and capability report. **Public — no token required.**
 
 ```json
 {
@@ -116,6 +110,14 @@ Returns system health, version, and capability report.
   }
 }
 ```
+
+### initialize_context
+
+Initialize a persistent memory context for a conversation or agent session. **Public — no token required.**
+
+### slo_report
+
+Return uptime and SLO metrics (requires admin token).
 
 ## MCP Handshake
 
@@ -136,20 +138,19 @@ Response:
   "result": {
     "protocolVersion": "2024-11-05",
     "capabilities": { "tools": { "listChanged": false } },
-    "serverInfo": { "name": "synapse-layer", "version": "1.0.7" }
+    "serverInfo": { "name": "synapse-layer", "version": "2.4.6" }
   }
 }
 ```
 
-## Self-Hosted Deployment
+## Install via Smithery
 
-For full persistence with your own database, deploy the [mcp-autosave bridge](https://github.com/SynapseLayer/synapse-layer/tree/main/mcp-autosave) with Supabase:
+The recommended distribution channel:
 
 ```bash
-cd mcp-autosave
-cp .env.example .env
-# Configure SUPABASE_URL and SUPABASE_KEY
-python server.py
+npx -y @smithery/cli@latest install @synapselayer/synapselayer \
+  --client <your-client> \
+  --config '{"connect_token": "sk_connect_YOUR_TOKEN"}'
 ```
 
-This gives you the same 4 tools with real database persistence, embedding generation, and RLS security.
+See the [Quick Start](/docs/quickstart) for the full setup guide.

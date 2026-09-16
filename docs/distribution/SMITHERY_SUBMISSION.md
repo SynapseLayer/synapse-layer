@@ -7,7 +7,7 @@ Use this content for the Smithery listing page, GitHub PR body, or registry form
 ---
 
 ### Server Name
-`@synapselayer/synapse-protocol`
+`@synapselayer/synapselayer`
 
 ### Display Name
 Synapse Layer — Persistent Memory for AI Agents
@@ -96,7 +96,9 @@ Ismael Marchi — [@synapselayer](https://x.com/synapselayer)
 ## CLI Publish Command
 
 ```bash
-npx @anthropic-ai/smithery-cli mcp publish https://forge.synapselayer.org/api/mcp -n @synapselayer/synapse-protocol
+npx -y @smithery/cli@latest install @synapselayer/synapselayer \
+  --client <your-client> \
+  --config '{"connect_token": "sk_connect_YOUR_TOKEN"}'
 ```
 
 ## Alternative: Submit via GitHub

@@ -9,20 +9,32 @@ Three ways to connect. Pick the one that fits your stack.
 
 ## Option 1: Smithery (Recommended for MCP)
 
-The fastest path for Claude Desktop, LangChain, and CrewAI agents:
+The fastest path for Claude Desktop, Cursor, OpenAI Codex, and any MCP-compatible client:
 
 ```bash
-npx @smithery/cli install @synapselayer/synapse-protocol
+npx -y @smithery/cli@latest install @synapselayer/synapselayer \
+  --client <your-client> \
+  --config '{"connect_token": "sk_connect_YOUR_TOKEN"}'
 ```
 
-This registers Synapse Layer as an MCP server. Your agent immediately gets access to 4 tools:
+Replace `<your-client>` with one of: `claude`, `cursor`, `opencode`, `codex`, `gemini-cli`, `cline`, `windsurf`. Or open the [Smithery listing](https://smithery.ai/servers/synapselayer/synapselayer), click **Install**, and paste the generated command.
+
+Connect your agent on [forge.synapselayer.org](https://forge.synapselayer.org) → **Connect** to get your `sk_connect_...` token.
+
+Your agent immediately gets access to **13 MCP tools**:
 
 | Tool | What It Does |
 |---|---|
-| `process_text` | Scans text for decisions, milestones, alerts — saves autonomously |
-| `save_to_synapse` | Direct structured memory persistence with full security pipeline |
-| `backfill_embeddings` | Async vector embedding generation for stored memories |
-| `health_check` | System health, version, and capability report |
+| `health_check` | System health, version, and capability report (public — no token needed) |
+| `initialize_context` | Warm-up memory context at session start |
+| `recall` / `recall_memory` | Semantic / temporal / priority memory retrieval |
+| `search` | Full-text search across agents |
+| `list_memories` | List stored memory metadata |
+| `save_to_synapse` / `save_memory` / `store_memory` | Persist memory with the full security pipeline (AES-256-GCM at rest) |
+| `process_text` | Auto-detect decisions, milestones, alerts from free text |
+| `memory_feedback` | Adjust trust scoring on a memory |
+| `neural_handover` | Transfer contextual state between agents |
+| `slo_report` | Uptime and SLO metrics (admin token) |
 
 ## Option 2: Direct MCP Connection
 
@@ -39,7 +51,7 @@ Add to your MCP client configuration:
 ```
 
 <Tip>
-  This connects to the discovery endpoint. For full persistence with your own database, deploy the [mcp-autosave bridge](https://github.com/SynapseLayer/synapse-layer/tree/main/mcp-autosave) with Supabase.
+  This connects to the hosted endpoint. `health_check` and `initialize_context` work without a token; authenticated tools require your `sk_connect_...` token passed as the `x-connect-token` header (or `Authorization: Bearer` for compatibility).
 </Tip>
 
 ## Option 3: Python SDK
@@ -49,39 +61,16 @@ pip install synapse-layer
 ```
 
 ```python
-from synapse_layer import SynapseMemory
-import asyncio
+from synapse_layer import Synapse
 
-async def main():
-    mem = SynapseMemory(agent_id="my-agent")
+syn = Synapse(token="sk_connect_YOUR_TOKEN", agent_id="my-agent")
 
-    # Store a memory (full security pipeline runs automatically)
-    result = await mem.store(
-        "User prefers dark mode and speaks Portuguese",
-        confidence=0.95
-    )
-    print(f"Stored: TQ={result.trust_quotient:.3f}")
+# Store a memory (full security pipeline runs automatically)
+syn.store("User prefers dark mode and speaks Portuguese")
 
-    # Recall with semantic search
-    results = await mem.recall("user preferences")
-    for r in results:
-        print(f"  {r.content} (TQ: {r.trust_quotient:.3f})")
-
-asyncio.run(main())
-```
-
-## Auto-Save Engine
-
-For autonomous memory capture (no manual tagging):
-
-```python
-from synapse_memory.autosave import AutoSaveEngine, AutoSaveEvent
-
-# The engine detects what's worth saving
-results = engine.process_text(
-    "We decided to pivot to enterprise B2B after the seed round"
-)
-# → Detects [DECISION] trigger, redacts PII, deduplicates, persists
+# Recall with semantic search
+for r in syn.recall("user preferences"):
+    print(f"  {r.content}")
 ```
 
 ## Verify Installation
@@ -89,18 +78,18 @@ results = engine.process_text(
 ```bash
 curl -s -X POST https://forge.synapselayer.org/api/mcp \
   -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | python3 -m json.tool
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
 ```
 
-Expected: JSON response with 4 tools listed.
+Expected: JSON response with **13 tools** listed, and no authentication required for the public `health_check` tool.
 
 ## Next Steps
 
 <CardGroup cols={2}>
   <Card title="Architecture" icon="brain" href="/docs/architecture">
-    Understand TQ Intelligence and the memory pipeline.
+    Understand how memory flows through the system.
   </Card>
   <Card title="Security" icon="shield-halved" href="/docs/security">
-    How the Zero-Leak Policy protects your data.
+    How AES-256-GCM at rest and the redaction pipeline protect your data.
   </Card>
 </CardGroup>
