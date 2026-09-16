@@ -31,6 +31,7 @@ ask() { # ask "<prompt>" <varname> [default]
     read -r -p "$_p" "$_v" || true
   fi
   [[ -n "$_d" && -z "${!_v:-}" ]] && printf -v "$_v" "%s" "$_d"
+  return 0
 }
 
 ask_secret() { # ask_secret "<prompt>" <varname>
@@ -43,6 +44,7 @@ ask_secret() { # ask_secret "<prompt>" <varname>
   fi
   printf '\n'
   printf -v "$_v" "%s" "$_val"
+  return 0
 }
 
 main() {
