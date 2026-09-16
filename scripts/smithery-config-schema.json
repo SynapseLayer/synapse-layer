@@ -1,11 +1,17 @@
 {
   "type": "object",
-  "required": ["connect_token"],
   "properties": {
     "connect_token": {
       "type": "string",
       "title": "Synapse Connect Token",
-      "description": "Your Synapse Connect Token. Get it at forge.synapselayer.org → Dashboard → Connect."
+      "description": "Your Synapse Connect Token. Get it at forge.synapselayer.org → Dashboard → Connect. Optional at config time; required only to call authenticated tools. Leave empty to browse and call public tools (e.g. health_check).",
+      "x-to": {
+        "header": "x-connect-token"
+      },
+      "x-from": {
+        "header": "connect_token"
+      },
+      "default": ""
     },
     "agent_id": {
       "type": "string",
