@@ -14,6 +14,7 @@
 set -euo pipefail
 
 LISTING_URL="https://smithery.ai/servers/synapselayer/synapselayer"
+SERVER_REF="@synapselayer/synapselayer"
 SUPPORTED_CLIENTS="claude, cursor, opencode, codex, gemini-cli, cline, windsurf, vscode, roocode, witsy, enconvo, amazon-bedrock, amazonq, librechat, goose"
 
 trim() { [[ -z "${1:-}" ]] && return 0; printf '%s' "${1//[$'\t\r\n ']}"; }
@@ -80,7 +81,7 @@ main() {
   echo
   echo "Installing @synapselayer/synapselayer into your $client config"
   echo "  token: ${token:0:12}… (masked)"
-  npx -y @smithery/cli@latest install "$LISTING_URL" \
+  npx -y @smithery/cli@latest install "$SERVER_REF" \
     --client "$client" \
     --config "{\"connect_token\": \"$token\"}"
 
