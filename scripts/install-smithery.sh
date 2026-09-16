@@ -18,6 +18,32 @@ SUPPORTED_CLIENTS="claude, cursor, opencode, codex, gemini-cli, cline, windsurf,
 
 trim() { [[ -z "${1:-}" ]] && return 0; printf '%s' "${1//[$'\t\r\n ']}"; }
 
+# When a script is piped through `curl ... | bash`, stdin is the pipe itself,
+# already consumed by bash — so `read` would get EOF and abort. Interactive
+# prompts must read from the real TTY (/dev/tty) when one is available.
+ask() { # ask "<prompt>" <varname> [default]
+  local _p="$1" _v="$2" _d="${3:-}"
+  if [[ -n "$_d" ]]; then _p+=" [$_d]: "; else _p+=": "; fi
+  if [[ -e /dev/tty ]]; then
+    read -r -p "$_p" "$_v" < /dev/tty || true
+  else
+    read -r -p "$_p" "$_v" || true
+  fi
+  [[ -n "$_d" && -z "${!_v:-}" ]] && printf -v "$_v" "%s" "$_d"
+}
+
+ask_secret() { # ask_secret "<prompt>" <varname>
+  local _p="$1" _v="$2"
+  local _val
+  if [[ -e /dev/tty ]]; then
+    read -r -s -p "$_p" _val < /dev/tty || true
+  else
+    read -r -s -p "$_p" _val || true
+  fi
+  printf '\n'
+  printf -v "$_v" "%s" "$_val"
+}
+
 main() {
   local token="" client=""
   local arg
@@ -34,18 +60,16 @@ main() {
 
   if [ -z "$client" ]; then
     echo "Synapse Layer — Smithery installer"
-    echo "Which client do you use? ($SUPPORTED_CLIENTS)"
-    read -r -p "client: " client
+    ask "Which client? ($SUPPORTED_CLIENTS)" client "claude"
   fi
 
   if [ -z "$token" ]; then
     echo
     echo "Get your free Connect Token at https://forge.synapselayer.org -> Connect"
     while [ -z "$token" ]; do
-      read -r -s -p "connect_token (sk_connect_...): " token
-      echo
+      ask_secret "connect_token (sk_connect_...): " token
+      token="$(trim "$token")"
     done
-    token="$(trim "$token")"
   fi
 
   if [[ "$token" != sk_connect_* && "$token" != sk_* ]]; then
