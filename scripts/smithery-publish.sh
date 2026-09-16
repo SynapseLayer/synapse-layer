@@ -17,7 +17,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 CONFIG_SCHEMA="${REPO_ROOT}/scripts/smithery-config-schema.json"
 SERVER_URL="https://forge.synapselayer.org/api/mcp"
-QUALIFIED_NAME="synapselayer/synapse-protocol"
+QUALIFIED_NAME="synapselayer/synapselayer"
 EXPECTED_TOOLS=13
 
 echo "🧠 Synapse Layer — Smithery Publish Pipeline v3"
@@ -122,4 +122,4 @@ echo "   → Go to github.com/SynapseLayer/synapse-layer/settings/secrets/action
 echo "   → Add secret: SMITHERY_API_KEY = <your key>"
 echo "   → Future publishes: Actions → 'Publish to Smithery Registry' → Run workflow"
 echo ""
-echo "🎉 Done! Verify at: https://smithery.ai/servers/synapselayer/synapse-protocol"
+echo "🎉 Done! Verify at: https://smithery.ai/servers/synapselayer/synapselayer"
