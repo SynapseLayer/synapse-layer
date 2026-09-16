@@ -29,8 +29,10 @@ Synapse Layer is open-source persistent memory infrastructure for AI agents and 
 Get your Connect Token at [forge.synapselayer.org](https://forge.synapselayer.org) → Connect, then install into any MCP client:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/SynapseLayer/synapse-layer/main/scripts/install-smithery.sh | bash
+curl -fsSL https://forge.synapselayer.org/install/smithery | bash
 ```
+
+On the [Forge dashboard](https://forge.synapselayer.org/dashboard/connect) the **Smithery** card already copies the command with your token embedded (`… | bash -s -- sk_connect_…`) — a single paste in your terminal is enough.
 
 Or use the Python SDK:
 
