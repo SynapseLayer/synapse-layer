@@ -73,7 +73,7 @@ At Synapse Layer, we built the infrastructure to fix it.
 
 **What we ship today:**
 - Store/recall API for any MCP-compatible agent
-- AES-256-GCM encryption at rest — server never sees plaintext
+- AES-256-GCM encryption at rest
 - Trust Quotient (TQ) scoring: every memory ranked 0.0–1.0 for reliability
 - Cross-agent memory: store in Claude, recall in GPT-4
 - 30-second install via pip or MCP config
