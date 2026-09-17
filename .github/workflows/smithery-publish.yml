@@ -44,7 +44,7 @@ jobs:
           fi
 
       - name: Publish to Smithery
-        if: ${{ inputs.dry_run != 'true' }}
+        if: ${{ inputs.dry_run != true }}
         env:
           SMITHERY_API_KEY: ${{ secrets.SMITHERY_API_KEY }}
         run: |
@@ -54,7 +54,7 @@ jobs:
             --config-schema scripts/smithery-config-schema.json
 
       - name: Verify publication
-        if: ${{ inputs.dry_run != 'true' }}
+        if: ${{ inputs.dry_run != true }}
         run: |
           sleep 5
           curl -sf "https://registry.smithery.ai/servers/@synapselayer/synapselayer" | \
