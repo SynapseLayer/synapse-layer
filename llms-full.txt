@@ -273,6 +273,9 @@ Full schema, payloads, and examples: https://synapselayer.org/api/openapi.json
 | GET | `/api/mcp` | Discovery metadata + optional SSE stream for server push. |
 | POST | `/api/v1/capture` | Store an encrypted memory (REST). |
 | GET | `/api/connect/health` | Authenticated health check — returns identity, plan, and memory count. |
+| GET | `/api/health` | Public healthcheck — status, product/server version, DB connectivity. |
+| POST | `/api/connect/token` | Exchange an authorization code (OAuth/PKCE connect flow) for a connect token. |
+| POST | `/api/v1/handover` | Deprecated — legacy V1 handover, permanently disabled (returns `410 LEGACY_DISABLED`). Use `neural_handover` (MCP) or Handover V2. |
 | GET | `/.well-known/mcp.json` | MCP capability manifest. |
 | GET | `/.well-known/mcp/server-card.json` | MCP server card (tools, auth, transport). |
 | GET | `/.well-known/trust.json` | Machine-readable trust manifest. |

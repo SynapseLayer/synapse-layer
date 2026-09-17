@@ -320,7 +320,11 @@ class ForgeBackend:
         embedding: Optional[List[float]] = None,
         source: str = "sdk",
     ) -> str:
-        """Store a memory via Forge API — server never sees plaintext.
+        """Store a memory via the Forge API using client-side encryption.
+
+        This backend encrypts content on the client (AES-256-GCM) before it
+        leaves the SDK, so the server only handles ciphertext. (The default
+        ``Synapse`` backend sends plaintext and encrypts at rest instead.)
 
         Flow:
             1. Encrypt content CLIENT-SIDE (AES-256-GCM)
@@ -329,9 +333,8 @@ class ForgeBackend:
             4. POST encrypted envelope + searchIndex + zkMode=True
             5. Server stores ciphertext WITHOUT re-encrypting
 
-        The server NEVER sees plaintext.  The ``content`` field is
-        intentionally absent from the payload — replaced by
-        ``encryptedContent``, ``iv``, ``authTag``.
+        The ``content`` field is intentionally absent from the payload —
+        replaced by ``encryptedContent``, ``iv``, ``authTag``.
 
         Args:
             content: Memory content string.

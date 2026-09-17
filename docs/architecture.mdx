@@ -12,12 +12,12 @@ Synapse Layer is not a simple key-value store. It’s an **autonomous memory eng
 Every memory operation flows through a deterministic pipeline:
 
 ```
-Agent → Sanitize (PII) → Validate Intent → Encrypt (AES-256) → DP Noise → Vault
+Agent → Sanitize (PII) → Validate Intent → DP Noise → Vault (AES-256-GCM at rest)
                                                                           ↓
   Recall ← Trust Quotient™ Ranking ← Cosine Search ← Decrypt ← ← ← ← ←
 ```
 
-**Key guarantee:** The server never sees plaintext. Embeddings are noise-injected before storage. Every recall is deterministic and explainable.
+**Key guarantee:** Memories are encrypted at rest with AES-256-GCM. Embeddings are noise-injected before storage. With the optional ForgeBackend client, content is encrypted before it leaves the SDK, so the server only ever handles ciphertext. Every recall is deterministic and explainable.
 
 ## Trust Quotient™ (TQ) — The Intelligence Layer
 

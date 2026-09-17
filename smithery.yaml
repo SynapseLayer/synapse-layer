@@ -4,8 +4,7 @@ description: >
   Persistent memory infrastructure for autonomous AI agents — MCP-native,
   cross-agent, and audit-ready. Memories are encrypted with AES-256-GCM at
   rest, governed by PII sanitization and consent controls, and scored with
-  Trust Quotient™ for reliability. The OAuth for AI Memory: connect once,
-  remember everywhere.
+  Trust Quotient™ for reliability. Connect once, remember everywhere.
 version: "2.4.6"
 icon: "🧠"
 sourceUrl: "https://github.com/SynapseLayer/synapse-layer"
