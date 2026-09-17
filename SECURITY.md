@@ -25,6 +25,10 @@
 - Content sanitization before encryption
 - Encryption: AES-256-GCM at rest with per-operation random IV — content cleared after encryption
 
+## Dependency Advisory
+
+- **cryptography**: production deployments that pin dependencies should use `cryptography>=50.0.1`. Earlier pins are affected by GHSA-537c-gmf6-5ccf / CVE-2026-69247. The published 2.4.6 SDK metadata allows `>=48.0.1`, so `pip` resolves the latest fixed release; an explicit `>=50.0.1` floor ships in the next coordinated release.
+
 ## Data Retention
 
 Memories with a TTL (`expiresAt` field) are automatically hard-deleted when expired:
