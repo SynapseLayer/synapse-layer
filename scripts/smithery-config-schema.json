@@ -11,13 +11,32 @@
       "x-from": {
         "header": "connect_token"
       },
-      "default": ""
+      "default": "",
+      "x-order": 0
     },
     "agent_id": {
       "type": "string",
       "title": "Agent ID",
       "description": "Identifier for the agent using the memory layer. Defaults to 'default'.",
-      "default": "default"
+      "default": "default",
+      "x-order": 1
+    },
+    "memory_scope": {
+      "type": "string",
+      "title": "Memory Scope",
+      "description": "Default scope for recall and search: 'agent' isolates to the current agent; 'tenant' searches across all agents. Optional.",
+      "enum": ["agent", "tenant"],
+      "default": "agent",
+      "x-order": 2
+    },
+    "max_recall_results": {
+      "type": "number",
+      "title": "Max Recall Results",
+      "description": "Default maximum number of memories returned per recall query (1–50). Optional.",
+      "default": 10,
+      "minimum": 1,
+      "maximum": 50,
+      "x-order": 3
     }
   }
 }
