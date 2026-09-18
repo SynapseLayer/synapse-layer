@@ -32,8 +32,8 @@ configSchema:
     agent_id:
       type: "string"
       title: "Agent ID"
-      description: "Agent identifier for memory scoping (e.g. cursor, claude, codex). Optional — defaults to 'default'."
-      default: "default"
+      description: "Agent identifier for memory scoping (e.g. cursor, claude, codex). Defaults to 'smithery' when installed via Smithery badge."
+      default: "smithery"
     memory_scope:
       type: "string"
       title: "Memory Scope"

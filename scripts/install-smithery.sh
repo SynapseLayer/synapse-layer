@@ -83,9 +83,9 @@ main() {
   echo
   echo "Installing @synapselayer/synapselayer into your $client config"
   echo "  token: ${token:0:12}… (masked)"
-  npx -y @smithery/cli@latest install "$SERVER_REF" \
+  npx -y @smithery/cli@latest mcp add "$SERVER_REF" \
     --client "$client" \
-    --config "{\"connect_token\": \"$token\"}"
+    --headers "{\"x-connect-token\": \"$token\", \"x-agent-id\": \"smithery\"}"
 
   echo
   echo "Done. Restart $client and your 13 Synapse Layer MCP tools will be live:"

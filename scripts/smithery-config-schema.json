@@ -17,8 +17,11 @@
     "agent_id": {
       "type": "string",
       "title": "Agent ID",
-      "description": "Identifier for the agent using the memory layer. Defaults to 'default'.",
-      "default": "default",
+      "description": "Identifier for the agent using the memory layer. Defaults to 'smithery' when installed via Smithery badge.",
+      "default": "smithery",
+      "x-to": {
+        "header": "x-agent-id"
+      },
       "x-order": 1
     },
     "memory_scope": {
