@@ -172,7 +172,19 @@ Best for:
 
 ---
 
-## MCP Integration (Claude Desktop / Cursor)
+## MCP Integration (one tested path per client)
+
+### Claude Code (CLI)
+
+```bash
+claude mcp add --transport http synapse-layer \
+  https://forge.synapselayer.org/api/mcp \
+  --header "x-connect-token: sk_connect_YOUR_TOKEN"
+```
+
+The URL is a **positional argument** — `claude mcp add --transport http <name> <url>` — there is no `--url` flag.
+
+### Claude Desktop
 
 Add to `claude_desktop_config.json`:
 
@@ -192,10 +204,18 @@ Add to `claude_desktop_config.json`:
 }
 ```
 
-Config file location:
-- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
-- Linux: `~/.config/Claude/claude_desktop_config.json`
+### Cursor
+
+Add to `.cursor/mcp.json` in your project root (same JSON block as above).
+
+### Any MCP client
+
+Any host that runs `npx` can use the `mcp-remote` block above unchanged — it bridges local stdio to the remote endpoint.
+
+Config file locations:
+- Claude Desktop — macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Claude Desktop — Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+- Claude Desktop — Linux: `~/.config/Claude/claude_desktop_config.json`
 
 ---
 

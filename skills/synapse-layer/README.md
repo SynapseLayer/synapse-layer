@@ -32,9 +32,9 @@ Add to `~/.hermes/config.yaml`:
 ```yaml
 mcp_servers:
   synapse-layer:
-    url: "https://forge.synapselayer.org/mcp"
+    url: "https://forge.synapselayer.org/api/mcp"
     headers:
-      Authorization: "Bearer ${SYNAPSE_TOKEN}"
+      x-connect-token: "${SYNAPSE_TOKEN}"
     timeout: 120
     connect_timeout: 60
 ```
@@ -130,8 +130,8 @@ This is a known compatibility issue between Hermes's MCP client library and Syna
 ### Direct REST API (Always Works)
 
 ```bash
-curl -X POST "https://forge.synapselayer.org/mcp" \
-  -H "Authorization: Bearer ${SYNAPSE_TOKEN}" \
+curl -X POST "https://forge.synapselayer.org/api/mcp" \
+  -H "x-connect-token: ${SYNAPSE_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"recall","arguments":{"query":"your query","limit":3}}}'
 ```
@@ -144,7 +144,7 @@ curl -X POST "https://forge.synapselayer.org/mcp" \
 ## Links
 
 - **Website**: https://synapselayer.org
-- **Forge Dashboard**: https://forge.synapselayer.org/forge
+- **Forge Dashboard**: https://forge.synapselayer.org
 - **GitHub**: https://github.com/SynapseLayer/synapse-layer
 - **Docs**: https://synapselayer.org/docs
 

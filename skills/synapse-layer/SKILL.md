@@ -4,13 +4,13 @@ version: 0.3.0
 description: AES-256-GCM encrypted persistent memory layer for Hermes Agent. Provides encrypted cross-session memory, Trust Quotient (TQ) scoring, and automatic recall across ALL channels (Telegram, WhatsApp, CLI, Discord).
 homepage: https://synapselayer.org
 credits: Rafa Martins | rafacpti@gmail.com |  | ramelseg.com.br
-metadata: {"synapse":{"category":"memory","requires":{"env":["SYNAPSE_TOKEN"]},"mcp":{"type":"http","url":"https://forge.synapselayer.org/mcp","auth":"Bearer ${SYNAPSE_TOKEN}"}}}
+metadata: {"synapse":{"category":"memory","requires":{"env":["SYNAPSE_TOKEN"]},"mcp":{"type":"http","url":"https://forge.synapselayer.org/api/mcp","auth":"x-connect-token ${SYNAPSE_TOKEN}"}}}
 ---
 
 # Synapse Layer — Persistent Memory for Hermes
 
 **Credits**: Rafa Martins (rafacpti@gmail.com |  | ramelseg.com.br)  
-**Website**: [synapselayer.org](https://synapselayer.org) | **Forge**: [forge.synapselayer.org/forge](https://synapselayer.org/forge) | **GitHub**: [github.com/SynapseLayer/synapse-layer](https://github.com/SynapseLayer/synapse-layer)
+**Website**: [synapselayer.org](https://synapselayer.org) | **Forge**: [forge.synapselayer.org](https://forge.synapselayer.org) | **GitHub**: [github.com/SynapseLayer/synapse-layer](https://github.com/SynapseLayer/synapse-layer)
 
 AES-256-GCM encrypted memory that persists across ALL Hermes channels. Context survives between sessions, Telegram/WhatsApp/CLI all share the same memory.
 
@@ -25,9 +25,9 @@ Add to `~/.hermes/config.yaml` at the root level (same indentation as `display:`
 ```yaml
 mcp_servers:
   synapse-layer:
-    url: "https://forge.synapselayer.org/mcp"
+    url: "https://forge.synapselayer.org/api/mcp"
     headers:
-      Authorization: "Bearer ${SYNAPSE_TOKEN}"
+      x-connect-token: "${SYNAPSE_TOKEN}"
     timeout: 120
     connect_timeout: 60
 ```
@@ -40,7 +40,7 @@ Add your Synapse Layer token to `~/.hermes/.env`:
 SYNAPSE_TOKEN=sk_connect_your_token_here
 ```
 
-Get your token at: https://synapselayer.org/forge
+Get your token at: https://forge.synapselayer.org
 
 ### 3. Disable Tool Progress for Telegram (IMPORTANT)
 
@@ -229,14 +229,14 @@ Synapse Layer pipeline on every save:
 
 ```bash
 # JSONRPC 2.0 format — list available tools
-curl -X POST "https://forge.synapselayer.org/mcp" \
-  -H "Authorization: Bearer ${SYNAPSE_TOKEN}" \
+curl -X POST "https://forge.synapselayer.org/api/mcp" \
+  -H "x-connect-token: ${SYNAPSE_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
 
 # Recall memories
-curl -X POST "https://forge.synapselayer.org/mcp" \
-  -H "Authorization: Bearer ${SYNAPSE_TOKEN}" \
+curl -X POST "https://forge.synapselayer.org/api/mcp" \
+  -H "x-connect-token: ${SYNAPSE_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"recall","arguments":{"query":"your query","limit":3}}}'
 ```
@@ -263,8 +263,8 @@ When MCP is unstable, call Synapse Layer tools via REST:
 
 ```bash
 # JSONRPC 2.0 format required
-curl -X POST "https://forge.synapselayer.org/mcp" \
-  -H "Authorization: Bearer ${SYNAPSE_TOKEN}" \
+curl -X POST "https://forge.synapselayer.org/api/mcp" \
+  -H "x-connect-token: ${SYNAPSE_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"recall","arguments":{"query":"your query","limit":3}}}'
 ```
@@ -275,7 +275,7 @@ curl -X POST "https://forge.synapselayer.org/mcp" \
 
 ## Dashboard
 
-View and manage memories at: https://forge.synapselayer.org/forge
+View and manage memories at: https://forge.synapselayer.org
 
 ---
 
