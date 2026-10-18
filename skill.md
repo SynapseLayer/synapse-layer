@@ -38,28 +38,24 @@ pip install synapse-layer
 ## Agent Quickstart (60 seconds)
 
 ```python
-from synapse_layer import SynapseClient
+from synapse_layer import Synapse
 
-# Initialize with your API key
-client = SynapseClient(token="sk_connect_...")
+# Initialize with your Connect token (forge.synapselayer.org → Dashboard → Connect)
+client = Synapse(token="sk_connect_...", agent_id="onboarding-v2")
 
 # Store a memory (encrypted server-side with AES-256-GCM)
 client.store(
     content="User prefers dark mode and minimal notifications",
-    agent="onboarding-v2",
-    memory_type="preference"
+    memory_type="long_term",
 )
 
-# Recall by semantic similarity
-memories = client.recall(
-    query="user interface preferences",
-    min_tq=0.7,  # Trust Quotient filter
-    limit=5
-)
-
-# Delete a memory (hard-delete, LGPD-compliant)
-client.delete(memory_id="mem_abc123")
+# Recall by hybrid routing (semantic / temporal / priority / hybrid)
+memories = client.recall(query="user interface preferences", top_k=5)
+for m in memories:
+    print(m["content"], m["trust_quotient"])
 ```
+
+Cross-agent handover is the MCP tool `neural_handover` (JSON-RPC `tools/call`) — it is not a Python client method.
 
 ## Supported Frameworks
 
@@ -84,7 +80,7 @@ client.delete(memory_id="mem_abc123")
 ## Trust & Security
 
 - **Encryption**: AES-256-GCM server-side at rest, per-operation random IV, 128-bit auth tag
-- **Auth**: OAuth 2.0 + PKCE S256, Bearer tokens (sk_connect_*), SHA-256 token hashing
+- **Auth**: OAuth 2.0 + PKCE S256 for the dashboard; header-first Connect tokens (`x-connect-token: sk_connect_*`) for MCP and REST; SHA-256 token hashing
 - **Isolation**: 1 user = 1 tenant = 1 private mind. Zero cross-user access.
 - **Audit**: Immutable three-layer lifecycle (live data, tombstone, analytics)
 - **Compliance**: Designed for LGPD/GDPR alignment. Hard-delete on request.
