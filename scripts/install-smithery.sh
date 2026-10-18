@@ -10,6 +10,8 @@
 #
 # The connect_token is passed as an argv (never in the URL), so it never
 # leaks into CDN/proxy logs. It is a per-agent scoped token, not the master key.
+# NOTE: argv is visible to the local process list on the same machine. On shared
+# hosts, prefer the interactive (masked) prompt instead of passing the token inline.
 # Installs @synapselayer/synapselayer into your MCP client config.
 set -euo pipefail
 
@@ -83,7 +85,7 @@ main() {
   echo
   echo "Installing @synapselayer/synapselayer into your $client config"
   echo "  token: ${token:0:12}… (masked)"
-  npx -y @smithery/cli@latest mcp add "$SERVER_REF" \
+  npx -y @smithery/cli@4.11.1 mcp add "$SERVER_REF" \
     --client "$client" \
     --headers "{\"x-connect-token\": \"$token\", \"x-agent-id\": \"smithery\"}"
 
@@ -91,7 +93,7 @@ main() {
   echo "Done. Restart $client and your 13 Synapse Layer MCP tools will be live:"
   echo "  health_check | initialize_context | recall | search | save_to_synapse"
   echo "  process_text | store_memory | save_memory | list_memories"
-  echo "  memory_feedback | recall_memory | slo_report"
+  echo "  memory_feedback | recall_memory | neural_handover | slo_report"
   echo
   echo "Details: $LISTING_URL"
 }

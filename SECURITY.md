@@ -13,7 +13,7 @@
 
 **Do NOT open public issues for security vulnerabilities.**
 
-- Email: security@synapselayer.org
+- Email: founder.synapselayer@proton.me
 - Response: 48 hours
 
 ## Security Features

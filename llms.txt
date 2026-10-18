@@ -42,8 +42,7 @@ memories = client.recall(query="user theme preference", top_k=5)
 recent = client.list_memories(limit=10)   # metadata + governance pagination
 ```
 
-Full SDK API reference (Python `Synapse`/`SynapseClient` + TypeScript
-`SynapseClient`): https://synapselayer.org/llms-full.txt#sdk-api-reference · https://synapselayer.org/docs#sdk-api
+Full SDK API reference (Python `Synapse` + TypeScript `SynapseClient`): https://synapselayer.org/llms-full.txt#sdk-api-reference · https://synapselayer.org/docs#sdk-api
 
 ## Supported Platforms
 
@@ -52,13 +51,17 @@ Full SDK API reference (Python `Synapse`/`SynapseClient` + TypeScript
 - Cursor — MCP integration
 - LangChain — Python SDK
 - Vercel AI SDK — TypeScript SDK
-- CrewAI, AutoGen, LangGraph — Coming Soon
-- n8n, Zapier — Coming Soon
+- CrewAI, AutoGen, LlamaIndex, Semantic Kernel — Python SDK integrations (pip extras)
+- LangGraph — dedicated package (github.com/SynapseLayer/synapse-layer-langgraph)
+- n8n — REST/MCP recipe (see docs)
+- Zapier — Coming Soon
 
 ## Interop & Registries
 
 - [MCP Marketplace](https://mcp-marketplace.io/server/io-github-synapselayer-synapse-layer): Official MCP server listing
 - [Smithery](https://smithery.ai/server/synapselayer/synapselayer): MCP server registry listing
+- [Glama](https://glama.ai/mcp/connectors/io.github.SynapseLayer/synapse-layer): MCP connector listing
+- [Official MCP Registry](https://registry.modelcontextprotocol.io): Official registry listing
 - [PyPI](https://pypi.org/project/synapse-layer/): Python SDK package (v2.4.6)
 - [npm](https://www.npmjs.com/package/synapse-layer): TypeScript SDK package
 - [GitHub](https://github.com/SynapseLayer/synapse-layer): Source code, issues, and contributions
