@@ -18,6 +18,11 @@ export LC_ALL=C
 REPO="${1:-$(cd "$(dirname "$0")/.." && pwd)}"
 cd "$REPO" || { echo "ERRO: não foi possível entrar em $REPO"; exit 2; }
 
+# Onde procurar. Por omissão, o repositório inteiro. Repositórios com arquivo
+# histórico (versões antigas, já inertes) podem restringir às superfícies vivas:
+#   SCAN_PATHS="nextjs_space public" bash scripts/verify-claims.sh
+SCAN_PATHS="${SCAN_PATHS:-.}"
+
 FAILED=0
 FOUND=0
 
@@ -37,7 +42,7 @@ CORRECTIVE='(FORBIDDEN|forbidden|PROIBIDO|proibido|Claim Proibido|removid[oa]|\x
 check() {
   local label="$1" regex="$2" extra_exclude="${3:-}" redact="${4:-}"
   local hits
-  hits=$(grep -rIniE "$regex" . \
+  hits=$(grep -rIniE "$regex" $SCAN_PATHS \
     --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=.next \
     --exclude-dir=coverage --exclude-dir=dist --exclude-dir=__pycache__ \
     --exclude='*.pyc' --exclude='*.lock' --exclude='*.min.js' 2>/dev/null \
