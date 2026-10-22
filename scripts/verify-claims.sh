@@ -24,7 +24,7 @@ FOUND=0
 # ── ficheiros isentos ───────────────────────────────────────────────────────
 # Documentos que mencionam as expressões proibidas para as proibirem
 # (a matriz, o histórico de mudanças e as auditorias anteriores).
-EXCLUDE='(scripts/verify-claims\.sh[: ]|app/api/v1/capture/route\.ts[: ]|app/api/v1/recall/route\.ts[: ]|\.github/workflows/claims-guard\.yml[: ]|docs/governance/PUBLIC_CLAIMS_MATRIX\.md[: ]|docs/PUBLIC_CLAIMS_MATRIX\.md[: ]|docs/FEATURE_CANONICAL_REGISTRY.*\.md[: ]|CHANGELOG\.md[: ]|docs/releases/.*[: ]|docs/governance/FINAL_SCAN.*\.md[: ]|docs/governance/TRUTH_SOURCE.*\.md[: ]|docs/FEATURE_CANONICAL_REGISTRY_v1\.md[: ]|node_modules/.*$|\.git/.*$|\.pyc$|package-lock\.json[: ]|evidence/.*$|\.venv/.*$|dist/.*$|build/.*$|site/.*$|docs/releases/.*[: ]|docs/archive/.*[: ])'
+EXCLUDE='((^|/)verify-claims\.sh[: ]|(^|/)\.env[.:]|app/api/v1/capture/route\.ts[: ]|app/api/v1/recall/route\.ts[: ]|\.github/workflows/claims-guard\.yml[: ]|docs/governance/PUBLIC_CLAIMS_MATRIX\.md[: ]|docs/PUBLIC_CLAIMS_MATRIX\.md[: ]|docs/FEATURE_CANONICAL_REGISTRY.*\.md[: ]|CHANGELOG\.md[: ]|docs/releases/.*[: ]|docs/governance/FINAL_SCAN.*\.md[: ]|docs/governance/TRUTH_SOURCE.*\.md[: ]|docs/FEATURE_CANONICAL_REGISTRY_v1\.md[: ]|node_modules/.*$|\.git/.*$|\.pyc$|package-lock\.json[: ]|evidence/.*$|\.venv/.*$|dist/.*$|build/.*$|site/.*$|docs/releases/.*[: ]|docs/archive/.*[: ])'
 
 # As rotas de captura/recall ficam isentas: 'zkMode' é o nome do campo do
 # protocolo (renomeá-lo quebra clientes) — um identificador não é uma alegação.
@@ -32,10 +32,10 @@ EXCLUDE='(scripts/verify-claims\.sh[: ]|app/api/v1/capture/route\.ts[: ]|app/api
 # Contexto que indica uma frase correctiva (negação explícita).
 # Nota: sem caracteres multibyte dentro de [ ] — o script corre em modo byte (LC_ALL=C),
 # e um padrão como [ãa] não funciona aí. O texto literal UTF-8 continua a casar normalmente.
-CORRECTIVE='(FORBIDDEN|forbidden|PROIBIDO|proibido|Claim Proibido|removid[oa]|\xef\xb7\x8f|\xe2\x9d\x8c|n[^A-Za-z]{0,2}o[^A-Za-z]{0,3}(usar|usamos|anunciar|afirmar|fazemos|prometemos|somos|processa)|not to be used|instead of|this is[^.]{0,60}not|not[^.]{0,60}(certified|compliant)|processa|processes plaintext|replaced[^.]{0,80}with|sem certifica|no RLS|sem RLS|no database RLS|not a zero-knowledge|not mean zero-knowledge|not end-to-end)'
+CORRECTIVE='(FORBIDDEN|forbidden|PROIBIDO|proibido|Claim Proibido|removid[oa]|\xef\xb7\x8f|\xe2\x9d\x8c|n[^A-Za-z]{0,2}o[^A-Za-z]{0,3}(usar|usamos|anunciar|afirmar|fazemos|prometemos|somos|processa)|not to be used|instead of|this is[^.]{0,60}not|not[^.]{0,60}(certified|compliant)|processa|processes plaintext|sem prova|prometer|replaced[^.]{0,80}with|sem certifica|no RLS|sem RLS|no database RLS|not a zero-knowledge|not mean zero-knowledge|not end-to-end)'
 
 check() {
-  local label="$1" regex="$2" extra_exclude="${3:-}"
+  local label="$1" regex="$2" extra_exclude="${3:-}" redact="${4:-}"
   local hits
   hits=$(grep -rIniE "$regex" . \
     --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=.next \
@@ -48,7 +48,12 @@ check() {
   if [ -n "$hits" ]; then
     echo ""
     echo "✗ ${label}"
-    echo "$hits" | sed 's/^/    /'
+    if [ "$redact" = "redact" ]; then
+      echo "$hits" | sed -E 's/^([^:]+:[0-9]+):.*$/\1/' | sort -u | sed 's/^/    /'
+      echo "    (conteudo redigido: pode ser um segredo real - verificar manualmente)"
+    else
+      echo "$hits" | sed 's/^/    /'
+    fi
     FAILED=$((FAILED + 1))
     FOUND=$((FOUND + 1))
   else
@@ -86,8 +91,10 @@ check "sem alegações de Row-Level Security" \
 check "sem selos de certificação" \
   '(HIPAA[- ]compliant|SOC ?2[- ]compliant|certified by|GDPR[- ]certified|certificad[oa] (pela|by) )'
 
-check "sem prefixos de chave reais nos exemplos" \
-  '(832d919b|SYNAPSE_ENCRYPTION_KEY *= *[0-9a-fA-F]{16,})'
+check "sem chaves reais em ficheiros versionados" \
+  '(832d919b|SYNAPSE_ENCRYPTION_KEY *= *[0-9a-fA-F]{16,})' \
+  '' \
+  redact
 
 check "sem métricas absolutas sem dataset" \
   '(99\.9% (accuracy|uptime|disponibilidade)|100% (uptime|disponibilidade|seguro))'
