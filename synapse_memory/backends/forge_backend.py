@@ -16,8 +16,8 @@ What this mode does and does not guarantee:
     stores no plaintext copy of the content in this path.
   - The key is held by the caller.  Use a key the platform does not
     have.  The platform's own agents and MCP tools read memories through
-    server-side decryption with the tenant key, so the platform is NOT
-    a zero-knowledge system across every path.
+    server-side decryption with the tenant key.  This is not a zero-knowledge
+    system across every path.
   - The request also carries a keyword index and an embedding vector
     derived from the plaintext.  These are processed representations of
     the content, not plaintext, and must be treated as personal data.
@@ -389,8 +389,8 @@ class ForgeBackend:
 
         # ── Step 4: Build payload — NO "content" field ──────────────
         # "zkMode" is the API's legacy field name for "the client already
-        # encrypted the content".  It does not mean zero-knowledge: the
-        # platform's own agents read memories through server-side
+        # encrypted the content".  It does not mean zero-knowledge, because
+        # the platform's own agents read memories through server-side
         # decryption with the tenant key.
         payload: Dict[str, Any] = {
             "encryptedContent": ct_b64,

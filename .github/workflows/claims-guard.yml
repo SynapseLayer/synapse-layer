@@ -1,0 +1,36 @@
+# Synapse Layer — Claims Guard
+# Blocks push/PR if a public claim that the governance matrix forbids
+# reappears in the code, the documentation or the packaging metadata.
+#
+# The matrix is the authority: docs/governance/PUBLIC_CLAIMS_MATRIX.md
+# (PROVEN / HOLD / FORBIDDEN, with the evidence for each).
+#
+# This is the safety net for the G7 correction: the SDK, the architecture
+# document and the skill used to claim things the platform does not do
+# (zero-knowledge, client-side encryption as the default, PBKDF2, RLS,
+# certification seals, a real key prefix).
+
+name: Claims Guard
+
+on:
+  push:
+    branches: ['*']
+  pull_request:
+    branches: ['*']
+
+jobs:
+  claims-guard:
+    name: Verificar alegações públicas
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Correr a guarda de alegações
+        run: bash scripts/verify-claims.sh .
+
+      - name: Resumo
+        if: always()
+        run: |
+          echo "Matriz de governação: docs/governance/PUBLIC_CLAIMS_MATRIX.md"
+          echo "Se esta execução falhou, a alegação proibida está listada acima, com o ficheiro e a linha."
