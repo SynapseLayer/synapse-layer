@@ -21,10 +21,10 @@ Status: APPROVED
 
 ### Benefícios (comprováveis)
 - Cross-model handover seguro
-- Privacy-first: AES-256-GCM encrypted at rest
+- Privacy-first: AES-256-GCM encrypted at rest, com chave por tenant
+  (HKDF-SHA256 sobre a chave mestra) e IV aleatório por operação
+- Differential privacy nos embeddings (mecanismo gaussiano, ε=0.5, δ=1e-5)
 - Deterministic recall com Trust Quotient (TQ)
-- Works in 30 seconds
-- Server never sees plaintext
 
 ### Categorias Oficiais
 - Memory Infrastructure Layer (principal)
@@ -50,12 +50,16 @@ Status: APPROVED
 
 | Canal | Copy Aprovada |
 |---|---|
-| GitHub Org Bio | Persistent, encrypted memory infrastructure for AI agents. Server never sees plaintext. MCP-native. Built in Brazil. |
+| GitHub Org Bio | Persistent, encrypted memory infrastructure for AI agents. Encrypted at rest with a per-tenant key. MCP-native. Built in Brazil. |
 | synapse-layer description | Persistent memory infrastructure for AI agents — encrypted, governed, and cross-agent. |
 | synapse-sdk-python description | Python SDK for Synapse Layer — persistent, encrypted, cross-agent memory for AI agents. |
 | synapse-layer-skill description | Persistent memory skill for AI agents. Remembers preferences, brand voice and decisions with Trust Quotient scoring. |
 | PyPI / npm | Synapse Layer SDK — persistent, encrypted, cross-agent memory for AI agents. |
-| MCP / Smithery | Persistent memory infrastructure for AI agents. Server never sees plaintext. Works in 30 seconds. |
+| MCP / Smithery | Persistent memory infrastructure for AI agents. Encrypted at rest with a per-tenant key. |
+
+> Evidência e estados (PROVEN / HOLD / FORBIDDEN) na matriz de governança:
+> [`docs/governance/PUBLIC_CLAIMS_MATRIX.md`](governance/PUBLIC_CLAIMS_MATRIX.md).
+> Em caso de conflito, prevalece a matriz de governança.
 
 ## Regras de Governança
 1. Toda superfície pública respeita esta matriz.
