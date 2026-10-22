@@ -1,7 +1,7 @@
 """
 Synapse Layer — ForgeBackend Unit Tests
 
-Verifies encryption guarantees (server never sees plaintext):
+Verifies the encryption behaviour of the client-side path:
   - TEST-ENC-1: store() encrypts client-side — NO plaintext in HTTP payload
   - TEST-2: recall() decrypts encrypted envelope before returning
   - TEST-3, TEST-4: Auth failures raised correctly
@@ -9,11 +9,12 @@ Verifies encryption guarantees (server never sees plaintext):
   - TEST-6: Decrypt failures skip items gracefully
   - TEST-7: count() returns correct integer
   - TEST-8: _build_search_index() sanitizes PII
+  - TEST-9: recall() accepts a result that already carries plaintext
 
-Architecture (Client-Side Encrypted):
-  SDK encrypt (AES-256-GCM) → HTTP POST (ciphertext only) → Server stores
-  SDK recall → Server returns encrypted envelope → SDK decrypt locally
-  Plaintext NEVER traverses the network in EITHER direction.
+Architecture (client-side encryption):
+  SDK encrypt (AES-256-GCM) → HTTP POST (ciphertext only) → Platform stores
+  SDK recall → Platform returns encrypted envelope → SDK decrypts locally
+  The plaintext is not part of the request body in this path.
 
 Uses respx to mock httpx requests — no network calls.
 
@@ -76,8 +77,8 @@ def _make_encrypted_payload(key: bytes, plaintext: str) -> dict:
 @pytest.mark.asyncio
 async def test_zk_store_no_plaintext_in_payload(backend: ForgeBackend) -> None:
     """⚡ CRITICAL: Plaintext must NEVER appear in the HTTP payload.
-    SDK encrypts client-side BEFORE POST.  Server NEVER sees plaintext.
-    This is THE definitive encryption test — server never sees plaintext.
+    The SDK encrypts before the POST, so the request body carries the
+    ciphertext and never the content.
     """
     secret_content = "My SSN is 123-45-6789 and my password is hunter2"
     captured_body: dict = {}
@@ -456,3 +457,36 @@ def test_pseudo_embedding_dimensions() -> None:
     # Deterministic: same input → same output
     vec2 = _pseudo_embedding("test text")
     assert vec == vec2
+
+# ── TEST-9: recall() accepts a result that already carries plaintext ──────
+
+@respx.mock
+@pytest.mark.asyncio
+async def test_recall_accepts_plaintext_result(backend: ForgeBackend) -> None:
+    """A result that already carries content is used as-is.
+
+    The platform's server-side path can return the decrypted content;
+    the SDK must not drop those results for lack of encryption fields.
+    """
+    respx.post(f"{BASE_URL}/api/v1/recall").mock(
+        return_value=httpx.Response(
+            200,
+            json={
+                "memories": [
+                    {
+                        "id": "mem_plain_001",
+                        "content": "Already decrypted by the platform",
+                        "trustQuotient": 0.9,
+                        "intent": "preference",
+                    }
+                ],
+                "count": 1,
+            },
+        )
+    )
+
+    results = await backend.recall("anything")
+
+    assert len(results) == 1
+    assert results[0]["id"] == "mem_plain_001"
+    assert results[0]["content"] == "Already decrypted by the platform"

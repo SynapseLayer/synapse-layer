@@ -1,7 +1,7 @@
 # PUBLIC CLAIMS MATRIX — SYNAPSE LAYER
 
 > Regra: claim só vai a público se status = PROVEN e evidência existe.
-> Atualizado: 2026-05-05 | Responsável: Ismael Marchi
+> Atualizado: 2026-10-22 | Responsável: Ismael Marchi
 
 ---
 
@@ -24,6 +24,22 @@
 | 13 | 5 recall modes | auto/temporal/semantic/priority/hybrid — RecallRouter live | Technical docs |
 | 14 | pgvector semantic search | HNSW index + text-embedding-3-small (1536d) | Technical docs |
 | 15 | pip install synapse-layer (<10s) | Confirmado: 3s em clean venv | Onboarding, README |
+| 16 | Encryption at rest: AES-256-GCM, per-tenant key | `lib/synapse/memory-encryption.ts` — per-tenant key (HKDF-SHA256 over the master key) when `SYNAPSE_HKDF_ENABLED=true`; random 96-bit IV per operation; 128-bit auth tag; fail-closed on a missing key | Security docs, comparisons |
+| 17 | Differential privacy on embeddings | `lib/synapse/privacy.ts` — Gaussian mechanism, ε=0.5, δ=1e-5, applied to the stored vector | Security docs, comparisons |
+| 18 | 21 PII patterns redacted before storage | `lib/synapse/sanitizer.ts` — pattern-based redaction (`[TYPE_REDACTED]`) | Security docs, compliance |
+
+### Reality of the two storage paths (use this wording, not a blanket claim)
+
+| Path | Who holds the key | What the platform stores | Who can read the plaintext |
+|------|-------------------|-------------------------|---------------------------|
+| Server-side (platform agents, MCP tools) | The platform, per tenant | Ciphertext (AES-256-GCM) | The platform's agents and tools, after server-side decryption, inside the platform's trust boundary |
+| Client-side (SDK opt-in) | The caller | Ciphertext (AES-256-GCM) | Only the caller — and only while it holds the key |
+
+Neither path is end-to-end encrypted across the whole platform, and neither
+path is a zero-knowledge system for the platform's own agents.  In the
+client-side path the request still carries a keyword index and an embedding
+vector derived from the plaintext: these are processed representations of
+the content, not plaintext, and must be handled as personal data.
 
 ---
 
@@ -47,7 +63,7 @@
 | 2 | Continuous Consciousness Infrastructure | Overclaim — não há "consciência" |
 | 3 | Consciência Sintética / Imortalidade Cognitiva | Risco reputacional extremo |
 | 4 | Giving Models a Soul | Marketing enganoso |
-| 5 | Client-side encryption | Encriptação é server-side (AES-256-GCM at rest) |
+| 5 | Client-side encryption | A encriptação é server-side por omissão. O modo cliente é opcional (chave do chamador) e não é E2E — nunca anunciar como "o servidor nunca vê o texto" |
 | 6 | End-to-end encrypted | Não é E2E — server encripta |
 | 7 | Métricas absolutas sem dataset verificável | Misleading (ex: "99.9% accuracy") |
 | 8 | Quantum-proof / Quantum-resistant | Sem implementação de PQC |

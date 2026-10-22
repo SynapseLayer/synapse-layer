@@ -10,7 +10,7 @@ Synapse Layer is a **Persistent Encrypted Memory Layer for AI Agents** with AES-
 2. **Client-Side Sanitization:** PII removal before transmission
 3. **Intent Validation:** Intelligent categorization with self-healing
 4. **Trust Quotient:** Adaptive conflict resolution algorithm
-5. **Immutable Pipeline:** sanitize → validate → encrypt → embed → store
+5. **Fixed-order pipeline:** sanitize → validate → encrypt → embed → store
 
 ---
 
@@ -45,13 +45,13 @@ graph TD
     O -->|proceed| M
     O -->|reject| P["Drop Memory"]
     
-    M -->|encrypt with PBKDF2 derived key| Q["Encrypted Blob"]
+    M -->|encrypt with per-tenant key (HKDF over master key)| Q["Encrypted Blob"]
     Q --> R["Generate Embeddings"]
     
     R -->|semantic search vector| S["pgvector Index"]
     S --> T["PostgreSQL Storage"]
     
-    T --> U["Immutable Audit Log"]
+    T --> U["Audit Log (append-only)"]
     U --> V["Memory Successfully Stored"]
     
     V --> W["Return Handle & Proof"]
@@ -114,9 +114,15 @@ graph TD
 
 ### 3. AES-256-GCM Encryption
 
-**Key Derivation:** PBKDF2-SHA256
-- Iterations: **210,000** (NIST 2023 minimum)
-- Salt: 32 bytes, randomly generated
+**Key Derivation:** per-tenant key from the master key
+- Master key: `SYNAPSE_ENCRYPTION_KEY` (64 hex chars = 256-bit), held in
+  the environment. It is never a client credential.
+- Per-tenant derivation: HKDF-Expand over HMAC-SHA256 —
+  `HMAC-SHA256(masterKey, tenantId + ":synapse-memory-v1")` → 256-bit key,
+  giving cryptographic separation between tenants.
+- Enabled by `SYNAPSE_HKDF_ENABLED=true` (encryption version `v1.1-hkdf`).
+  Memories written before that (version `v1.0`) use the master key
+  directly and are still readable.
 - Output: 256-bit encryption key
 
 **Encryption Mode:**
@@ -126,7 +132,7 @@ graph TD
 
 **Process:**
 ```
-User Password + Random Salt → PBKDF2(210k iterations) → 256-bit Key
+Master Key (env) + tenantId → HKDF-Expand (HMAC-SHA256) → 256-bit per-tenant key
                                                      ↓
                                           AES-256-GCM Encryption
                                                      ↓
@@ -156,17 +162,16 @@ CREATE TABLE memories (
     updated_at TIMESTAMP NOT NULL
 );
 
--- Row-Level Security (RLS)
-ALTER TABLE memories ENABLE ROW LEVEL SECURITY;
-CREATE POLICY agent_isolation
-    ON memories
-    FOR SELECT
-    USING (agent_id = current_user_id());
+-- Isolation is enforced by the application layer:
+-- every read/write is scoped by tenant_id (fail-closed).
+-- No Row-Level Security policy is enabled on these tables.
 ```
 
 **Constraints:**
-- RLS (Row-Level Security) by agent_id
-- Immutable audit trail
+- Tenant isolation enforced in the application layer: every query is
+  scoped by `tenantId` and fails closed. No database RLS policy is
+  enabled — the guarantee comes from the query layer, not from Postgres
+- Append-only audit trail (application level)
 - Automatic deletion on TTL
 
 ### 6. Trust Quotient Calculation
@@ -190,14 +195,14 @@ Full algorithm available under Enterprise license.
 
 ---
 
-## Pipeline Sequence (Immutable)
+## Pipeline Sequence (fixed order)
 
 The following sequence is **mandatory and non-negotiable**:
 
 1. **INPUT** → Raw text
 2. **SANITIZE** → Remove PII (SynapseSanitizer)
 3. **VALIDATE** → Classify intent (SynapseValidator)
-4. **ENCRYPT** → AES-256-GCM with PBKDF2 key
+4. **ENCRYPT** → AES-256-GCM with the per-tenant key
 5. **EMBED** → Generate semantic vector
 6. **STORE** → Upsert to pgvector + audit log
 7. **OUTPUT** → Memory handle + proof of storage
@@ -320,7 +325,8 @@ Signature: HMAC-SHA256(header.payload, signing_key)
 
 - **Encrypted at Rest:** AES-256-GCM with per-operation random IV — content cleared after encryption
 - **Client-Side Sanitization:** PII removed before leaving client
-- **Immutable Audit:** Every operation logged; cannot be deleted
+- **Audit trail:** every operation logged in `ForgeEvent` (append-only in
+  the application; the database layer does not enforce immutability)
 - **Differential Privacy:** Aggregate queries don't leak individual data
 - **Handover Verification:** HMAC-SHA256 signed JWT tokens on cross-model transfers
 - **Persistence-First:** All handovers vault-persisted before transmission
@@ -329,10 +335,14 @@ Signature: HMAC-SHA256(header.payload, signing_key)
 
 ## Compliance & Standards
 
-- ✅ **GDPR:** Data minimization, encryption, right to deletion
-- ✅ **LGPD:** Consent, secure handling, audit trail (padrão bancário BR)
-- ✅ **HIPAA:** Encryption + audit (with proper key management)
-- ✅ **SOC 2:** Security controls, monitoring, incident response
+- **LGPD-ready:** consent records, encryption at rest, right to deletion
+  (soft and hard), audit trail. "Ready" means the controls exist — it is
+  not a certification and no certification is claimed.
+- **GDPR-aligned controls:** data minimisation, encryption at rest, right
+  to deletion. No GDPR certification is claimed.
+- **HIPAA / SOC 2:** the technical controls (encryption, audit trail,
+  tenant isolation) are the building blocks, but the platform holds **no
+  HIPAA or SOC 2 certification**. Do not present it as certified.
 
 ---
 
@@ -342,7 +352,7 @@ Signature: HMAC-SHA256(header.payload, signing_key)
 |-----------|---------|-----------|
 | Sanitize | < 10ms | 1000+ items/sec |
 | Validate | < 5ms | 2000+ items/sec |
-| PBKDF2 (210k) | ~100ms | Single-threaded |
+| Key derivation (HKDF-Expand) | < 1ms | Per tenant, cached in memory |
 | AES-256-GCM | < 5ms | ~100MB/sec |
 | Embedding (API) | 100-500ms | Depends on provider |
 | pgvector Search | < 50ms | HNSW index |

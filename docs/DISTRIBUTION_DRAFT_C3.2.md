@@ -29,7 +29,7 @@ Synapse Layer gives agents persistent memory in 3 steps:
 2. recall() — Semantic search across all stored memory
 3. TQ score — Trust Quotient ranks memory by reliability
 
-AES-256-GCM encrypted at rest. Server never sees plaintext.
+AES-256-GCM encrypted at rest with a per-tenant key (HKDF over the master key).
 
 ### Tweet 4 (code)
 Get started in 30 seconds:

@@ -85,8 +85,8 @@ Persistent encrypted memory for AI agents. AES-256-GCM at rest, content sanitiza
 
 ### Security Posture
 
-- AES-256-GCM with PBKDF2 key derivation (600k iterations)
-- 15+ PII regex patterns (emails, phones, SSNs, credentials)
+- AES-256-GCM with a per-tenant key derived from the master key (HKDF-SHA256)
+- 21 PII regex patterns (emails, phones, SSNs, CPFs/CNPJs, credentials)
 - Calibrated Gaussian noise on embeddings (differential privacy)
 - Encryption: AES-256-GCM at rest with per-operation random IV
 

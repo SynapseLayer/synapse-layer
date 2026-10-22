@@ -89,10 +89,10 @@ async def store_memory_complete_pipeline(raw_content: str, agent_id: str):
         }
     
     # ============================================================================
-    # STEP 3: ENCRYPT — AES-256-GCM with PBKDF2 derived key
+    # STEP 3: ENCRYPT — AES-256-GCM with the per-tenant key (HKDF over master key)
     # ============================================================================
     print("\n[STEP 3] ENCRYPTING with AES-256-GCM...")
-    print(f"  ℹ️  Key derivation: PBKDF2-SHA256 (210,000 iterations)")
+    print(f"  ℹ️  Key derivation: per-tenant key (HKDF-SHA256 over the master key)")
     print(f"  ℹ️  IV: 96 bits (random)")
     print(f"  ℹ️  Auth Tag: 128 bits")
     
@@ -134,7 +134,7 @@ async def store_memory_complete_pipeline(raw_content: str, agent_id: str):
     }
     
     print(f"  ✓ Memory stored in PostgreSQL + pgvector")
-    print(f"  ✓ Row-Level Security (RLS) by agent_id")
+    print(f"  ✓ Tenant isolation applied (queries scoped by tenant_id)")
     print(f"  ✓ Audit log entry created")
     
     # ============================================================================
