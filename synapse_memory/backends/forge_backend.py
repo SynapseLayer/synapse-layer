@@ -1,27 +1,38 @@
 """
-Synapse Layer — Forge Backend (AES-256-GCM Encrypted)
+Synapse Layer — Forge Backend (client-side AES-256-GCM)
 
-Production-grade backend for Synapse Layer Forge API.
+Backend for the Synapse Layer Forge API that keeps memory content opaque
+to the platform by encrypting it in the calling process.
 
-Architecture (Client-Side Encrypted):
-  - **Store**: SDK encrypts content client-side (AES-256-GCM) BEFORE
-    the HTTP POST.  The server NEVER sees plaintext.  The payload
-    contains ``encryptedContent``, ``iv``, ``authTag``, ``searchIndex``
-    (sanitized keywords), and ``zkMode: true``.
-  - **Recall**: Server returns the encrypted envelope (ciphertext, iv,
-    authTag).  SDK decrypts locally.  Plaintext NEVER traverses the
-    network in either direction.
+Architecture (client-side encryption):
+  - **Store**: the SDK encrypts the content with AES-256-GCM BEFORE the
+    HTTP POST and sends ``encryptedContent``, ``iv`` and ``authTag``.
+    The platform stores the ciphertext as-is.
+  - **Recall**: the API returns the encrypted envelope (ciphertext, iv,
+    authTag) and the SDK decrypts it locally.
 
-The encryption_key is the hex-decoded SYNAPSE_ENCRYPTION_KEY, shared
-between SDK and server.  Both sides use identical AES-256-GCM params.
+What this mode does and does not guarantee:
+  - The content travels over TLS and is stored encrypted; the platform
+    stores no plaintext copy of the content in this path.
+  - The key is held by the caller.  Use a key the platform does not
+    have.  The platform's own agents and MCP tools read memories through
+    server-side decryption with the tenant key, so the platform is NOT
+    a zero-knowledge system across every path.
+  - The request also carries a keyword index and an embedding vector
+    derived from the plaintext.  These are processed representations of
+    the content, not plaintext, and must be treated as personal data.
+
+The server-side alternative (platform encrypts at rest with a key derived
+per tenant, content readable by the platform's own agents) is available
+through :class:`synapse_memory.client.SynapseClient` and the MCP tools.
 
 Usage::
 
     from synapse_memory.backends import ForgeBackend
 
     backend = ForgeBackend(
-        api_key="sk_connect_abc123",
-        encryption_key=bytes.fromhex("832d919b..."),  # SYNAPSE_ENCRYPTION_KEY
+        api_key="sk_connect_...",
+        encryption_key=bytes.fromhex("00112233..."),  # YOUR key, 32 bytes
     )
     memory_id = await backend.store("User prefers dark mode")
     results  = await backend.recall("preferences")
@@ -63,12 +74,11 @@ _EMBEDDING_DIM = 1536  # Forge API expects 1536-dim vectors
 
 
 class ForgeBackend:
-    """AES-256-GCM encrypted backend for Synapse Layer Forge API.
+    """Backend for the Synapse Layer Forge API using client-side AES-256-GCM.
 
-    Store encrypts content CLIENT-SIDE (AES-256-GCM) BEFORE the HTTP
-    POST — the server NEVER receives or sees plaintext.
-    Recall receives encrypted envelopes and decrypts locally.
-    Plaintext NEVER traverses the network in EITHER direction.
+    The content is encrypted in this process with a key you hold, and the
+    platform stores the resulting ciphertext.  The API returns the
+    encrypted envelope on recall and the SDK decrypts it locally.
 
     This class implements the ``StorageBackend`` protocol with
     async-first methods.  For synchronous use, wrap calls with
@@ -77,9 +87,11 @@ class ForgeBackend:
     Args:
         api_key: Bearer token (``sk_connect_...``).
         base_url: Forge API base URL.  Default: ``https://forge.synapselayer.org``.
-        encryption_key: 32-byte AES-256 key — must match the Forge server's
-            ``SYNAPSE_ENCRYPTION_KEY``.  Used to decrypt recalled memories.
-            If ``None``, generates a random key and logs a WARNING.
+        encryption_key: Your own 32-byte AES-256 key.  Use a key the
+            platform does not hold — the platform's master key is not a
+            client credential.  If ``None``, a random key is generated
+            and a WARNING is logged; persist it or the stored memories
+            become unreadable.
         timeout: HTTP request timeout in seconds.
         embedding_fn: Optional callable ``(text: str) -> List[float]``.
             Supports sync and async functions.  Takes precedence over
@@ -95,11 +107,16 @@ class ForgeBackend:
         2. ``embedding_provider`` + ``embedding_api_key`` (pluggable provider)
         3. Pseudo-embedding (SHA-256 expansion — always works, no deps)
 
+    Note on the trade-off: because the platform never sees the plaintext
+    in this mode, it cannot run the content quality gate or build a
+    semantic vector for these memories.  The SDK sends the embedding it
+    computed locally so that semantic recall keeps working.
+
     Example with OpenAI provider (semantic quality)::
 
         backend = ForgeBackend(
             api_key="sk_connect_...",
-            encryption_key=bytes.fromhex("832d...cba"),
+            encryption_key=bytes.fromhex("0011...cba"),
             embedding_provider="openai",
             embedding_api_key="sk-proj-...",
         )
@@ -107,8 +124,8 @@ class ForgeBackend:
     Example without provider (baseline — always works)::
 
         backend = ForgeBackend(
-            api_key="sk_connect_abc123",
-            encryption_key=bytes.fromhex("832d...cba"),
+            api_key="sk_connect_...",
+            encryption_key=bytes.fromhex("0011...cba"),
         )
         # Uses pseudo-embedding — functional but not semantically meaningful
     """
@@ -136,8 +153,9 @@ class ForgeBackend:
         if encryption_key is None:
             encryption_key = os.urandom(32)
             logger.warning(
-                "[Synapse] No encryption_key provided — generated random key. "
-                "Persist this key or you will LOSE access to stored memories: %s",
+                "[Synapse] No encryption_key provided — generated a random key. "
+                "The platform cannot read memories stored with this key: "
+                "persist it or you will LOSE access to them. Key: %s",
                 encryption_key.hex(),
             )
         if not isinstance(encryption_key, bytes) or len(encryption_key) != 32:
@@ -322,19 +340,24 @@ class ForgeBackend:
     ) -> str:
         """Store a memory via the Forge API using client-side encryption.
 
-        This backend encrypts content on the client (AES-256-GCM) before it
-        leaves the SDK, so the server only handles ciphertext. (The default
-        ``Synapse`` backend sends plaintext and encrypts at rest instead.)
+        The content is encrypted with AES-256-GCM in this process before
+        the request leaves, so the platform stores the ciphertext without
+        holding a plaintext copy.
 
         Flow:
-            1. Encrypt content CLIENT-SIDE (AES-256-GCM)
+            1. Encrypt content client-side (AES-256-GCM)
             2. Build sanitized search index (keywords, no PII)
             3. Generate embedding from plaintext (before sending)
-            4. POST encrypted envelope + searchIndex + zkMode=True
-            5. Server stores ciphertext WITHOUT re-encrypting
+            4. POST encrypted envelope + searchIndex
+            5. Platform stores the ciphertext as-is
 
         The ``content`` field is intentionally absent from the payload —
         replaced by ``encryptedContent``, ``iv``, ``authTag``.
+
+        Note: the search index and the embedding are derived from the
+        plaintext and travel with the request.  They are processed
+        representations of the content, not plaintext, and should be
+        handled as personal data.
 
         Args:
             content: Memory content string.
@@ -365,6 +388,10 @@ class ForgeBackend:
             embedding = await self._embed(content)
 
         # ── Step 4: Build payload — NO "content" field ──────────────
+        # "zkMode" is the API's legacy field name for "the client already
+        # encrypted the content".  It does not mean zero-knowledge: the
+        # platform's own agents read memories through server-side
+        # decryption with the tenant key.
         payload: Dict[str, Any] = {
             "encryptedContent": ct_b64,
             "iv": iv_b64,
@@ -478,13 +505,15 @@ class ForgeBackend:
         threshold: float = 0.7,
         agent_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
-        """Recall memories with local AES-256-GCM decryption.
+        """Recall memories and return them in plaintext.
 
         Flow:
             1. Generate embedding from query
             2. POST to Forge recall API
-            3. Decrypt each result locally using SYNAPSE_ENCRYPTION_KEY
-            4. Return plaintext results — NEVER returns ciphertext to caller
+            3. Decrypt each result locally with the key held by this
+               process
+            4. Return plaintext results — ciphertext is never returned
+               to the caller
 
         Memories that fail decryption are silently skipped (logged as
         WARNING without sensitive data).
@@ -537,21 +566,29 @@ class ForgeBackend:
         for item in raw_results:
             memory_id = item.get("id", item.get("memoryId", "unknown"))
             try:
-                enc_content = item.get("encryptedContent", "")
-                iv_str = item.get("iv", "")
-                tag_str = item.get("authTag", "")
+                # A result may already carry plaintext (server-side
+                # encryption path); otherwise it is an encrypted envelope
+                # that this process decrypts with its own key.
+                direct_content = item.get("content")
+                if isinstance(direct_content, str) and direct_content:
+                    plaintext = direct_content
+                else:
+                    enc_content = item.get("encryptedContent", "")
+                    iv_str = item.get("iv", "")
+                    tag_str = item.get("authTag", "")
 
-                if not enc_content or not iv_str or not tag_str:
-                    logger.warning(
-                        "[Synapse] Recall item %s missing encryption fields — skipped",
-                        str(memory_id)[:12],
+                    if not enc_content or not iv_str or not tag_str:
+                        logger.warning(
+                            "[Synapse] Recall item %s has neither content nor "
+                            "encryption fields — skipped",
+                            str(memory_id)[:12],
+                        )
+                        continue
+
+                    # Decrypt using raw AES-256-GCM (base64 fields, no wire format)
+                    plaintext = self._decrypt_aes_gcm(
+                        enc_content, iv_str, tag_str, self._enc_key
                     )
-                    continue
-
-                # Decrypt using raw AES-256-GCM (base64 fields, no wire format)
-                plaintext = self._decrypt_aes_gcm(
-                    enc_content, iv_str, tag_str, self._enc_key
-                )
 
                 decrypted.append({
                     "id": memory_id,

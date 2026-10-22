@@ -204,10 +204,16 @@ Every active project the user works on must be stored with:
 
 ## Security
 
-- **AES-256-GCM** encryption at rest
-- **15+ PII patterns** auto-redacted (emails, phones, API keys, IPs)
-- **Server never sees plaintext** — encrypted at rest with per-operation random IV
-- **Differential privacy** on embeddings
+- **AES-256-GCM** encryption at rest, with a per-tenant key derived from the
+  master key (HKDF) and a random IV per operation
+- **21 PII patterns** auto-redacted (emails, phones, API keys, IPs, CPFs/CNPJs)
+- **Differential privacy on embeddings** — Gaussian mechanism, ε=0.5, δ=1e-5
+- **Tenant isolation** — every query scoped by `tenantId`, fail-closed
+
+The platform's own agents and MCP tools read memories through server-side
+decryption, so the content is plaintext inside the platform's trust
+boundary. The SDK's optional client-side mode keeps content encrypted with
+a key the caller holds — in that mode the platform stores only ciphertext.
 
 Safe to store: user preferences, project decisions, environment facts, code patterns, tool quirks.
 

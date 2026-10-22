@@ -13,7 +13,10 @@ Wire format (all big-endian)::
     - ciphertext: AES-256-GCM output (includes 128-bit auth tag)
 
 Key derivation uses PBKDF2-HMAC-SHA256 with 600,000 iterations
-(OWASP 2023 recommendation) and a 16-byte random salt.
+(OWASP 2023 recommendation) and a 16-byte random salt.  This is the
+SDK's local helper for password-derived keys; the platform's own
+at-rest scheme derives a per-tenant key from the server master key
+with HKDF-SHA256 and is documented in the Forge architecture.
 
 Author : Security & Architecture Team @ Synapse Layer
 License: Apache 2.0

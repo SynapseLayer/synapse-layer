@@ -27,7 +27,7 @@ Agent → Sanitize (PII) → Validate Intent → Encrypt (AES-256-GCM) → DP No
 - **Persistent cross-session memory** — agents remember across restarts
 - **Deterministic recall** — ranked by Trust Quotient scoring
 - **AES-256-GCM Encryption** — encrypted at rest with per-operation random IV
-- **AES-256-GCM encryption** with PBKDF2 key derivation (600k iterations)
+- **AES-256-GCM encryption** with a per-tenant key derived from the master key (HKDF-SHA256)
 - **Content sanitization** — input validation and sanitization before encryption
 - **Differential privacy** — calibrated Gaussian noise on embeddings
 - **1-line integration** — `@remember` decorator wraps any function
@@ -89,7 +89,7 @@ Ismael Marchi — [@synapselayer](https://x.com/synapselayer)
 - 5 framework integrations
 - 4 MCP tools (real DB calls)
 - 2 storage backends + custom protocol
-- AES-256-GCM + PBKDF2 (600k iterations)
+- AES-256-GCM + per-tenant key (HKDF-SHA256 over the master key)
 
 ---
 
