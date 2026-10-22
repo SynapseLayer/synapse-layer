@@ -24,7 +24,7 @@ FOUND=0
 # ── ficheiros isentos ───────────────────────────────────────────────────────
 # Documentos que mencionam as expressões proibidas para as proibirem
 # (a matriz, o histórico de mudanças e as auditorias anteriores).
-EXCLUDE='(scripts/verify-claims\.sh[: ]|docs/governance/PUBLIC_CLAIMS_MATRIX\.md[: ]|docs/PUBLIC_CLAIMS_MATRIX\.md[: ]|docs/FEATURE_CANONICAL_REGISTRY.*\.md[: ]|CHANGELOG\.md[: ]|docs/releases/.*[: ]|docs/governance/FINAL_SCAN.*\.md[: ]|docs/governance/TRUTH_SOURCE.*\.md[: ]|docs/FEATURE_CANONICAL_REGISTRY_v1\.md[: ]|node_modules/.*$|\.git/.*$|\.pyc$|package-lock\.json[: ]|evidence/.*$|\.venv/.*$|dist/.*$|build/.*$|site/.*$|docs/releases/.*[: ]|docs/archive/.*[: ])'
+EXCLUDE='(scripts/verify-claims\.sh[: ]|\.github/workflows/claims-guard\.yml[: ]|docs/governance/PUBLIC_CLAIMS_MATRIX\.md[: ]|docs/PUBLIC_CLAIMS_MATRIX\.md[: ]|docs/FEATURE_CANONICAL_REGISTRY.*\.md[: ]|CHANGELOG\.md[: ]|docs/releases/.*[: ]|docs/governance/FINAL_SCAN.*\.md[: ]|docs/governance/TRUTH_SOURCE.*\.md[: ]|docs/FEATURE_CANONICAL_REGISTRY_v1\.md[: ]|node_modules/.*$|\.git/.*$|\.pyc$|package-lock\.json[: ]|evidence/.*$|\.venv/.*$|dist/.*$|build/.*$|site/.*$|docs/releases/.*[: ]|docs/archive/.*[: ])'
 
 # Contexto que indica uma frase correctiva (negação explícita).
 # Nota: sem caracteres multibyte dentro de [ ] — o script corre em modo byte (LC_ALL=C),
