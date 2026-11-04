@@ -9,6 +9,8 @@
 
 Synapse Layer is open-source persistent memory infrastructure for AI agents and assistants. Memories are encrypted at rest with AES-256-GCM, indexed via pgvector HNSW for semantic recall, and exposed through MCP JSON-RPC for native integration with Claude, GPT, Gemini, and any MCP-compatible client. Apache 2.0 licensed.
 
+**Status and limits:** see [FEATURES.md](FEATURES.md) — the public contract for what is shipped, gated, experimental or roadmap.
+
 [![PyPI](https://img.shields.io/pypi/v/synapse-layer)](https://pypi.org/project/synapse-layer/)
 [![Python](https://img.shields.io/pypi/pyversions/synapse-layer)](https://pypi.org/project/synapse-layer/)
 [![Downloads](https://img.shields.io/pypi/dm/synapse-layer)](https://pypi.org/project/synapse-layer/)
@@ -62,7 +64,7 @@ Your AI agents forget everything between sessions. Synapse Layer fixes that.
 | 🌐 **Cross-agent memory** | Save in ChatGPT, recall in Claude |
 | ⚡ **MCP-native** | Any MCP-compatible agent |
 | 🔒 **Header-first auth** | Tokens never in URLs or logs |
-| 🎯 **Trust Quotient** | Deterministic recall — memories ranked by confidence, not recency alone |
+| 🎯 **Trust Quotient** | Trust-weighted recall — confidence, recency and usage combined with semantic relevance |
 
 ---
 
@@ -74,7 +76,7 @@ Your AI agents forget everything between sessions. Synapse Layer fixes that.
 |---|---|
 | Agent forgets context every session | Persistent memory across all sessions |
 | Memory locked to one model | Cross-agent: save in ChatGPT, recall in Claude |
-| No audit trail | Trust Quotient scoring on every memory |
+| No audit trail | Append-only audit events for scope changes and curation decisions |
 | Complex integration | `pip install synapse-layer` + 3 lines of code |
 | Plaintext stored on servers | AES-256-GCM encrypted at rest |
 
@@ -129,9 +131,9 @@ Get your token at [forge.synapselayer.org](https://forge.synapselayer.org) → D
 
 ---
 
-## 13 MCP Tools at a Glance
+## 13 MCP Tool Names at a Glance
 
-Synapse Layer currently exposes 13 MCP tools for persistent memory workflows:
+Synapse Layer registers 13 public tool names (10 operations plus 3 aliases) for persistent memory workflows:
 
 - `recall`
 - `save_to_synapse`
@@ -147,11 +149,13 @@ Synapse Layer currently exposes 13 MCP tools for persistent memory workflows:
 - `neural_handover`
 - `slo_report`
 
-These tools cover memory capture, semantic recall, structured storage, feedback loops, agent handoff, and operational observability.
+`save_memory`, `store_memory` and `save_to_synapse` are aliases; `recall` and `recall_memory` are aliases. These tools cover memory capture, semantic recall, structured storage, feedback loops, agent handoff, and operational observability.
 
 ---
 
 ## Deployment Modes
+
+The public package runs the client and local engine. The hosted Forge adds corporate organizations, projects, memberships, curation policies and audit. See [FEATURES.md](FEATURES.md) for what is OSS, hosted, gated or roadmap.
 
 ### Python Script Mode
 Use the SDK when you want direct Python access to Forge memory from your application.
@@ -244,7 +248,7 @@ curl -X POST \
 | Integrity | HMAC-SHA-256 on content |
 | Auth | Header-first (`x-connect-token`) — tokens never in URLs or logs |
 | Privacy | Content sanitization + tenant-scoped encrypted storage |
-| Isolation | 1 user = 1 tenant = 1 private mind |
+| Isolation | Personal: 1 user = 1 private mind. Corporate: organization → projects → memberships, with tenant-scoped queries |
 
 See [SECURITY.md](SECURITY.md) for vulnerability reporting.
 
@@ -262,7 +266,8 @@ See [SECURITY.md](SECURITY.md) for vulnerability reporting.
 
 ## Governance
 
-- All public claims follow the [Public Claims Matrix](docs/PUBLIC_CLAIMS_MATRIX.md).
+- Public features and limits follow [FEATURES.md](FEATURES.md).
+- Internal governance follows the [Public Claims Matrix](docs/PUBLIC_CLAIMS_MATRIX.md).
 - Architecture details that reveal benefits are public; mechanisms that enable them are private.
 - Claim = Reality. If it's not implemented, it's not in the README.
 
