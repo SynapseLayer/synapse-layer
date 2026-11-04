@@ -40,7 +40,7 @@
 | Lifecycle states (active · needs_review · merged · superseded · quarantined · archived) | Shipped | — |
 | Grace window before expiry | Shipped | Memory stays recallable during the window |
 | Expiry surfaced in the curation queue | Shipped | Passive — no proactive notifications yet |
-| No AI-initiated merge or deletion. Policy-based TTL/GC may delete expired data under configured retention rules, with an audit trail. Hard delete requires a documented reason. | Shipped (mechanism) | — |
+| No AI-initiated merge or deletion. Policy-based TTL/GC may delete expired data under configured retention rules, with an audit trail. Hard delete is restricted to the documented erasure path (LGPD reason, append-only trail). | Shipped (mechanism) | Verification that every hard-delete path requires a reason is in progress |
 | Full right-to-erase propagation (indexes, embeddings, caches, backups) + retention/legal-hold exceptions | In progress | **Not claimed as complete compliance** |
 | Proactive pre-expiry notifications | Roadmap | — |
 
