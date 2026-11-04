@@ -59,7 +59,7 @@ Full SDK API reference (Python `Synapse` + TypeScript `SynapseClient`): https://
 ## Interop & Registries
 
 - [MCP Marketplace](https://mcp-marketplace.io/server/io-github-synapselayer-synapse-layer): Official MCP server listing
-- [Smithery](https://smithery.ai/server/synapselayer/synapselayer): MCP server registry listing
+- Smithery (directory only — proxy/CLI retired 2026-10-31): https://smithery.ai/server/synapselayer/synapselayer
 - [Glama](https://glama.ai/mcp/connectors/io.github.SynapseLayer/synapse-layer): MCP connector listing
 - [Official MCP Registry](https://registry.modelcontextprotocol.io): Official registry listing
 - [PyPI](https://pypi.org/project/synapse-layer/): Python SDK package (v2.4.6)
@@ -86,4 +86,4 @@ Full SDK API reference (Python `Synapse` + TypeScript `SynapseClient`): https://
 - [Agent Skill](https://synapselayer.org/skill.md): When and how to use Synapse Layer — agent-readable skill file.
 - [Forge Dashboard](https://forge.synapselayer.org): Operational dashboard for memory management.
 - [MCP Marketplace](https://mcp-marketplace.io/server/io-github-synapselayer-synapse-layer): MCP server listing.
-- [Smithery](https://smithery.ai/server/synapselayer/synapselayer): MCP server registry listing.
+- Smithery (directory only — proxy/CLI retired 2026-10-31): https://smithery.ai/server/synapselayer/synapselayer

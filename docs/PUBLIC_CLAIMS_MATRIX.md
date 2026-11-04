@@ -1,6 +1,9 @@
 # PUBLIC_CLAIMS_MATRIX.md
 **Synapse Layer — Matriz de Claims Públicos v1.0**
 
+> **Superseded (2026-11-04):** the public contract is [FEATURES.md](../FEATURES.md).
+> This file is retained for historical governance; conflicts resolve in favor of FEATURES.md.
+
 Última atualização: 04 de Maio de 2026
 Proprietário: Ismael Marchi
 Status: APPROVED
@@ -23,8 +26,7 @@ Status: APPROVED
 - Cross-model handover seguro
 - Privacy-first: AES-256-GCM encrypted at rest, com chave por tenant
   (HKDF-SHA256 sobre a chave mestra) e IV aleatório por operação
-- Differential privacy nos embeddings (mecanismo gaussiano, ε=0.5, δ=1e-5)
-- Deterministic recall com Trust Quotient (TQ)
+- Trust-weighted recall com Trust Quotient (TQ)
 
 ### Categorias Oficiais
 - Memory Infrastructure Layer (principal)
@@ -36,9 +38,9 @@ Status: APPROVED
 - "Zero context loss across 10K+ sessions" → só após validação
 - "Enterprise-ready" → só após casos reais
 - "Self-healing memory" → em desenvolvimento
+- "Differential privacy" → not claimed; experimental noise only; API reports `differential_privacy: false`
 
 ## FORBIDDEN — Nunca usar publicamente
-- AES-256-GCM Encrypted Storage
 - Continuous Consciousness / Consciência Sintética
 - Giving Models a Soul
 - Imortalidade Cognitiva
@@ -50,12 +52,12 @@ Status: APPROVED
 
 | Canal | Copy Aprovada |
 |---|---|
-| GitHub Org Bio | Persistent, encrypted memory infrastructure for AI agents. Encrypted at rest with a per-tenant key. MCP-native. Built in Brazil. |
+| GitHub Org Bio | MCP-native memory infrastructure for autonomous agents. Encrypted server-side persistence (AES-256-GCM) · Trust Quotient™ scoring · human-in-the-loop curation. |
 | synapse-layer description | Persistent memory infrastructure for AI agents — encrypted, governed, and cross-agent. |
 | synapse-sdk-python description | Python SDK for Synapse Layer — persistent, encrypted, cross-agent memory for AI agents. |
 | synapse-layer-skill description | Persistent memory skill for AI agents. Remembers preferences, brand voice and decisions with Trust Quotient scoring. |
 | PyPI / npm | Synapse Layer SDK — persistent, encrypted, cross-agent memory for AI agents. |
-| MCP / Smithery | Persistent memory infrastructure for AI agents. Encrypted at rest with a per-tenant key. |
+| MCP | Persistent memory infrastructure for AI agents. Encrypted at rest with a per-tenant key. |
 
 > Evidência e estados (PROVEN / HOLD / FORBIDDEN) na matriz de governança:
 > [`docs/governance/PUBLIC_CLAIMS_MATRIX.md`](governance/PUBLIC_CLAIMS_MATRIX.md).

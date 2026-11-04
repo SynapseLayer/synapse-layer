@@ -7,6 +7,7 @@
 > test counts, deploy state) lives in the private evidence register.
 
 **Last verified:** 2026-11-04
+**Release under verification:** production check `2026-11-04` · serverVersion `2.4.6` · schema `0–18` (last verified `2026-11-03`) · deploy SHA pending
 **Public versions:** MCP server `2.4.6` · PyPI `synapse-layer` `2.4.6`
 **Status legend:** Shipped · Gated (deployed, flag off) · In progress · Experimental · Roadmap · Not claimed
 

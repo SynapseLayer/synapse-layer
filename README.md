@@ -18,7 +18,6 @@ Synapse Layer is open-source persistent memory infrastructure for AI agents and 
 [![Official MCP Registry](https://img.shields.io/badge/MCP_Registry-Published-00C853)](https://registry.modelcontextprotocol.io)
 [![CI](https://github.com/SynapseLayer/synapse-layer/actions/workflows/ci.yml/badge.svg)](https://github.com/SynapseLayer/synapse-layer/actions/workflows/ci.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
-[![Smithery](https://img.shields.io/badge/Smithery-Add%20to%20MCP-800080?logo=smithery)](https://smithery.ai/servers/synapselayer/synapselayer)
 
 [Website](https://synapselayer.org) · [Docs](https://forge.synapselayer.org/docs) · [PyPI](https://pypi.org/project/synapse-layer/) · [Forge](https://forge.synapselayer.org)
 
@@ -28,13 +27,15 @@ Synapse Layer is open-source persistent memory infrastructure for AI agents and 
 
 ## ⚡ 30-Second Quickstart
 
-Get your Connect Token at [forge.synapselayer.org](https://forge.synapselayer.org) → Connect, then install into any MCP client:
+Get your Connect Token at [forge.synapselayer.org](https://forge.synapselayer.org) → Connect, then add the MCP endpoint to your client:
 
 ```bash
-curl -fsSL https://forge.synapselayer.org/install/smithery | bash
+claude mcp add --transport http synapse-layer \
+  https://forge.synapselayer.org/api/mcp \
+  --header "x-connect-token: sk_connect_YOUR_TOKEN"
 ```
 
-On the [Forge dashboard](https://forge.synapselayer.org/dashboard/connect) the **Smithery** card already copies the command with your token embedded (`… | bash -s -- sk_connect_…`) — a single paste in your terminal is enough.
+For Claude Desktop, Cursor and other clients, use the `npx mcp-remote` block under [MCP Integration](#mcp-integration-one-tested-path-per-client). Smithery's proxy/CLI was retired on 31 Oct 2026; the direct endpoint above is canonical.
 
 Or use the Python SDK:
 

@@ -367,7 +367,7 @@ Quota is checked and enforced per plan. `402` is returned when exhausted.
 ## 15. Registries & links
 
 - MCP Marketplace: https://mcp-marketplace.io/server/io-github-synapselayer-synapse-layer
-- Smithery: https://smithery.ai/server/synapselayer/synapselayer
+- Smithery (directory only, proxy/CLI retired 2026-10-31): https://smithery.ai/server/synapselayer/synapselayer
 - PyPI: https://pypi.org/project/synapse-layer/
 - npm: https://www.npmjs.com/package/synapse-layer
 - GitHub: https://github.com/SynapseLayer/synapse-layer

@@ -1,5 +1,9 @@
 # Smithery Registry Submission — Synapse Layer
 
+> **HISTORICAL (2026-10-31):** Smithery's proxy, API, CLI and SDK were retired.
+> The directory remains online under Arcade. Do not use this manifest for
+> installation; use the direct MCP endpoint `https://forge.synapselayer.org/api/mcp`.
+
 ## Submission Manifesto
 
 Use this content for the Smithery listing page, GitHub PR body, or registry form.
