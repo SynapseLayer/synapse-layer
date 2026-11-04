@@ -88,7 +88,7 @@
 ## 8. Explicitly not claimed
 
 - Zero-knowledge / end-to-end encryption — the service processes plaintext in memory
-- "Server never sees plaintext" — false for this architecture
+- Operator-blind encryption — false; the service decrypts server-side and processes plaintext in memory
 - Formal differential privacy
 - Automatic merge or deletion of content
 - Certified LGPD/GDPR compliance — mechanisms shipped; propagation audit pending
