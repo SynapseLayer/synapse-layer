@@ -1,6 +1,8 @@
 # Changelog
 
-## [2.4.7] - 2026-07-09
+## [Unreleased] — 2.4.7 (not published)
+
+> 2.4.7 is not published yet: PyPI and the MCP server remain at 2.4.6.
 
 ### Changed
 - Brand sweep: replaced all "ZK" / "zero-knowledge" references in forge_backend.py
