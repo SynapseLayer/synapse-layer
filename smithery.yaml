@@ -1,3 +1,5 @@
+# HISTORICAL: Smithery proxy/CLI retired 2026-10-31. Kept for directory metadata only.
+# Canonical distribution: server.json and https://forge.synapselayer.org/api/mcp
 qualifiedName: "@synapselayer/synapselayer"
 displayName: "Synapse Layer"
 description: >

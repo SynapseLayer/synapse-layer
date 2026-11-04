@@ -1,5 +1,8 @@
 # PUBLIC CLAIMS MATRIX — SYNAPSE LAYER
 
+> **Internal governance, not marketing copy.** The public contract is
+> [FEATURES.md](../../FEATURES.md). Claims below must match it.
+>
 > Regra: claim só vai a público se status = PROVEN e evidência existe.
 > Atualizado: 2026-10-22 | Responsável: Ismael Marchi
 
@@ -15,18 +18,17 @@
 | 4 | OAuth for AI Memory | ConnectToken flow implementado (generate→SHA-256→auth) | Category positioning |
 | 5 | State Continuity Layer | NCI v4.2 live, session cache, context injection | Technical docs, positioning |
 | 6 | AES-256-GCM encryption at rest | `lib/synapse/crypto.ts` — per-op random IV, GCM tag validated | Security docs, comparisons |
-| 7 | 13 MCP tools | `tools/list` introspection confirma 13 tools live | Docs, integrations |
-| 8 | Tenant-isolated (1 user = 1 private mind) | `WHERE tenantId` em toda query, fail-closed | Security, compliance |
+| 7 | 13 MCP tool names (10 operations + 3 aliases) | `tools/list` confirms 13 names; 10 unique operations | Docs, integrations |
+| 8 | Personal: 1 user = 1 private mind; Corporate: organization → projects → memberships | `WHERE tenantId` em toda query, fail-closed | Security, compliance |
 | 9 | Sub-second perceived recall | Cache layer: perceived p50 = 0ms | Performance claims (com "perceived") |
 | 10 | Fail-closed security | 401 confirmado para no-auth e invalid-token | Security positioning |
 | 11 | ~~PII redaction pipeline~~ | REMOVED (v1.1.5) — replaced by content sanitization | — |
-| 12 | LGPD-ready | delete_memory (soft+hard), content sanitization, tenant isolation | Compliance docs |
+| 12 | LGPD/GDPR alignment (mechanisms shipped; propagation audit pending) | delete_memory (soft+hard), content sanitization, tenant isolation | Compliance docs |
 | 13 | 5 recall modes | auto/temporal/semantic/priority/hybrid — RecallRouter live | Technical docs |
 | 14 | pgvector semantic search | HNSW index + text-embedding-3-small (1536d) | Technical docs |
 | 15 | pip install synapse-layer (<10s) | Confirmado: 3s em clean venv | Onboarding, README |
 | 16 | Encryption at rest: AES-256-GCM, per-tenant key | `lib/synapse/memory-encryption.ts` — per-tenant key (HKDF-SHA256 over the master key) when `SYNAPSE_HKDF_ENABLED=true`; random 96-bit IV per operation; 128-bit auth tag; fail-closed on a missing key | Security docs, comparisons |
-| 17 | Differential privacy on embeddings | `lib/synapse/privacy.ts` — Gaussian mechanism, ε=0.5, δ=1e-5, applied to the stored vector | Security docs, comparisons |
-| 18 | 21 PII patterns redacted before storage | `lib/synapse/sanitizer.ts` — pattern-based redaction (`[TYPE_REDACTED]`) | Security docs, compliance |
+| 17 | 21 PII patterns redacted before storage | `lib/synapse/sanitizer.ts` — pattern-based redaction (`[TYPE_REDACTED]`) | Security docs, compliance |
 
 ### Reality of the two storage paths (use this wording, not a blanket claim)
 
@@ -51,7 +53,8 @@ the content, not plaintext, and must be handled as personal data.
 | 2 | Quality Gate TQ scoring live | Fix deployed (C4.7), scores reais pendentes em volume | Monitorar 7 dias |
 | 3 | HNSW index accelerates recall | Ativo mas SeqScan usado para <300 rows | Quando >1000 memories |
 | 4 | Neural Handover production-ready | V2 implementado, 0 sessions em produção | Primeiro uso real |
-| 5 | Smithery verified listing | Listing existe, re-publish pendente (latency) | Quando warm <200ms |
+| 5 | Smithery directory (historical) | Proxy/API/CLI retired 2026-10-31; directory remains under Arcade | Directory only; no install path |
+| 6 | Differential privacy on embeddings | API returns `differential_privacy: false`; experimental noise only | Not claimed until formal spec + evaluation |
 
 ---
 
