@@ -16,7 +16,7 @@
 |---|---|---|
 | Persistent memory across sessions and agents (MCP · REST · Python SDK) | Shipped | — |
 | Full-text ∥ vector search; filters applied before ranking | Shipped | — |
-| Exact dedup, scoped per project | Shipped | Cross-scope duplicate returns a consultative warning — never auto-merge |
+| Exact dedup — scoped: personal memories dedup within the user; project memories dedup within the project | Shipped | Cross-scope duplicates return a consultative warning — never auto-merge |
 | Configurable duplicate threshold per project | Shipped | Threshold is read from the stored project policy |
 | Idempotent writes (`Idempotency-Key`) | Shipped | — |
 | Recall requires a stated reason (governance) | Shipped | Enforced on plaintext exports |
@@ -40,7 +40,7 @@
 | Lifecycle states (active · needs_review · merged · superseded · quarantined · archived) | Shipped | — |
 | Grace window before expiry | Shipped | Memory stays recallable during the window |
 | Expiry surfaced in the curation queue | Shipped | Passive — no proactive notifications yet |
-| Deletion mechanisms: TTL/GC, hard delete with reason, audit trail | Shipped (mechanism) | Mechanism only — see the next line |
+| No AI-initiated merge or deletion. Policy-based TTL/GC may delete expired data under configured retention rules, with an audit trail. Hard delete requires a documented reason. | Shipped (mechanism) | — |
 | Full right-to-erase propagation (indexes, embeddings, caches, backups) + retention/legal-hold exceptions | In progress | **Not claimed as complete compliance** |
 | Proactive pre-expiry notifications | Roadmap | — |
 
@@ -52,7 +52,7 @@
 | Suggestions carry metadata only — never memory content | Shipped | — |
 | Orphan detection + automated sweep of non-actionable suggestions | Shipped (with limitation) | Sweep dismissal is not yet reversible — in progress |
 | Policy-based thresholds; organization/project inheritance; runtime policy resolution | Shipped (stored thresholds) · Gated (inheritance + resolver) | Gated paths are deployed behind a feature flag, default OFF pending canary |
-| No automatic merge or deletion of content | Shipped (with limitation) | The sweep may dismiss non-actionable *suggestions*; reversibility is evolving |
+| No AI-initiated merge or deletion of content | Shipped (with limitation) | The sweep may dismiss non-actionable *suggestions*; reversibility is evolving |
 
 ## 5. Security & privacy
 
@@ -79,7 +79,7 @@
 
 | Capability | Status | Known limits |
 |---|---|---|
-| MCP server — 13 registered public tool names (10 operations + 3 aliases), typed outputs | Shipped | Tool list is documented in `server.json` / `smithery.yaml`; the generated-from-spec check is in progress |
+| MCP server — public tools with typed outputs | Shipped | Automated generation and drift checks from the canonical API spec are in progress |
 | REST API | Shipped (spec refresh pending) | OpenAPI is published, but some current routes are not yet listed |
 | Python SDK — `pip install synapse-layer` → `from synapse_layer import Synapse` | Shipped | Canonical sync client. The standalone `synapse-sdk-python` repository is legacy |
 | Agent skill | Shipped (beta) | Official = maintained by the org; beta = stability/support level. Durable-content save policy |
@@ -90,7 +90,7 @@
 - Zero-knowledge / end-to-end encryption — the service processes plaintext in memory
 - Operator-blind encryption — false; the service decrypts server-side and processes plaintext in memory
 - Formal differential privacy
-- Automatic merge or deletion of content
+- AI-initiated merge or deletion of content (policy-based TTL/GC may delete expired data per configured retention rules; the sweep may dismiss non-actionable suggestions — reversibility evolving)
 - Certified LGPD/GDPR compliance — mechanisms shipped; propagation audit pending
 - SOC 2 / HIPAA certification
 - Published token-savings results
